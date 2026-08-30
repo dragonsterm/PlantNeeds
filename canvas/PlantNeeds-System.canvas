@@ -1,0 +1,27 @@
+{
+	"nodes":[
+		{"id":"0be7c20a883d4bee","type":"group","label":"UI LAYER (humans)","x":-740,"y":-200,"width":440,"height":320,"color":"4"},
+		{"id":"372aedb1057441aa","type":"group","label":"TOOL LAYER (agents)","x":-740,"y":160,"width":440,"height":340,"color":"6"},
+		{"id":"a72c986811604ef8","type":"group","label":"SHARED LOGIC LAYER (C4)","x":-260,"y":-40,"width":460,"height":340,"color":"1"},
+		{"id":"d13f7229df334e02","type":"group","label":"STATE + EXTERNAL","x":240,"y":-200,"width":440,"height":920,"color":"5"},
+		{"id":"1a3b13e302f94506","type":"text","text":"🧑 **HUMAN USER**\nClicks the visual UI","x":-1100,"y":-80,"width":260,"height":120,"color":"4"},
+		{"id":"6d9b4f9aaba449f9","type":"text","text":"🤖 **AI AGENT**\n(ChatGPT browser / Chrome)\nCalls WebMCP tools","x":-1100,"y":220,"width":260,"height":140,"color":"6"},
+		{"id":"85010825eebc4fbe","type":"file","file":"docs/ui-ux-overview.md","x":-700,"y":-160,"width":360,"height":240},
+		{"id":"de327730907e4ae1","type":"file","file":"docs/webmcp-tools.md","x":-700,"y":200,"width":360,"height":260},
+		{"id":"6d1d6faac58a4698","type":"file","file":"docs/architecture.md","x":-220,"y":0,"width":380,"height":260},
+		{"id":"a04854e506444226","type":"file","file":"docs/data-model.md","x":280,"y":-160,"width":360,"height":240},
+		{"id":"778ad28b0ef042c6","type":"file","file":"docs/api-integrations.md","x":280,"y":200,"width":360,"height":240},
+		{"id":"001cc9bad92442a5","type":"text","text":"🗄️ **STATE LAYER**\nIndexedDB (Dexie)\n+ pub/sub event bus\n\n'plants-changed' → UI re-renders","x":280,"y":520,"width":340,"height":160,"color":"2"},
+		{"id":"efd9acebefdc45c3","type":"text","text":"⚡ **LIVE-SYNC (C5)**\nAgent tool call → shared logic\n→ state write → event emit\n→ UI updates + toast 'by agent'\nNO page reload","x":-220,"y":520,"width":380,"height":170,"color":"3"}
+	],
+	"edges":[
+		{"id":"78f8f75fcfed43ea","fromNode":"1a3b13e302f94506","fromSide":"right","toNode":"85010825eebc4fbe","toSide":"left","label":"clicks"},
+		{"id":"9051c78ccf684f63","fromNode":"6d9b4f9aaba449f9","fromSide":"right","toNode":"de327730907e4ae1","toSide":"left","label":"registerTool()"},
+		{"id":"d0bf38d9143c4a6e","fromNode":"85010825eebc4fbe","fromSide":"right","toNode":"6d1d6faac58a4698","toSide":"left","label":"same functions"},
+		{"id":"954284568b5846b4","fromNode":"de327730907e4ae1","fromSide":"right","toNode":"6d1d6faac58a4698","toSide":"left","label":"same functions"},
+		{"id":"83d409d70fcc42a6","fromNode":"6d1d6faac58a4698","fromSide":"right","toNode":"a04854e506444226","toSide":"left","label":"reads/writes"},
+		{"id":"6519f4e936b346c2","fromNode":"6d1d6faac58a4698","fromSide":"right","toNode":"778ad28b0ef042c6","toSide":"left","label":"fetches weather"},
+		{"id":"0cb85d2b09924bd6","fromNode":"a04854e506444226","fromSide":"right","toNode":"001cc9bad92442a5","toSide":"left","label":"persists"},
+		{"id":"6717af974002467d","fromNode":"6d1d6faac58a4698","fromSide":"right","toNode":"efd9acebefdc45c3","toSide":"left","label":"emits events"}
+	]
+}

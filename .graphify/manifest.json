@@ -1,0 +1,110 @@
+{
+ "C:\\Project\\PlantNeeds\\AGENTS.md": {
+  "mtime": 1788082517732.8044,
+  "hash": "e25a8f4f45b3fd7ab57e91ba63b98ebf"
+ },
+ "C:\\Project\\PlantNeeds\\CLAUDE.md": {
+  "mtime": 1788083243320.0308,
+  "hash": "a94db993a678245c7e44a1d5792ec7db"
+ },
+ "C:\\Project\\PlantNeeds\\docs\\api-integrations.md": {
+  "mtime": 1788081980294.0432,
+  "hash": "0819b5a9e4722069a270867c2ffff66d"
+ },
+ "C:\\Project\\PlantNeeds\\docs\\architecture.md": {
+  "mtime": 1788083147564.3381,
+  "hash": "58af99f18e9a9b0f1c6409dd0fb05ed7"
+ },
+ "C:\\Project\\PlantNeeds\\docs\\data-model.md": {
+  "mtime": 1788082822915.0305,
+  "hash": "899f8700e68ef93c481629e76ee78428"
+ },
+ "C:\\Project\\PlantNeeds\\docs\\decisions.md": {
+  "mtime": 1788083069192.1235,
+  "hash": "7148c6999d9605704a835a5e15543777"
+ },
+ "C:\\Project\\PlantNeeds\\docs\\deployment.md": {
+  "mtime": 1788083042583.4216,
+  "hash": "d0bec7fb475b4ced7769400c0cade190"
+ },
+ "C:\\Project\\PlantNeeds\\docs\\diagnosis-engine.md": {
+  "mtime": 1788081953282.585,
+  "hash": "7238bb085f6eacc22869d09179ee15b3"
+ },
+ "C:\\Project\\PlantNeeds\\docs\\graph-sync.md": {
+  "mtime": 1788082517705.72,
+  "hash": "601c5aeba9894551ec37fb610b4d5e17"
+ },
+ "C:\\Project\\PlantNeeds\\docs\\testing-strategy.md": {
+  "mtime": 1788082046904.8962,
+  "hash": "f947d165b396fb3537a8c92094a17dbc"
+ },
+ "C:\\Project\\PlantNeeds\\docs\\ui-ux-overview.md": {
+  "mtime": 1788082013231.0269,
+  "hash": "3a3b01a362460479c4e542fa28e54ee6"
+ },
+ "C:\\Project\\PlantNeeds\\docs\\webmcp-tools.md": {
+  "mtime": 1788081885959.5825,
+  "hash": "1d79e4b1bb2e6e7fa7b8df2f23eb8898"
+ },
+ "C:\\Project\\PlantNeeds\\plan.md": {
+  "mtime": 1788083242648.4841,
+  "hash": "baad180a58768a7be94548dc4d16b72b"
+ },
+ "C:\\Project\\PlantNeeds\\PlantNeeds-SRD.md": {
+  "mtime": 1788083304995.1824,
+  "hash": "191b116cd2eaf2375eab14c164007853"
+ },
+ "C:\\Project\\PlantNeeds\\README.md": {
+  "mtime": 1788095840308.3352,
+  "hash": "3570b0e8c78a55e2166edd805d1be768"
+ },
+ "C:\\Project\\PlantNeeds\\specification.md": {
+  "mtime": 1788083124230.678,
+  "hash": "ce73bc9ce541f8057fdfc79a3735a730"
+ },
+ "C:\\Project\\PlantNeeds\\tasks\\day-01.md": {
+  "mtime": 1788082627131.3242,
+  "hash": "bc2a956b9b948df8b1e6bdfc1d5b42b7"
+ },
+ "C:\\Project\\PlantNeeds\\tasks\\day-02.md": {
+  "mtime": 1788082200296.94,
+  "hash": "1218252b90657d1e0fe9721917b2dd96"
+ },
+ "C:\\Project\\PlantNeeds\\tasks\\day-03.md": {
+  "mtime": 1788082200297.9487,
+  "hash": "23160f98f9cea82a2285416a4f912abe"
+ },
+ "C:\\Project\\PlantNeeds\\tasks\\day-04.md": {
+  "mtime": 1788082200297.9487,
+  "hash": "c12ad1330f660e92b38fb0649e6816fe"
+ },
+ "C:\\Project\\PlantNeeds\\tasks\\day-05.md": {
+  "mtime": 1788082200298.9463,
+  "hash": "e24d86eac9080d9202c648543dff46a3"
+ },
+ "C:\\Project\\PlantNeeds\\tasks\\day-06.md": {
+  "mtime": 1788082200298.9463,
+  "hash": "b80d42a2fc0f89839df880c5f486914c"
+ },
+ "C:\\Project\\PlantNeeds\\tasks\\day-07.md": {
+  "mtime": 1788082200299.9485,
+  "hash": "f7361adbc5631a3ab50c4de0a68db4fe"
+ },
+ "C:\\Project\\PlantNeeds\\tasks\\day-08.md": {
+  "mtime": 1788082200300.4573,
+  "hash": "05d0e2ce39fd564c0b04b00bad007277"
+ },
+ "C:\\Project\\PlantNeeds\\tasks\\day-09.md": {
+  "mtime": 1788083124231.6768,
+  "hash": "ba86643c9c63b12f220358257bc09cf7"
+ },
+ "C:\\Project\\PlantNeeds\\tasks\\day-10.md": {
+  "mtime": 1788082200300.4573,
+  "hash": "2952e9aedd5802bb2eefa2d258595d15"
+ },
+ "C:\\Project\\PlantNeeds\\tasks\\kanban.md": {
+  "mtime": 1788083124232.6746,
+  "hash": "64f10780824a4e2edbc430bce9d690b0"
+ }
+}

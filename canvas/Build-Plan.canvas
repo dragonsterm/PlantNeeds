@@ -1,0 +1,43 @@
+{
+	"nodes":[
+		{"id":"298a78b456fb43e2","type":"text","text":"PHASE 1 · FOUNDATION (D1-2)","x":-1400,"y":-260,"width":320,"height":120,"color":"1"},
+		{"id":"b422b0bdda914aaa","type":"text","text":"PHASE 2 · CORE FEATURES (D3-6)","x":-1400,"y":40,"width":320,"height":120,"color":"2"},
+		{"id":"48b9602f25ea4615","type":"text","text":"PHASE 3 · AGENT LAYER (D7-8)","x":-1400,"y":340,"width":320,"height":120,"color":"6"},
+		{"id":"68ec0fff237e474a","type":"text","text":"PHASE 4 · POLISH & SUBMIT (D9-10)","x":-1400,"y":640,"width":320,"height":120,"color":"3"},
+		{"id":"ef2e78349eaf4f99","type":"file","file":"tasks/day-01.md","x":-1000,"y":-280,"width":300,"height":200},
+		{"id":"7b605112ace74087","type":"file","file":"tasks/day-02.md","x":-640,"y":-280,"width":300,"height":200},
+		{"id":"0e782f1ebc5d4d7a","type":"file","file":"tasks/day-03.md","x":-1000,"y":20,"width":300,"height":200},
+		{"id":"018c3c99ab874adb","type":"file","file":"tasks/day-04.md","x":-640,"y":20,"width":300,"height":200},
+		{"id":"167858fe377f40b5","type":"file","file":"tasks/day-05.md","x":-280,"y":20,"width":300,"height":200},
+		{"id":"03d498c131494663","type":"file","file":"tasks/day-06.md","x":80,"y":20,"width":300,"height":200},
+		{"id":"3fd2aad001394c10","type":"file","file":"tasks/day-07.md","x":-640,"y":320,"width":300,"height":200},
+		{"id":"5e3ffec4c54e4087","type":"file","file":"tasks/day-08.md","x":-280,"y":320,"width":300,"height":200},
+		{"id":"e25ca8be0ee44e6c","type":"file","file":"tasks/day-09.md","x":-640,"y":620,"width":300,"height":200},
+		{"id":"2943319b55f54669","type":"file","file":"tasks/day-10.md","x":-280,"y":620,"width":300,"height":200},
+		{"id":"bf5d368985a24400","type":"text","text":"🏁 GATE: app boots,\ndata persists","x":-280,"y":-270,"width":300,"height":110,"color":"1"},
+		{"id":"ab1675c2817847e5","type":"text","text":"🏁 GATE: human-usable\n(no agent needed)","x":440,"y":30,"width":300,"height":110,"color":"2"},
+		{"id":"b5e3c70ae2bb44f9","type":"text","text":"🏁 GATE: all 7 tools callable,\nUI syncs live","x":440,"y":-130,"width":300,"height":110,"color":"6"},
+		{"id":"cffc110807ee469b","type":"text","text":"🏁 GATE: demo scenario passes\nin ChatGPT browser","x":80,"y":330,"width":300,"height":110,"color":"3"},
+		{"id":"52f57a57078f42c8","type":"text","text":"🚀 SUBMITTED","x":80,"y":640,"width":300,"height":110,"color":"3"},
+		{"id":"6d5f8da6a1034187","type":"file","file":"plan.md","x":800,"y":20,"width":320,"height":220},
+		{"id":"34dc68ae0f764ba7","type":"file","file":"tasks/kanban.md","x":800,"y":300,"width":320,"height":220},
+		{"id":"82e572362c244dd2","type":"file","file":"PlantNeeds-SRD.md","x":800,"y":-260,"width":320,"height":240}
+	],
+	"edges":[
+		{"id":"b9585fd1e88e4cbb","fromNode":"298a78b456fb43e2","fromSide":"right","toNode":"ef2e78349eaf4f99","toSide":"left","label":""},
+		{"id":"11e494cd015d4ae7","fromNode":"b422b0bdda914aaa","fromSide":"right","toNode":"0e782f1ebc5d4d7a","toSide":"left","label":""},
+		{"id":"c9255ba708a54884","fromNode":"48b9602f25ea4615","fromSide":"right","toNode":"3fd2aad001394c10","toSide":"left","label":""},
+		{"id":"a8a6d65040874fc8","fromNode":"68ec0fff237e474a","fromSide":"right","toNode":"e25ca8be0ee44e6c","toSide":"left","label":""},
+		{"id":"dbc6823427e84238","fromNode":"ef2e78349eaf4f99","fromSide":"right","toNode":"7b605112ace74087","toSide":"left","label":""},
+		{"id":"3c8318a501e24359","fromNode":"0e782f1ebc5d4d7a","fromSide":"right","toNode":"018c3c99ab874adb","toSide":"left","label":""},
+		{"id":"4914dc3401104cfc","fromNode":"018c3c99ab874adb","fromSide":"right","toNode":"167858fe377f40b5","toSide":"left","label":""},
+		{"id":"1b701ab3cf984b0f","fromNode":"167858fe377f40b5","fromSide":"right","toNode":"03d498c131494663","toSide":"left","label":""},
+		{"id":"6a58bb43c19f44b8","fromNode":"3fd2aad001394c10","fromSide":"right","toNode":"5e3ffec4c54e4087","toSide":"left","label":""},
+		{"id":"52ff7e5811054708","fromNode":"e25ca8be0ee44e6c","fromSide":"right","toNode":"2943319b55f54669","toSide":"left","label":""},
+		{"id":"91a353093b3a4ab2","fromNode":"7b605112ace74087","fromSide":"right","toNode":"bf5d368985a24400","toSide":"left","label":""},
+		{"id":"24b1fe6de60c4751","fromNode":"018c3c99ab874adb","fromSide":"right","toNode":"ab1675c2817847e5","toSide":"left","label":""},
+		{"id":"38c316f0c9214068","fromNode":"03d498c131494663","fromSide":"right","toNode":"b5e3c70ae2bb44f9","toSide":"left","label":""},
+		{"id":"a976f081a5064367","fromNode":"5e3ffec4c54e4087","fromSide":"right","toNode":"cffc110807ee469b","toSide":"left","label":""},
+		{"id":"2dbcf09ca13b41a9","fromNode":"2943319b55f54669","fromSide":"right","toNode":"52f57a57078f42c8","toSide":"left","label":""}
+	]
+}

@@ -1,0 +1,29 @@
+# ---------- Obsidian (user-specific state — DO NOT commit) ----------
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/cache
+.obsidian/plugins/*/data.json
+
+# Keep these shared vault configs committed:
+#   .obsidian/app.json
+#   .obsidian/appearance.json
+#   .obsidian/core-plugins.json
+#   .obsidian/graph.json
+
+# ---------- OS junk ----------
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---------- Node (app code, when built) ----------
+node_modules/
+dist/
+*.local
+
+# ---------- Python (sync script) ----------
+__pycache__/
+*.pyc
+.venv/
+
+# ---------- Logs ----------
+*.log
