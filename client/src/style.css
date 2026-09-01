@@ -1,48 +1,185 @@
 /*
- * client/src/style.css — base styles
- * -----------------------------------
- * ⚠️ Visual design is UNDER DISCUSSION (docs/ui-ux-overview.md). Use CSS
- * custom properties so the final theme is a ONE-FILE swap (ADR-007). Keep it
- * functional + neutral for now; no committed palette/typography.
+ * client/src/style.css
+ * PlantNeeds Design System — Exact Google Stitch Export
+ * Theme: Botanical Ether (Glassmorphism over Dark Moody Foliage)
  */
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
+
 :root {
-  /* Neutral placeholder tokens — replaced by the design decision (ADR-012). */
-  --color-primary: #2f7d4f;
-  --color-bg: #ffffff;
-  --color-surface: #f6f7f6;
-  --color-text: #1b1f1c;
-  --color-muted: #66716a;
-  --radius: 10px;
-  --space: 1rem;
-  --max-width: 72rem;
+  --primary: #154212;
+  --primary-container: #2D5A27;
+  --primary-fixed: #BCF0AE;
+  --primary-fixed-dim: #A1D494;
+  --forest-deep: #1B3022;
+  --on-primary: #FFFFFF;
+  --on-surface: #191C18;
+  --on-surface-variant: #42493E;
+  --outline: #72796E;
+  --outline-variant: #C2C9BB;
+  --surface: #F9FAF2;
+  --sage-soft: #E1E8E0;
+  --status-water: #4A90E2;
+  --status-warning: #D97706;
+  --error: #BA1A1A;
+  --error-bg: rgba(186, 26, 26, 0.2);
+
+  --radius-card: 1.5rem;
+  --radius-pill: 9999px;
+  --max-width: 80rem;
 }
 
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
 body {
-  margin: 0;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-  background: var(--color-bg);
-  color: var(--color-text);
-  line-height: 1.5;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: #FFFFFF;
+  min-height: 100vh;
+  width: 100vw;
+  overflow-x: hidden;
+  position: relative;
+  background-color: #0b140d;
+  -webkit-font-smoothing: antialiased;
 }
 
-#app {
-  max-width: var(--max-width);
-  margin: 0 auto;
-  padding: var(--space);
+/* Background Image Exact from Stitch */
+.bg-layer {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCt4sr262f8kgCGYokXcV_a41iq7kOJcDG-BdyxXhUJ3ONRkamncp8DcboiNeIVlKSN5RpiKbCY5GVGsf3Fe-kOr54K_R-w9nDp48GnPDyPNoktAi1HYwo1_PCEv1TjVqKcfPW0z34F7d4SodZciZq3iWCdTm3xIby54NYtsVYXu2zEkPuXm4RuC6L6HO7cE2BYhnyxy2zuWZdzShQOd5D0-J7woR_lDaqH_6_HH9k5s0yfk6idSnWZQ0JXJSYa1XD6kww');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
-.app-header h1 { margin: 0 0 0.25rem; }
-.tagline { color: var(--color-muted); margin-top: 0; }
-.boot-note {
-  padding: var(--space);
-  background: var(--color-surface);
-  border-radius: var(--radius);
+/* Glass Panels Exact from Stitch code.html */
+.glass-panel {
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
 }
 
-/* Mobile-responsive: single-column collapse under 640px (ui-ux-overview §Principles). */
-@media (max-width: 640px) {
-  #app { padding: 0.75rem; }
+.glass-card {
+  background: rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.glass-dark {
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.glass-input {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+  color: #FFFFFF;
+}
+
+.glass-input:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.progress-ring {
+  transition: stroke-dashoffset 0.5s ease-in-out;
+}
+
+/* Buttons */
+.btn-primary-stitch {
+  background: #154212;
+  color: #FFFFFF;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  border-radius: var(--radius-pill);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.btn-primary-stitch:hover {
+  background: #2D5A27;
+}
+
+.btn-primary-stitch:active {
+  transform: scale(0.98);
+}
+
+/* Typography Classes */
+.font-headline-xl {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.font-headline-lg {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.font-body-md {
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+}
+
+.font-body-sm {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.font-label-caps {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Auth Specific */
+.auth-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 440px;
+  padding: 36px 32px;
+}
+
+.error-alert {
+  padding: 10px 14px;
+  background: var(--error-bg);
+  border: 1px solid rgba(186, 26, 26, 0.4);
+  border-radius: 12px;
+  color: #ffdad6;
+  font-size: 13px;
+  margin-bottom: 16px;
+  text-align: left;
 }

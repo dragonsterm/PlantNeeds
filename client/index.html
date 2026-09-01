@@ -1,22 +1,122 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="PlantNeeds — a WebMCP-powered plant care companion. Plant apps today are reference books; PlantNeeds is a gardener." />
-    <title>PlantNeeds 🌱</title>
-  </head>
-  <body>
-    <!-- App mounts here. Functional-first markup; visual design is TBD (docs/ui-ux-overview). -->
-    <div id="app">
-      <header class="app-header">
-        <h1>🌱 PlantNeeds</h1>
-        <p class="tagline">Plant apps today are reference books. PlantNeeds is a gardener.</p>
-      </header>
-      <main id="main" aria-live="polite">
-        <p class="boot-note">Day 1 scaffold — app logic mounts here (Days 3+).</p>
-      </main>
-    </div>
-    <script type="module" src="/src/main.js"></script>
-  </body>
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>PlantNeeds - Plant Care Companion</title>
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@600;700&display=swap" rel="stylesheet"/>
+  <!-- Material Symbols -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <!-- Tailwind CSS Exact from Stitch -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary-container": "#2d5a27",
+            "on-error-container": "#93000a",
+            "glass-white": "rgba(255, 255, 255, 0.6)",
+            "surface-dim": "#d9dbd3",
+            "inverse-primary": "#a1d494",
+            "on-secondary-container": "#506b4f",
+            "forest-deep": "#1B3022",
+            "primary": "#154212",
+            "outline": "#72796e",
+            "secondary-container": "#ccebc7",
+            "on-surface-variant": "#42493e",
+            "on-secondary": "#ffffff",
+            "inverse-surface": "#2e312c",
+            "background": "#f9faf2",
+            "surface-tint": "#3b6934",
+            "tertiary": "#60233e",
+            "surface-variant": "#e2e3dc",
+            "status-water": "#4A90E2",
+            "primary-fixed-dim": "#a1d494",
+            "primary-fixed": "#bcf0ae",
+            "inverse-on-surface": "#f0f1ea",
+            "on-secondary-fixed-variant": "#334d33",
+            "surface-container-lowest": "#ffffff",
+            "sage-soft": "#E1E8E0",
+            "on-primary-fixed": "#002201",
+            "tertiary-fixed-dim": "#ffb0cc",
+            "on-secondary-fixed": "#07200b",
+            "outline-variant": "#c2c9bb",
+            "secondary-fixed": "#ccebc7",
+            "secondary": "#4a6549",
+            "error-container": "#ffdad6",
+            "on-error": "#ffffff",
+            "status-warning": "#D97706",
+            "on-tertiary-fixed-variant": "#71314c",
+            "earth-bark": "#4D4637",
+            "on-primary-container": "#9dd090",
+            "secondary-fixed-dim": "#b0cfad",
+            "error": "#ba1a1a",
+            "surface-container-high": "#e7e9e1",
+            "tertiary-fixed": "#ffd9e4",
+            "surface-container": "#edefe7",
+            "tertiary-container": "#7c3a55",
+            "surface-container-low": "#f3f4ed",
+            "on-tertiary-container": "#ffaac8",
+            "surface-bright": "#f9faf2",
+            "on-primary": "#ffffff",
+            "on-background": "#191c18",
+            "surface-container-highest": "#e2e3dc",
+            "on-surface": "#191c18",
+            "on-tertiary-fixed": "#3b0520",
+            "on-tertiary": "#ffffff",
+            "on-primary-fixed-variant": "#23501e",
+            "surface": "#f9faf2"
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px",
+            "2xl": "1rem",
+            "3xl": "1.5rem"
+          },
+          spacing: {
+            "container-margin": "24px",
+            "glass-padding": "20px",
+            "card-gap": "16px",
+            "element-stack": "8px"
+          },
+          fontFamily: {
+            "headline-lg-mobile": ["Plus Jakarta Sans"],
+            "headline-xl": ["Plus Jakarta Sans"],
+            "label-caps": ["Inter"],
+            "body-sm": ["Inter"],
+            "body-md": ["Inter"],
+            "status-verdict": ["Inter"],
+            "headline-lg": ["Plus Jakarta Sans"],
+            "mono": ["JetBrains Mono"]
+          },
+          fontSize: {
+            "headline-lg-mobile": ["28px", { lineHeight: "34px", fontWeight: "600" }],
+            "headline-xl": ["40px", { lineHeight: "48px", letterSpacing: "-0.02em", fontWeight: "700" }],
+            "label-caps": ["12px", { lineHeight: "16px", letterSpacing: "0.05em", fontWeight: "600" }],
+            "body-sm": ["14px", { lineHeight: "20px", fontWeight: "400" }],
+            "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+            "status-verdict": ["18px", { lineHeight: "22px", fontWeight: "700" }],
+            "headline-lg": ["32px", { lineHeight: "40px", letterSpacing: "-0.01em", fontWeight: "600" }]
+          }
+        },
+      },
+    }
+  </script>
+</head>
+<body class="text-white min-h-screen relative overflow-x-hidden font-body-md bg-[#0b140d]">
+  <!-- Background Image with Overlay Exact from Stitch -->
+  <div class="fixed inset-0 z-[-1]">
+    <div class="w-full h-full bg-cover bg-center" data-alt="Dark moody green foliage with raindrops." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCt4sr262f8kgCGYokXcV_a41iq7kOJcDG-BdyxXhUJ3ONRkamncp8DcboiNeIVlKSN5RpiKbCY5GVGsf3Fe-kOr54K_R-w9nDp48GnPDyPNoktAi1HYwo1_PCEv1TjVqKcfPW0z34F7d4SodZciZq3iWCdTm3xIby54NYtsVYXu2zEkPuXm4RuC6L6HO7cE2BYhnyxy2zuWZdzShQOd5D0-J7woR_lDaqH_6_HH9k5s0yfk6idSnWZQ0JXJSYa1XD6kww')"></div>
+  </div>
+  
+  <div id="app"></div>
+  <script type="module" src="/src/main.js"></script>
+</body>
 </html>
