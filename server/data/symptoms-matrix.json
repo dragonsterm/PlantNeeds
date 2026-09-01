@@ -1,0 +1,307 @@
+[
+  {
+    "cause": "Overwatering",
+    "category": "Water",
+    "symptoms": ["yellow_leaves", "mushy_stem", "drooping", "leaf_drop"],
+    "base_score": 0.4,
+    "rules": [
+      {
+        "when": "avgWaterGap < recommendedGap * 0.6",
+        "boost": 0.4,
+        "evidence": "Watered every {avgWaterGap}d but this plant prefers every {recommendedGap}d"
+      },
+      {
+        "when": "drainage === false",
+        "boost": 0.15,
+        "evidence": "Pot has no drainage holes, trapping excess moisture"
+      }
+    ],
+    "suggested_fix": "Allow soil to dry out completely. Empty any standing water in drip trays and ensure pot drains well. Inspect roots for black or mushy rot."
+  },
+  {
+    "cause": "Underwatering",
+    "category": "Water",
+    "symptoms": ["yellow_leaves", "drooping", "brown_tips", "wilting"],
+    "base_score": 0.4,
+    "rules": [
+      {
+        "when": "avgWaterGap > recommendedGap * 1.5",
+        "boost": 0.4,
+        "evidence": "Watered every {avgWaterGap}d but this plant needs watering every {recommendedGap}d"
+      },
+      {
+        "when": "daysSinceWatered > recommendedGap * 1.5",
+        "boost": 0.2,
+        "evidence": "Last watered {daysSinceWatered}d ago (schedule recommends every {recommendedGap}d)"
+      }
+    ],
+    "suggested_fix": "Give the plant a deep, thorough soak until water runs out the drainage holes. Resume normal watering cadence."
+  },
+  {
+    "cause": "Too much direct sun",
+    "category": "Light",
+    "symptoms": ["brown_tips", "spots", "yellow_leaves"],
+    "base_score": 0.35,
+    "rules": [
+      {
+        "when": "light === 'direct' && recommendedLight !== 'direct'",
+        "boost": 0.45,
+        "evidence": "Positioned in direct sun, but species prefers {recommendedLight} light"
+      }
+    ],
+    "suggested_fix": "Move plant away from intense direct rays into bright indirect light or behind a sheer curtain to prevent foliage burn."
+  },
+  {
+    "cause": "Insufficient light",
+    "category": "Light",
+    "symptoms": ["slow_growth", "yellow_leaves", "drooping", "leaf_drop"],
+    "base_score": 0.35,
+    "rules": [
+      {
+        "when": "light === 'low' && recommendedLight !== 'low'",
+        "boost": 0.45,
+        "evidence": "Placed in low light, but species thrives in {recommendedLight} conditions"
+      }
+    ],
+    "suggested_fix": "Relocate closer to an east or south-facing window, or supplement with a dedicated full-spectrum LED grow light."
+  },
+  {
+    "cause": "Root rot",
+    "category": "Roots/soil",
+    "symptoms": ["mushy_stem", "yellow_leaves", "drooping", "leaf_drop", "wilting"],
+    "base_score": 0.4,
+    "rules": [
+      {
+        "when": "avgWaterGap < recommendedGap * 0.7 && drainage === false",
+        "boost": 0.45,
+        "evidence": "Frequent watering combined with zero drainage creates ideal conditions for fungal root rot"
+      },
+      {
+        "when": "avgWaterGap < recommendedGap * 0.6",
+        "boost": 0.25,
+        "evidence": "Frequent over-saturation suffocates root systems"
+      }
+    ],
+    "suggested_fix": "Unpot immediately, trim away dark mushy foul-smelling roots with sterile shears, treat with diluted hydrogen peroxide, and repot in fresh, well-aerated potting mix."
+  },
+  {
+    "cause": "Root bound",
+    "category": "Roots/soil",
+    "symptoms": ["slow_growth", "drooping", "yellow_leaves", "wilting"],
+    "base_score": 0.35,
+    "rules": [
+      {
+        "when": "daysSinceRepotted > 365",
+        "boost": 0.35,
+        "evidence": "Plant has been in the same pot for over a year ({daysSinceRepotted}d)"
+      }
+    ],
+    "suggested_fix": "Gently slip plant from pot to inspect root ball. If roots coil tightly, repot into a container 2 inches larger with fresh soil."
+  },
+  {
+    "cause": "Poor drainage",
+    "category": "Roots/soil",
+    "symptoms": ["yellow_leaves", "mushy_stem", "drooping"],
+    "base_score": 0.35,
+    "rules": [
+      {
+        "when": "drainage === false",
+        "boost": 0.5,
+        "evidence": "Pot lacks drainage holes, preventing excess water from escaping"
+      }
+    ],
+    "suggested_fix": "Transfer to a pot with drainage holes, or add a layer of perlite/coarse bark to increase soil porosity."
+  },
+  {
+    "cause": "Nutrient deficiency (Nitrogen)",
+    "category": "Roots/soil",
+    "symptoms": ["yellow_leaves", "slow_growth"],
+    "base_score": 0.35,
+    "rules": [
+      {
+        "when": "daysSinceFertilized > 90",
+        "boost": 0.35,
+        "evidence": "No recorded fertilizer in over 90 days ({daysSinceFertilized}d)"
+      },
+      {
+        "when": "avgWaterGap >= recommendedGap * 0.8 && avgWaterGap <= recommendedGap * 1.2",
+        "boost": 0.2,
+        "evidence": "Watering cadence is on target, suggesting leaf chlorosis is nutritional rather than moisture stress"
+      }
+    ],
+    "suggested_fix": "Feed with a balanced, water-soluble houseplant fertilizer diluted to half strength during the active growing season."
+  },
+  {
+    "cause": "Nutrient deficiency (Iron)",
+    "category": "Roots/soil",
+    "symptoms": ["yellow_leaves", "slow_growth", "spots"],
+    "base_score": 0.3,
+    "rules": [
+      {
+        "when": "daysSinceFertilized > 120",
+        "boost": 0.3,
+        "evidence": "No micronutrient fertilization recorded for {daysSinceFertilized}d"
+      }
+    ],
+    "suggested_fix": "Apply chelated iron foliar spray or a micronutrient-enriched organic fertilizer; verify soil pH is not overly alkaline."
+  },
+  {
+    "cause": "Low humidity",
+    "category": "Environment",
+    "symptoms": ["brown_tips", "drooping", "wilting"],
+    "base_score": 0.35,
+    "rules": [
+      {
+        "when": "humidityPref === 'high'",
+        "boost": 0.45,
+        "evidence": "Species requires high ambient humidity but is in standard indoor air without misting"
+      },
+      {
+        "when": "location === 'indoor'",
+        "boost": 0.15,
+        "evidence": "Indoor heating and air conditioning strip ambient air moisture"
+      }
+    ],
+    "suggested_fix": "Run a humidifier nearby, group tropical plants together, or place the pot over a pebble tray filled with water."
+  },
+  {
+    "cause": "Cold stress",
+    "category": "Environment",
+    "symptoms": ["drooping", "leaf_drop", "wilting", "spots"],
+    "base_score": 0.35,
+    "rules": [
+      {
+        "when": "location === 'outdoor'",
+        "boost": 0.3,
+        "evidence": "Outdoor exposure leaves foliage vulnerable to sudden cold snaps or frost"
+      }
+    ],
+    "suggested_fix": "Protect from temperatures below 15°C (60°F). Move indoors or shield with horticultural fleece during cold weather."
+  },
+  {
+    "cause": "Heat stress",
+    "category": "Environment",
+    "symptoms": ["drooping", "wilting", "brown_tips", "yellow_leaves"],
+    "base_score": 0.35,
+    "rules": [
+      {
+        "when": "light === 'direct'",
+        "boost": 0.3,
+        "evidence": "High light intensity accelerates leaf transpiration and heat buildup"
+      }
+    ],
+    "suggested_fix": "Move to a cooler, shaded location, ensure adequate hydration, and increase air circulation."
+  },
+  {
+    "cause": "Draft shock",
+    "category": "Environment",
+    "symptoms": ["leaf_drop", "drooping", "yellow_leaves"],
+    "base_score": 0.3,
+    "rules": [
+      {
+        "when": "location === 'indoor'",
+        "boost": 0.25,
+        "evidence": "Indoor positioning near AC vents, heating ducts, or drafty exterior doors triggers shock"
+      }
+    ],
+    "suggested_fix": "Move plant away from direct airflow streams, heating registers, and exterior entryways."
+  },
+  {
+    "cause": "Spider mites",
+    "category": "Pests",
+    "symptoms": ["pests_visible", "spots", "yellow_leaves", "slow_growth"],
+    "base_score": 0.45,
+    "rules": [
+      {
+        "when": "humidityPref === 'high'",
+        "boost": 0.25,
+        "evidence": "Spider mites flourish in warm, dry environments when moisture drops"
+      }
+    ],
+    "suggested_fix": "Isolate plant immediately. Wipe leaves down with warm soapy water and apply insecticidal soap or neem oil spray every 5 days for 3 cycles."
+  },
+  {
+    "cause": "Fungus gnats",
+    "category": "Pests",
+    "symptoms": ["pests_visible", "yellow_leaves", "slow_growth"],
+    "base_score": 0.45,
+    "rules": [
+      {
+        "when": "avgWaterGap < recommendedGap * 0.8",
+        "boost": 0.35,
+        "evidence": "Consistently wet topsoil creates the ideal breeding ground for gnat larvae"
+      }
+    ],
+    "suggested_fix": "Let top 2 inches of soil dry completely between waterings. Use yellow sticky traps for adults and water with Bacillus thuringiensis israelensis (BTI / Mosquito Bits) to kill larvae."
+  },
+  {
+    "cause": "Mealybugs",
+    "category": "Pests",
+    "symptoms": ["pests_visible", "yellow_leaves", "slow_growth", "drooping"],
+    "base_score": 0.45,
+    "rules": [
+      {
+        "when": "location === 'indoor'",
+        "boost": 0.2,
+        "evidence": "Indoor conditions allow mealybug colonies to multiply rapidly in leaf axils"
+      }
+    ],
+    "suggested_fix": "Dab visible cottony pests with a 70% isopropyl alcohol cotton swab. Spray thoroughly with neem oil or systemic insecticide."
+  },
+  {
+    "cause": "Aphids",
+    "category": "Pests",
+    "symptoms": ["pests_visible", "drooping", "yellow_leaves", "slow_growth"],
+    "base_score": 0.45,
+    "rules": [
+      {
+        "when": "location === 'outdoor'",
+        "boost": 0.25,
+        "evidence": "Outdoor plants are frequent hosts for aphid clusters on tender new shoots"
+      }
+    ],
+    "suggested_fix": "Blast foliage with a sharp spray of water to dislodge pests, then treat with insecticidal soap."
+  },
+  {
+    "cause": "Natural aging",
+    "category": "Other",
+    "symptoms": ["yellow_leaves", "leaf_drop"],
+    "base_score": 0.3,
+    "rules": [
+      {
+        "when": "avgWaterGap >= recommendedGap * 0.8 && avgWaterGap <= recommendedGap * 1.2 && drainage === true",
+        "boost": 0.35,
+        "evidence": "Care schedule and drainage are optimal; shedding lowest/oldest leaves is a natural life-cycle process"
+      }
+    ],
+    "suggested_fix": "Prune off yellowing bottom leaves with clean shears to allow the plant to redirect energy to new apical growth."
+  },
+  {
+    "cause": "Fertilizer burn",
+    "category": "Other",
+    "symptoms": ["brown_tips", "wilting", "yellow_leaves"],
+    "base_score": 0.35,
+    "rules": [
+      {
+        "when": "daysSinceFertilized < 14",
+        "boost": 0.45,
+        "evidence": "Recently fertilized within the last 14 days ({daysSinceFertilized}d), risking mineral salt buildup"
+      }
+    ],
+    "suggested_fix": "Flush potting soil thoroughly with plain lukewarm distilled or tap water for several minutes to leach out accumulated fertilizer salts. Suspend feeding for 6 weeks."
+  },
+  {
+    "cause": "Transplant shock",
+    "category": "Other",
+    "symptoms": ["drooping", "wilting", "leaf_drop", "yellow_leaves"],
+    "base_score": 0.35,
+    "rules": [
+      {
+        "when": "daysSinceRepotted < 21",
+        "boost": 0.45,
+        "evidence": "Repotted recently within 3 weeks ({daysSinceRepotted}d), a common root disruption window"
+      }
+    ],
+    "suggested_fix": "Keep in gentle, indirect light and maintain steady moisture without overwatering while new root hairs establish. Avoid fertilizer."
+  }
+]
