@@ -7,6 +7,7 @@
 import { clearToken } from '../../api/client.js';
 import { renderAddPlantModal } from './add-plant-form.js';
 import { renderScheduleModal } from './schedule-modal.js';
+import { renderDiagnosisModal } from './diagnosis-panel.js';
 import { logCareActivity } from '../../logic/plants.js';
 
 export function renderLightDashboard(container, { userPlants = [], onUpdate = () => {} } = {}) {
@@ -193,8 +194,19 @@ export function renderLightDashboard(container, { userPlants = [], onUpdate = ()
     renderScheduleModal(container, { plants: userPlants, onClose: () => onUpdate() });
   };
 
+  const openDiagnosis = () => {
+    renderDiagnosisModal(() => onUpdate());
+  };
+
   container.querySelector('#light-add-plant-btn')?.addEventListener('click', openAddPlant);
   container.querySelector('#light-sidebar-sched-btn')?.addEventListener('click', openSchedule);
+
+  container.querySelectorAll('a[href="#diagnose"]').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      openDiagnosis();
+    });
+  });
 
   container.querySelectorAll('.light-water-btn').forEach(btn => {
     btn.addEventListener('click', async () => {

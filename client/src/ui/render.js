@@ -9,6 +9,7 @@ import { renderAuthForm } from './components/auth-form.js';
 import { renderLightDashboard } from './components/render-light-dashboard.js';
 import { renderAddPlantModal } from './components/add-plant-form.js';
 import { renderScheduleModal } from './components/schedule-modal.js';
+import { renderDiagnosisModal } from './components/diagnosis-panel.js';
 import { listPlants, logCareActivity } from '../logic/plants.js';
 
 export function mountUi() {
@@ -269,8 +270,19 @@ export function mountUi() {
       renderScheduleModal(root, { plants: userPlants, onClose: () => render() });
     };
 
+    const openDiagnosisModal = () => {
+      renderDiagnosisModal(() => render());
+    };
+
     document.getElementById('nav-add-plant-btn')?.addEventListener('click', openAddPlantModal);
     document.getElementById('sidebar-view-schedule-btn')?.addEventListener('click', openScheduleModal);
+
+    root.querySelectorAll('a[href="#diagnose"]').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        openDiagnosisModal();
+      });
+    });
 
     root.querySelectorAll('.nav-link').forEach(link => {
       link.addEventListener('click', (e) => {
@@ -278,6 +290,9 @@ export function mountUi() {
         if (href === '#schedule') {
           e.preventDefault();
           openScheduleModal();
+        } else if (href === '#diagnose') {
+          e.preventDefault();
+          openDiagnosisModal();
         }
       });
     });
