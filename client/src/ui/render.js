@@ -82,6 +82,9 @@ export function mountUi() {
 
     // Exact Markup matching Stitch Reference
     root.innerHTML = `
+      <!-- Dashboard Background (Dark Moody Foliage with Raindrops) -->
+      <div class="bg-layer"></div>
+
       <!-- TopNavBar -->
       <div class="fixed top-4 left-4 right-4 z-50 max-w-7xl mx-auto">
         <nav class="glass-panel rounded-full px-6 py-3 shadow-sm transition-all duration-300">
@@ -142,10 +145,10 @@ export function mountUi() {
               <h2 class="font-headline-xl text-headline-xl text-white drop-shadow-sm">My Plants</h2>
               <div class="flex gap-2">
                 <button class="p-2 rounded-full bg-white/20 hover:bg-white/30 transition text-white border border-white/20">
-                  <span class="material-symbols-outlined">grid_view</span>
+                  <span class="material-symbols-outlined" style="font-size: 18px;">grid_view</span>
                 </button>
                 <button class="p-2 rounded-full bg-white/10 hover:bg-white/20 transition text-white border border-white/10">
-                  <span class="material-symbols-outlined">format_list_bulleted</span>
+                  <span class="material-symbols-outlined" style="font-size: 18px;">format_list_bulleted</span>
                 </button>
               </div>
             </div>
