@@ -1,17 +1,25 @@
 /**
- * routes/planner.js — seasonal planting planner
- * ----------------------------------------------
- * Day 1: stub. Seasonal calendar lands Day 8 (T-17,
- * docs/api-integrations.md §Seasonal Planner Use).
+ * server/routes/planner.js — seasonal planting planner REST API
+ * -------------------------------------------------------------
+ * POST /api/planner/seasonal  { latitude, longitude, crops[] }
  */
 import { Router } from 'express';
 import { requireAuth } from '../middleware/auth.js';
+import { planSeasonalPlanting } from '../logic/planner.js';
 
 const router = Router();
 router.use(requireAuth);
 
-// POST /api/planner/seasonal  { latitude, longitude, crops[] }
-router.post('/seasonal', (_req, res) =>
-  res.status(501).json({ error: 'Not implemented — lands on Day 8 (T-17)' }));
+// POST /api/planner/seasonal — compute seasonal outdoor calendar and companion guidance
+router.post('/seasonal', async (req, res) => {
+  try {
+    const { latitude, longitude, crops } = req.body || {};
+    const result = await planSeasonalPlanting({ latitude, longitude, crops });
+    res.status(200).json(result);
+  } catch (err) {
+    const status = err.status || 500;
+    res.status(status).json({ error: err.message || 'Failed to compute seasonal planting plan' });
+  }
+});
 
 export default router;

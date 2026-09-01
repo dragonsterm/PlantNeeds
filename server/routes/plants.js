@@ -8,6 +8,7 @@
 import { Router } from 'express';
 import { requireAuth } from '../middleware/auth.js';
 import { addPlant as addPlantLogic, getCareSchedule as getScheduleLogic, logCareActivity as logCareLogic } from '../logic/plants.js';
+import { logGrowth, getGrowthHistory } from '../logic/planner.js';
 
 const router = Router();
 router.use(requireAuth);
@@ -181,34 +182,24 @@ router.post('/:id/care', async (req, res) => {
   }
 });
 
-/** POST /api/plants/:id/growth - Log growth milestone */
+/** POST /api/plants/:id/growth - Log growth milestone (T-16) */
 router.post('/:id/growth', async (req, res) => {
   try {
-    const { milestone, height_cm, notes, source = 'human' } = req.body;
-    
-    if (!milestone) {
-      return res.status(400).json({ error: 'Milestone is required' });
-    }
-    
-    await req.db.query(
-      `INSERT INTO growth_log (plant_id, milestone, height_cm, notes, source)
-       VALUES ($1, $2, $3, $4, $5)`,
-      [req.params.id, milestone, height_cm || null, notes || null, source]
-    );
-    
-    const timelineResult = await req.db.query(
-      'SELECT * FROM growth_log WHERE plant_id = $1 ORDER BY date DESC LIMIT 10',
-      [req.params.id]
-    );
-    
-    res.json({
-      success: true,
-      total_milestones: timelineResult.rows.length,
-      timeline: timelineResult.rows
-    });
-  } catch (error) {
-    console.error('Error logging growth:', error);
-    res.status(500).json({ error: 'Failed to log growth' });
+    const { milestone, height_cm, notes, date, source } = req.body || {};
+    const result = await logGrowth(req.params.id, req.userId, { milestone, height_cm, notes, date, source });
+    res.status(200).json(result);
+  } catch (err) {
+    res.status(err.status || 500).json({ error: err.message || 'Failed to log growth milestone' });
+  }
+});
+
+/** GET /api/plants/:id/growth - Get plant growth history (T-16) */
+router.get('/:id/growth', async (req, res) => {
+  try {
+    const result = await getGrowthHistory(req.params.id, req.userId);
+    res.status(200).json(result);
+  } catch (err) {
+    res.status(err.status || 500).json({ error: err.message || 'Failed to fetch growth history' });
   }
 });
 

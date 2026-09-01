@@ -341,6 +341,20 @@
     "common_issues": ["root_rot_from_overwatering", "woody_growth_from_no_pruning"],
     "tips": "Loves full sun and well-draining soil. Prune after flowering."
   },
+  "solanum_lycopersicum": {
+    "common_name": "Tomato",
+    "aliases": ["tomato", "tomat", "garden tomato", "cherry tomato"],
+    "type": "outdoor_crop",
+    "water_needs_inches_weekly": 1.5,
+    "light": "direct",
+    "days_to_harvest": 70,
+    "weeks_before_last_frost": 6,
+    "companions": ["basil", "marigold"],
+    "enemies": ["fennel", "potato"],
+    "toxic_to_pets": false,
+    "common_issues": ["blossom_end_rot", "early_blight", "hornworms"],
+    "tips": "Stake or cage plants. Provide consistent moisture to prevent blossom end rot."
+  },
   "ocimum_basilicum": {
     "common_name": "Basil",
     "aliases": ["basil", "sweet basil", "kemangi"],
