@@ -1,16 +1,22 @@
 /**
- * routes/diagnose.js — history-aware symptom diagnosis
- * -----------------------------------------------------
- * Day 1: stub. Scoring engine lands Day 6 (T-13, docs/diagnosis-engine.md).
+ * routes/diagnose.js — history-aware symptom diagnosis (T-13, C4)
  */
 import { Router } from 'express';
 import { requireAuth } from '../middleware/auth.js';
+import { diagnoseProblem } from '../logic/diagnose.js';
 
 const router = Router();
 router.use(requireAuth);
 
-// POST /api/diagnose  { plant_id, symptoms[] }
-router.post('/', (_req, res) =>
-  res.status(501).json({ error: 'Not implemented — lands on Day 6 (T-13)' }));
+// POST /api/diagnose { plant_id, symptoms[] }
+router.post('/', async (req, res, next) => {
+  try {
+    const { plant_id, symptoms } = req.body;
+    const result = await diagnoseProblem(req.userId, { plant_id, symptoms });
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+});
 
 export default router;
