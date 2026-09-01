@@ -11,6 +11,7 @@ import { renderAddPlantModal } from './components/add-plant-form.js';
 import { renderScheduleModal } from './components/schedule-modal.js';
 import { renderDiagnosisModal } from './components/diagnosis-panel.js';
 import { listPlants, logCareActivity } from '../logic/plants.js';
+import { setCache } from '../state/store.js';
 
 export function mountUi() {
   const root = document.getElementById('app');
@@ -68,7 +69,11 @@ export function mountUi() {
         userPlants = livePlants.map((p, idx) => ({
           id: p.id,
           name: p.name,
-          subtitle: `${p.species} • ${p.location === 'outdoor' ? 'Outdoor Bed' : 'Indoor'}`,
+          species: p.species || 'Houseplant',
+          location: p.location || 'indoor',
+          water_frequency_days: p.water_frequency_days || 7,
+          last_watered: p.last_watered || null,
+          subtitle: `${p.species || 'Houseplant'} • ${p.location === 'outdoor' ? 'Outdoor Bed' : 'Indoor'}`,
           days_remaining: p.days_remaining ?? idx * 3,
           status_label: (p.days_remaining ?? idx * 3) <= 0 ? 'Due Today' : 'Healthy',
           is_overdue: (p.days_remaining ?? idx * 3) <= 0,
@@ -84,6 +89,9 @@ export function mountUi() {
     } catch {
       // Fallback
     }
+
+    // Keep store cache synchronized for WebMCP tools (Single Source of Truth)
+    setCache('plants', userPlants);
 
     // Render Light Dashboard (Default for #light-dashboard / #dashboard)
     if (isLightDashboard && !isDarkDashboard) {
@@ -284,18 +292,27 @@ export function mountUi() {
       });
     });
 
-    root.querySelectorAll('.nav-link').forEach(link => {
+    // Handle all schedule and diagnose triggers (nav links, hash, sidebar buttons)
+    root.querySelectorAll('a[href="#schedule"]').forEach(link => {
       link.addEventListener('click', (e) => {
-        const href = link.getAttribute('href');
-        if (href === '#schedule') {
-          e.preventDefault();
-          openScheduleModal();
-        } else if (href === '#diagnose') {
-          e.preventDefault();
-          openDiagnosisModal();
-        }
+        e.preventDefault();
+        openScheduleModal();
       });
     });
+
+    root.querySelectorAll('a[href="#diagnose"]').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        openDiagnosisModal();
+      });
+    });
+
+    // Auto-open if direct URL contains hash
+    if (window.location.hash === '#schedule') {
+      openScheduleModal();
+    } else if (window.location.hash === '#diagnose') {
+      openDiagnosisModal();
+    }
 
     root.querySelectorAll('.water-btn').forEach(btn => {
       btn.addEventListener('click', async () => {

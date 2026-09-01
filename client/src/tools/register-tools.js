@@ -74,6 +74,15 @@ export function registerAllTools() {
     },
     execute: async (input = {}) => {
       const { plant_id, days_ahead } = input || {};
+      
+      // Strict parameter validation (Fix finding 2)
+      if (days_ahead !== undefined && (typeof days_ahead !== 'number' || isNaN(days_ahead) || days_ahead <= 0 || days_ahead > 90)) {
+        return {
+          error: 'Invalid input: "days_ahead" must be a positive integer between 1 and 90.',
+          code: 'INVALID_DAYS_AHEAD'
+        };
+      }
+
       return plants.getCareSchedule({ plant_id, days_ahead: days_ahead ?? 7 });
     }
   });

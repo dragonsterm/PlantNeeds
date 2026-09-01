@@ -201,6 +201,13 @@ export function renderLightDashboard(container, { userPlants = [], onUpdate = ()
   container.querySelector('#light-add-plant-btn')?.addEventListener('click', openAddPlant);
   container.querySelector('#light-sidebar-sched-btn')?.addEventListener('click', openSchedule);
 
+  container.querySelectorAll('a[href="#schedule"]').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      openSchedule();
+    });
+  });
+
   container.querySelectorAll('a[href="#diagnose"]').forEach(link => {
     link.addEventListener('click', (e) => {
       e.preventDefault();
