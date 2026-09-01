@@ -11,9 +11,6 @@ type: tracker
 ## 📋 Backlog
 | ID | Task | Day | Links |
 |---|---|---|---|
-| T-12 | symptoms-matrix.json — 20 causes | 6 | [[docs/diagnosis-engine#Target Coverage (~20 causes — Day 6 work, tasks/day-06)\|coverage]] |
-| T-13 | diagnoseProblem scoring + `/api/diagnose` endpoint | 6 | [[docs/diagnosis-engine]] |
-| T-14 | DiagnosisPanel UI | 6 | [[docs/ui-ux-overview]] |
 | T-15 | ChatGPT-browser E2E pass + description iteration | 7 | [[docs/testing-strategy#4. E2E Agent Scenario (manual — ChatGPT in-app browser)\|E2E]] |
 | T-16 | Growth journal UI + log_growth endpoint | 8 | [[docs/backend-api]] |
 | T-17 | Seasonal planting planner | 8 | [[docs/api-integrations#Seasonal Planner Use\|planner]] |
@@ -43,3 +40,6 @@ _(log with repro steps — see [[docs/testing-strategy#Bug Protocol|bug protocol
 | T-22 | API & auth test pass (A1–A10) | 4 | 2026-09-01 (`f0c07d9`) | [[docs/testing-strategy#2. API & Auth Tests (scripted — HTTP against running server)\|api tests]] |
 | T-10 | registerAllTools() — all 7 wrappers (over client/logic → API) | 5 | 2026-09-01 | [[docs/webmcp-tools]] |
 | T-11 | Chrome WebMCP flag test pass (T1–T6, with auth) | 5 | 2026-09-01 | [[docs/testing-strategy#3. WebMCP Tool Tests (manual — Chrome)\|tool tests]] |
+| T-12 | symptoms-matrix.json — 20 causes across 5 categories | 6 | 2026-09-01 (`d4a6d91`) | [[docs/diagnosis-engine#Target Coverage (~20 causes — Day 6 work, tasks/day-06)\|coverage]] |
+| T-13 | diagnoseProblem scoring + `/api/diagnose` endpoint | 6 | 2026-09-01 (`cb37a57`) | [[docs/diagnosis-engine]] |
+| T-14 | DiagnosisPanel UI with symptom multi-select | 6 | 2026-09-01 (`08c7bab`) | [[docs/ui-ux-overview]] |

@@ -78,9 +78,9 @@ Days 1-2                     Days 3-6                      Days 7-8             
 
 > Update this table as milestones complete (agents: check off + date).
 
-- [ ] 🏁 Day 2 gate — foundation solid *(Day 1 ✅ scaffold+DB foundation `45d343f` 2026-09-01; gate closes Day 2 pending live Postgres connect)*
-- [ ] 🏁 Day 4 gate — human-usable app
-- [ ] 🏁 Day 6 gate — agent-callable app
+- [x] 🏁 Day 2 gate — foundation solid *(Day 1 ✅ scaffold+DB foundation `45d343f` 2026-09-01; Day 2 ✅ species seed & auth `5bd7296` `bde98c2`)*
+- [x] 🏁 Day 4 gate — human-usable app *(Day 3 ✅ UI v1; Day 4 ✅ CRUD + weather `f0c07d9`)*
+- [x] 🏁 Day 6 gate — agent-callable app *(Day 5 ✅ 7 WebMCP tools registered; Day 6 ✅ history-aware diagnosis engine `d4a6d91` `cb37a57` `08c7bab`)*
 - [ ] 🏁 Day 8 gate — demo scenario passes in ChatGPT browser
 - [ ] 🏁 Day 10 — submitted
 

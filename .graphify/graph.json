@@ -1900,13 +1900,6 @@
   },
   {
    "source": "tasks/day-06",
-   "target": "docs/decisions",
-   "relation": "links_to",
-   "confidence": "EXTRACTED",
-   "weight": 1
-  },
-  {
-   "source": "tasks/day-06",
    "target": "tasks/day-05",
    "relation": "links_to",
    "confidence": "EXTRACTED",
@@ -2152,27 +2145,6 @@
   },
   {
    "source": "tasks/kanban",
-   "target": "docs/diagnosis-engine",
-   "relation": "links_to",
-   "confidence": "EXTRACTED",
-   "weight": 1
-  },
-  {
-   "source": "tasks/kanban",
-   "target": "docs/diagnosis-engine",
-   "relation": "links_to",
-   "confidence": "EXTRACTED",
-   "weight": 1
-  },
-  {
-   "source": "tasks/kanban",
-   "target": "docs/ui-ux-overview",
-   "relation": "links_to",
-   "confidence": "EXTRACTED",
-   "weight": 1
-  },
-  {
-   "source": "tasks/kanban",
    "target": "docs/testing-strategy",
    "relation": "links_to",
    "confidence": "EXTRACTED",
@@ -2307,6 +2279,27 @@
   {
    "source": "tasks/kanban",
    "target": "docs/testing-strategy",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "tasks/kanban",
+   "target": "docs/diagnosis-engine",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "tasks/kanban",
+   "target": "docs/diagnosis-engine",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "tasks/kanban",
+   "target": "docs/ui-ux-overview",
    "relation": "links_to",
    "confidence": "EXTRACTED",
    "weight": 1
