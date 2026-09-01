@@ -1,11 +1,12 @@
 /**
  * client/src/ui/render.js
  * Central UI render controller & reactive store subscriptions.
- * EXACT 1:1 Implementation of Google Stitch Export (code.html) with custom logo test.
+ * Supports dual dashboards: Light Summer Vibes (#light-dashboard) & Dark Emerald (#dark-dashboard).
  */
 import { on, clearCache } from '../state/store.js';
 import { hasToken, clearToken, setToken } from '../api/client.js';
 import { renderAuthForm } from './components/auth-form.js';
+import { renderLightDashboard } from './components/render-light-dashboard.js';
 import { renderAddPlantModal } from './components/add-plant-form.js';
 import { renderScheduleModal } from './components/schedule-modal.js';
 import { listPlants, logCareActivity } from '../logic/plants.js';
@@ -14,7 +15,7 @@ export function mountUi() {
   const root = document.getElementById('app');
   if (!root) return;
 
-  // Initial plants matching exact Google Stitch Mockup (code.html)
+  // Initial plants matching exact Google Stitch Mockup
   let userPlants = [
     {
       id: 'p-1',
@@ -45,15 +46,18 @@ export function mountUi() {
   ];
 
   async function render() {
-    const isDashboardHash = window.location.hash.includes('dashboard') || window.location.hash.includes('garden');
+    const currentHash = window.location.hash || '';
+    const isLightDashboard = currentHash.includes('light') || currentHash.includes('dashboard') || currentHash.includes('garden');
+    const isDarkDashboard = currentHash.includes('dark');
+    const isDashboardActive = isLightDashboard || isDarkDashboard;
     
-    if (!hasToken() && !isDashboardHash) {
+    if (!hasToken() && !isDashboardActive) {
       clearCache();
       renderAuthForm(root);
       return;
     }
 
-    if (!hasToken() && isDashboardHash) {
+    if (!hasToken() && isDashboardActive) {
       setToken('demo-token');
     }
 
@@ -80,12 +84,18 @@ export function mountUi() {
       // Fallback
     }
 
-    // Exact Markup matching Stitch Reference with Tested Logo
+    // Render Light Dashboard (Default for #light-dashboard / #dashboard)
+    if (isLightDashboard && !isDarkDashboard) {
+      renderLightDashboard(root, { userPlants, onUpdate: () => render() });
+      return;
+    }
+
+    // Render Dark Dashboard (For #dark-dashboard)
     root.innerHTML = `
       <!-- Dashboard Background (Dark Moody Foliage with Raindrops) -->
       <div class="bg-layer"></div>
 
-      <!-- TopNavBar -->
+      <!-- TopNavBar Dark -->
       <div class="fixed top-4 left-4 right-4 z-50 max-w-7xl mx-auto">
         <nav class="glass-panel rounded-full px-6 py-2.5 shadow-sm transition-all duration-300">
           <div class="flex justify-between items-center w-full">
@@ -94,11 +104,12 @@ export function mountUi() {
               <img src="/assets/plantneeds-leaf-drop-logo.png" alt="PlantNeeds Logo" style="height: 34px; width: auto; object-fit: contain;" />
               <span class="font-headline-lg text-headline-lg font-bold text-white">PlantNeeds</span>
             </div>
-            <!-- Navigation Links (Web) -->
+            <!-- Navigation Links -->
             <div class="hidden md:flex items-center gap-8">
-              <a class="text-white font-semibold border-b-2 border-white pb-1 transition-all duration-150 ease-in-out scale-95" href="#garden">My Garden</a>
+              <a class="text-white font-semibold border-b-2 border-white pb-1 transition-all duration-150 ease-in-out scale-95" href="#dark-dashboard">My Garden</a>
               <a class="text-white/70 hover:text-white transition-colors hover:bg-white/10 px-3 py-1 rounded-md duration-300" href="#schedule">Care Schedule</a>
               <a class="text-white/70 hover:text-white transition-colors hover:bg-white/10 px-3 py-1 rounded-md duration-300" href="#diagnose">Diagnosis</a>
+              <a class="text-primary-fixed hover:underline text-xs" href="#light-dashboard">[Switch to Light Theme]</a>
             </div>
             <!-- Trailing Actions -->
             <div class="flex items-center gap-4">
@@ -121,9 +132,9 @@ export function mountUi() {
         </nav>
       </div>
 
-      <!-- Main Content -->
+      <!-- Main Content Dark -->
       <main class="pt-[120px] pb-12 px-container-margin max-w-7xl mx-auto">
-        <!-- Top Banner -->
+        <!-- Top Weather Banner -->
         <div class="glass-panel rounded-2xl p-4 mb-8 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm relative overflow-hidden">
           <div class="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent pointer-events-none"></div>
           <div class="flex items-center gap-3 relative z-10">
@@ -222,7 +233,6 @@ export function mountUi() {
                 <h3 class="font-headline-lg-mobile text-headline-lg-mobile text-white font-bold">Smart Insights</h3>
               </div>
               <div class="flex flex-col gap-4">
-                <!-- Insight 1: Humidity (Amber/Orange Water Drop) -->
                 <div class="bg-black/25 border border-white/15 p-4 rounded-2xl flex gap-3">
                   <span class="material-symbols-outlined text-status-warning mt-0.5" style="color: #D97706; font-size: 22px;">water_drop</span>
                   <div>
@@ -230,7 +240,6 @@ export function mountUi() {
                     <p class="font-body-sm text-xs text-white/80 mt-1 leading-relaxed">Indoor heating is drying the air. Mist leaves today to maintain ~60% humidity.</p>
                   </div>
                 </div>
-                <!-- Insight 2: Outdoor Watering (Mint/Light Green Water Drop) -->
                 <div class="bg-black/25 border border-white/15 p-4 rounded-2xl flex gap-3">
                   <span class="material-symbols-outlined mt-0.5" style="color: #bcf0ae; font-size: 22px;">water_drop</span>
                   <div>
@@ -273,7 +282,6 @@ export function mountUi() {
       });
     });
 
-    // Water action button
     root.querySelectorAll('.water-btn').forEach(btn => {
       btn.addEventListener('click', async () => {
         const plantId = btn.getAttribute('data-id');
