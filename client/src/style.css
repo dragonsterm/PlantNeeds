@@ -1,0 +1,48 @@
+/*
+ * client/src/style.css — base styles
+ * -----------------------------------
+ * ⚠️ Visual design is UNDER DISCUSSION (docs/ui-ux-overview.md). Use CSS
+ * custom properties so the final theme is a ONE-FILE swap (ADR-007). Keep it
+ * functional + neutral for now; no committed palette/typography.
+ */
+
+:root {
+  /* Neutral placeholder tokens — replaced by the design decision (ADR-012). */
+  --color-primary: #2f7d4f;
+  --color-bg: #ffffff;
+  --color-surface: #f6f7f6;
+  --color-text: #1b1f1c;
+  --color-muted: #66716a;
+  --radius: 10px;
+  --space: 1rem;
+  --max-width: 72rem;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  background: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.5;
+}
+
+#app {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--space);
+}
+
+.app-header h1 { margin: 0 0 0.25rem; }
+.tagline { color: var(--color-muted); margin-top: 0; }
+.boot-note {
+  padding: var(--space);
+  background: var(--color-surface);
+  border-radius: var(--radius);
+}
+
+/* Mobile-responsive: single-column collapse under 640px (ui-ux-overview §Principles). */
+@media (max-width: 640px) {
+  #app { padding: 0.75rem; }
+}

@@ -1,0 +1,23 @@
+{
+  "monstera_deliciosa": {
+    "common_name": "Monstera",
+    "aliases": ["monstera", "swiss cheese plant"],
+    "water_frequency_days": 10,
+    "light": "bright_indirect",
+    "humidity": "high",
+    "toxic_to_pets": true,
+    "common_issues": ["yellow_leaves_from_overwatering", "brown_tips_from_low_humidity"],
+    "tips": "Loves to climb — give it a moss pole."
+  },
+  "solanum_lycopersicum": {
+    "common_name": "Tomato",
+    "type": "outdoor_crop",
+    "aliases": ["tomato"],
+    "water_needs_inches_weekly": 1.5,
+    "light": "direct",
+    "days_to_harvest": 70,
+    "weeks_before_last_frost": 6,
+    "companions": ["basil", "marigold"],
+    "enemies": ["fennel"]
+  }
+}
