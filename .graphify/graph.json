@@ -1802,7 +1802,7 @@
   },
   {
    "source": "tasks/day-04",
-   "target": "docs/decisions",
+   "target": "docs/testing-strategy",
    "relation": "links_to",
    "confidence": "EXTRACTED",
    "weight": 1
@@ -1852,13 +1852,6 @@
   {
    "source": "tasks/day-05",
    "target": "docs/testing-strategy",
-   "relation": "links_to",
-   "confidence": "EXTRACTED",
-   "weight": 1
-  },
-  {
-   "source": "tasks/day-05",
-   "target": "docs/decisions",
    "relation": "links_to",
    "confidence": "EXTRACTED",
    "weight": 1
@@ -2159,34 +2152,6 @@
   },
   {
    "source": "tasks/kanban",
-   "target": "docs/backend-api",
-   "relation": "links_to",
-   "confidence": "EXTRACTED",
-   "weight": 1
-  },
-  {
-   "source": "tasks/kanban",
-   "target": "docs/api-integrations",
-   "relation": "links_to",
-   "confidence": "EXTRACTED",
-   "weight": 1
-  },
-  {
-   "source": "tasks/kanban",
-   "target": "docs/webmcp-tools",
-   "relation": "links_to",
-   "confidence": "EXTRACTED",
-   "weight": 1
-  },
-  {
-   "source": "tasks/kanban",
-   "target": "docs/testing-strategy",
-   "relation": "links_to",
-   "confidence": "EXTRACTED",
-   "weight": 1
-  },
-  {
-   "source": "tasks/kanban",
    "target": "docs/diagnosis-engine",
    "relation": "links_to",
    "confidence": "EXTRACTED",
@@ -2264,13 +2229,6 @@
   },
   {
    "source": "tasks/kanban",
-   "target": "docs/testing-strategy",
-   "relation": "links_to",
-   "confidence": "EXTRACTED",
-   "weight": 1
-  },
-  {
-   "source": "tasks/kanban",
    "target": "specification",
    "relation": "links_to",
    "confidence": "EXTRACTED",
@@ -2314,6 +2272,41 @@
   {
    "source": "tasks/kanban",
    "target": "specification",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "tasks/kanban",
+   "target": "docs/backend-api",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "tasks/kanban",
+   "target": "docs/api-integrations",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "tasks/kanban",
+   "target": "docs/testing-strategy",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "tasks/kanban",
+   "target": "docs/webmcp-tools",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "tasks/kanban",
+   "target": "docs/testing-strategy",
    "relation": "links_to",
    "confidence": "EXTRACTED",
    "weight": 1
