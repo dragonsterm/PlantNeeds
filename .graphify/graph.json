@@ -28,6 +28,14 @@
    "community_name": "Core documents"
   },
   {
+   "id": "DESIGN",
+   "label": "DESIGN.md",
+   "file_type": "doc",
+   "source_file": "DESIGN.md",
+   "community": 0,
+   "community_name": "Core documents"
+  },
+  {
    "id": "docs/api-integrations",
    "label": "api-integrations.md",
    "file_type": "doc",
@@ -870,28 +878,7 @@
   },
   {
    "source": "docs/decisions",
-   "target": "docs/api-integrations",
-   "relation": "links_to",
-   "confidence": "EXTRACTED",
-   "weight": 1
-  },
-  {
-   "source": "docs/decisions",
-   "target": "docs/diagnosis-engine",
-   "relation": "links_to",
-   "confidence": "EXTRACTED",
-   "weight": 1
-  },
-  {
-   "source": "docs/decisions",
-   "target": "docs/ui-ux-overview",
-   "relation": "links_to",
-   "confidence": "EXTRACTED",
-   "weight": 1
-  },
-  {
-   "source": "docs/decisions",
-   "target": "docs/deployment",
+   "target": "docs/backend-api",
    "relation": "links_to",
    "confidence": "EXTRACTED",
    "weight": 1
@@ -912,7 +899,7 @@
   },
   {
    "source": "docs/decisions",
-   "target": "docs/backend-api",
+   "target": "docs/diagnosis-engine",
    "relation": "links_to",
    "confidence": "EXTRACTED",
    "weight": 1
@@ -1170,48 +1157,6 @@
    "weight": 1
   },
   {
-   "source": "docs/ui-ux-overview",
-   "target": "docs/decisions",
-   "relation": "links_to",
-   "confidence": "EXTRACTED",
-   "weight": 1
-  },
-  {
-   "source": "docs/ui-ux-overview",
-   "target": "PlantNeeds-SRD",
-   "relation": "links_to",
-   "confidence": "EXTRACTED",
-   "weight": 1
-  },
-  {
-   "source": "docs/ui-ux-overview",
-   "target": "docs/decisions",
-   "relation": "links_to",
-   "confidence": "EXTRACTED",
-   "weight": 1
-  },
-  {
-   "source": "docs/ui-ux-overview",
-   "target": "docs/architecture",
-   "relation": "links_to",
-   "confidence": "EXTRACTED",
-   "weight": 1
-  },
-  {
-   "source": "docs/ui-ux-overview",
-   "target": "docs/webmcp-tools",
-   "relation": "links_to",
-   "confidence": "EXTRACTED",
-   "weight": 1
-  },
-  {
-   "source": "docs/ui-ux-overview",
-   "target": "specification",
-   "relation": "links_to",
-   "confidence": "EXTRACTED",
-   "weight": 1
-  },
-  {
    "source": "docs/webmcp-tools",
    "target": "specification",
    "relation": "links_to",
@@ -1766,13 +1711,6 @@
   },
   {
    "source": "tasks/day-02",
-   "target": "docs/decisions",
-   "relation": "links_to",
-   "confidence": "EXTRACTED",
-   "weight": 1
-  },
-  {
-   "source": "tasks/day-02",
    "target": "tasks/day-01",
    "relation": "links_to",
    "confidence": "EXTRACTED",
@@ -1802,20 +1740,6 @@
   {
    "source": "tasks/day-03",
    "target": "plan",
-   "relation": "links_to",
-   "confidence": "EXTRACTED",
-   "weight": 1
-  },
-  {
-   "source": "tasks/day-03",
-   "target": "docs/ui-ux-overview",
-   "relation": "links_to",
-   "confidence": "EXTRACTED",
-   "weight": 1
-  },
-  {
-   "source": "tasks/day-03",
-   "target": "docs/decisions",
    "relation": "links_to",
    "confidence": "EXTRACTED",
    "weight": 1
@@ -2235,41 +2159,6 @@
   },
   {
    "source": "tasks/kanban",
-   "target": "docs/data-model",
-   "relation": "links_to",
-   "confidence": "EXTRACTED",
-   "weight": 1
-  },
-  {
-   "source": "tasks/kanban",
-   "target": "docs/data-model",
-   "relation": "links_to",
-   "confidence": "EXTRACTED",
-   "weight": 1
-  },
-  {
-   "source": "tasks/kanban",
-   "target": "docs/backend-api",
-   "relation": "links_to",
-   "confidence": "EXTRACTED",
-   "weight": 1
-  },
-  {
-   "source": "tasks/kanban",
-   "target": "docs/ui-ux-overview",
-   "relation": "links_to",
-   "confidence": "EXTRACTED",
-   "weight": 1
-  },
-  {
-   "source": "tasks/kanban",
-   "target": "specification",
-   "relation": "links_to",
-   "confidence": "EXTRACTED",
-   "weight": 1
-  },
-  {
-   "source": "tasks/kanban",
    "target": "docs/backend-api",
    "relation": "links_to",
    "confidence": "EXTRACTED",
@@ -2390,6 +2279,41 @@
   {
    "source": "tasks/kanban",
    "target": "docs/database-schema",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "tasks/kanban",
+   "target": "docs/data-model",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "tasks/kanban",
+   "target": "docs/data-model",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "tasks/kanban",
+   "target": "docs/backend-api",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "tasks/kanban",
+   "target": "docs/ui-ux-overview",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "tasks/kanban",
+   "target": "specification",
    "relation": "links_to",
    "confidence": "EXTRACTED",
    "weight": 1
