@@ -4,7 +4,7 @@
  * Pure functions over the DB. No req/res.
  */
 import { db } from '../db/pool.js';
-import speciesData from '../../../client/src/data/plants-db.json' with { type: 'json' };
+import speciesData from '../data/plants-db.json' with { type: 'json' };
 
 /** addPlant(input, userId) → resolves species, inserts plant, returns {plant, care_tips}. Day 4. */
 export async function addPlant({ name, species, location, light_exposure, pot_has_drainage, acquired_date }, userId) {
