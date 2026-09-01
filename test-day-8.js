@@ -41,7 +41,7 @@ async function runTests() {
 
     const basilPlan = resNorth.planting_plan.find(p => p.crop === 'Basil');
     assert(basilPlan != null, 'Includes Basil in planting plan');
-    assert(basilPlan.companion_plants.includes('tomato'), 'Basil lists tomato as good neighbor');
+    assert(basilPlan.companion_plants.some(c => c.toLowerCase().includes('tomato')), 'Basil lists tomato as good neighbor');
   } catch (err) {
     assert(false, `Seasonal planner northern test failed: ${err.message}`);
   }

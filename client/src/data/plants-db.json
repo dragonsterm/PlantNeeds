@@ -1,654 +1,2123 @@
 {
   "monstera_deliciosa": {
-    "common_name": "Monstera",
-    "aliases": ["monstera", "swiss cheese plant", "split leaf philodendron"],
+    "common_name": "Swiss Cheese Plant",
+    "scientific_name": "Monstera deliciosa",
+    "aliases": [
+      "ceriman",
+      "janda bolong besar",
+      "monstera",
+      "monstera deliciosa",
+      "monstera_deliciosa",
+      "swiss cheese plant"
+    ],
     "type": "indoor",
-    "water_frequency_days": 10,
+    "water_frequency_days": 7,
     "light": "bright_indirect",
-    "humidity": "high",
-    "toxic_to_pets": true,
-    "common_issues": ["yellow_leaves_from_overwatering", "brown_tips_from_low_humidity"],
-    "tips": "Loves to climb — give it a moss pole."
+    "ideal_humidity_percent": 60,
+    "min_temp_celsius": 18.0,
+    "max_temp_celsius": 30.0,
+    "tips": "Prefers bright_indirect light and ~60% humidity. Native range: Caribbean.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/605494677/original.jpg"
   },
   "epipremnum_aureum": {
-    "common_name": "Pothos",
-    "aliases": ["pothos", "devil's ivy", "golden pothos"],
+    "common_name": "Golden Pothos",
+    "scientific_name": "Epipremnum aureum",
+    "aliases": [
+      "devil's ivy",
+      "epipremnum aureum",
+      "epipremnum_aureum",
+      "golden pothos",
+      "pothos",
+      "sirih gading"
+    ],
     "type": "indoor",
     "water_frequency_days": 7,
     "light": "low",
-    "humidity": "medium",
-    "toxic_to_pets": true,
-    "common_issues": ["yellow_leaves_from_overwatering", "brown_tips_from_low_humidity"],
-    "tips": "Nearly indestructible. Tolerates low light and irregular watering."
-  },
-  "sansevieria_trifasciata": {
-    "common_name": "Snake Plant",
-    "aliases": ["snake plant", "mother-in-law's tongue", "sansevieria"],
-    "type": "indoor",
-    "water_frequency_days": 14,
-    "light": "low",
-    "humidity": "low",
-    "toxic_to_pets": true,
-    "common_issues": ["mushy_stem_from_overwatering", "root_rot"],
-    "tips": "Thrives on neglect. Water only when soil is completely dry."
-  },
-  "spathiphyllum_wallisii": {
-    "common_name": "Peace Lily",
-    "aliases": ["peace lily", "spathiphyllum"],
-    "type": "indoor",
-    "water_frequency_days": 7,
-    "light": "low",
-    "humidity": "high",
-    "toxic_to_pets": true,
-    "common_issues": ["drooping_from_underwatering", "brown_tips_from_low_humidity"],
-    "tips": "Droops dramatically when thirsty — a reliable water indicator."
-  },
-  "ficus_lyrata": {
-    "common_name": "Fiddle Leaf Fig",
-    "aliases": ["fiddle leaf fig", "ficus lyrata", "flf"],
-    "type": "indoor",
-    "water_frequency_days": 7,
-    "light": "bright_indirect",
-    "humidity": "medium",
-    "toxic_to_pets": true,
-    "common_issues": ["leaf_drop_from_inconsistent_watering", "brown_spots_from_overwatering"],
-    "tips": "Hates change. Keep in one spot and water on a strict schedule."
-  },
-  "chlorophytum_comosum": {
-    "common_name": "Spider Plant",
-    "aliases": ["spider plant", "airplane plant"],
-    "type": "indoor",
-    "water_frequency_days": 7,
-    "light": "bright_indirect",
-    "humidity": "medium",
-    "toxic_to_pets": false,
-    "common_issues": ["brown_tips_from_fluoride", "pale_leaves_from_too_much_light"],
-    "tips": "Produces baby plantlets — easy to propagate."
+    "ideal_humidity_percent": 50,
+    "min_temp_celsius": 15.0,
+    "max_temp_celsius": 30.0,
+    "tips": "Prefers low light and ~50% humidity. Native range: East Africa.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/604831750/original.jpg"
   },
   "philodendron_hederaceum": {
     "common_name": "Heartleaf Philodendron",
-    "aliases": ["philodendron", "heartleaf philodendron"],
+    "scientific_name": "Philodendron hederaceum",
+    "aliases": [
+      "heartleaf philodendron",
+      "philodendron hederaceum",
+      "philodendron_hederaceum",
+      "vilevine"
+    ],
     "type": "indoor",
     "water_frequency_days": 7,
     "light": "low",
-    "humidity": "medium",
-    "toxic_to_pets": true,
-    "common_issues": ["yellow_leaves_from_overwatering", "leggy_growth_from_low_light"],
-    "tips": "Fast-growing vining plant. Pinch tips to encourage bushiness."
+    "ideal_humidity_percent": 50,
+    "min_temp_celsius": 16.0,
+    "max_temp_celsius": 28.0,
+    "tips": "Prefers low light and ~50% humidity. Native range: Antioquia, Atl\u00e1ntico, Bol\u00edvar, Boyac\u00e1, Caldas, Casanare, Choc\u00f3, Cundinamarca, La Guajira, Magdalena, Meta, Nari\u00f1o, Norte.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/605640348/original.jpg"
+  },
+  "spathiphyllum_wallisii": {
+    "common_name": "Peace Lily",
+    "scientific_name": "Spathiphyllum wallisii",
+    "aliases": [
+      "peace lily",
+      "sepatu filum",
+      "spathiphyllum",
+      "spathiphyllum wallisii",
+      "spathiphyllum_wallisii"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 7,
+    "light": "low",
+    "ideal_humidity_percent": 50,
+    "min_temp_celsius": 15.0,
+    "max_temp_celsius": 30.0,
+    "tips": "Prefers low light and ~50% humidity. Native range: Gal\u00e1pagos Islands.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/611754736/original.jpg"
+  },
+  "anthurium_andraeanum": {
+    "common_name": "Flamingo Lily",
+    "scientific_name": "Anthurium andraeanum",
+    "aliases": [
+      "anthurium andraeanum",
+      "anthurium_andraeanum",
+      "flamingo lily",
+      "flamingo-lily"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 7,
+    "light": "bright_indirect",
+    "ideal_humidity_percent": 70,
+    "min_temp_celsius": 18.0,
+    "max_temp_celsius": 30.0,
+    "tips": "Prefers bright_indirect light and ~70% humidity. Native range: Armenia | Barrancabermeja | Monter\u00eda | Villavicencio | Manizales | Pasto.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/605732736/original.jpg"
   },
   "zamioculcas_zamiifolia": {
     "common_name": "ZZ Plant",
-    "aliases": ["zz plant", "zamioculcas", "zanzibar gem"],
+    "scientific_name": "Zamioculcas zamiifolia",
+    "aliases": [
+      "zamioculcas zamiifolia",
+      "zamioculcas_zamiifolia",
+      "zz plant"
+    ],
     "type": "indoor",
     "water_frequency_days": 14,
     "light": "low",
-    "humidity": "low",
-    "toxic_to_pets": true,
-    "common_issues": ["yellow_leaves_from_overwatering", "mushy_stem_from_overwatering"],
-    "tips": "Extremely drought tolerant. Better to underwater than overwater."
-  },
-  "dracaena_marginata": {
-    "common_name": "Dragon Tree",
-    "aliases": ["dragon tree", "dracaena", "madagascar dragon tree"],
-    "type": "indoor",
-    "water_frequency_days": 10,
-    "light": "medium",
-    "humidity": "medium",
-    "toxic_to_pets": true,
-    "common_issues": ["brown_tips_from_low_humidity", "leaf_drop_from_overwatering"],
-    "tips": "Tolerates some neglect. Avoid fluoridated water."
-  },
-  "calathea_orbifolia": {
-    "common_name": "Calathea Orbifolia",
-    "aliases": ["calathea", "prayer plant", "orbifolia"],
-    "type": "indoor",
-    "water_frequency_days": 5,
-    "light": "medium",
-    "humidity": "high",
-    "toxic_to_pets": false,
-    "common_issues": ["brown_edges_from_low_humidity", "curling_leaves_from_underwatering"],
-    "tips": "Needs consistently moist soil and high humidity. Use distilled water."
-  },
-  "aloe_vera": {
-    "common_name": "Aloe Vera",
-    "aliases": ["aloe", "aloe vera"],
-    "type": "indoor",
-    "water_frequency_days": 14,
-    "light": "direct",
-    "humidity": "low",
-    "toxic_to_pets": true,
-    "common_issues": ["mushy_leaves_from_overwatering", "brown_tips_from_underwatering"],
-    "tips": "Succulent — stores water in leaves. Let soil dry completely between waterings."
-  },
-  "echeveria_elegans": {
-    "common_name": "Echeveria",
-    "aliases": ["echeveria", "hens and chicks", "mexican snowball"],
-    "type": "indoor",
-    "water_frequency_days": 14,
-    "light": "direct",
-    "humidity": "low",
-    "toxic_to_pets": false,
-    "common_issues": ["stretching_from_low_light", "mushy_leaves_from_overwatering"],
-    "tips": "Needs bright light to maintain compact rosette shape."
-  },
-  "nephrolepis_exaltata": {
-    "common_name": "Boston Fern",
-    "aliases": ["boston fern", "fern", "sword fern"],
-    "type": "indoor",
-    "water_frequency_days": 4,
-    "light": "medium",
-    "humidity": "high",
-    "toxic_to_pets": false,
-    "common_issues": ["brown_fronds_from_low_humidity", "yellow_fronds_from_overwatering"],
-    "tips": "Loves humidity — mist daily or use a pebble tray."
-  },
-  "ficus_elastica": {
-    "common_name": "Rubber Plant",
-    "aliases": ["rubber plant", "rubber tree", "ficus elastica"],
-    "type": "indoor",
-    "water_frequency_days": 7,
-    "light": "bright_indirect",
-    "humidity": "medium",
-    "toxic_to_pets": true,
-    "common_issues": ["leaf_drop_from_low_light", "yellow_leaves_from_overwatering"],
-    "tips": "Wipe leaves regularly to keep them glossy and dust-free."
-  },
-  "pilea_peperomioides": {
-    "common_name": "Pilea",
-    "aliases": ["pilea", "chinese money plant", "pancake plant", "ufop plant"],
-    "type": "indoor",
-    "water_frequency_days": 7,
-    "light": "bright_indirect",
-    "humidity": "medium",
-    "toxic_to_pets": false,
-    "common_issues": ["drooping_from_underwatering", "yellow_leaves_from_overwatering"],
-    "tips": "Rotate weekly for even growth. Produces many pups."
-  },
-  "hoya_carnosa": {
-    "common_name": "Hoya",
-    "aliases": ["hoya", "wax plant", "wax flower"],
-    "type": "indoor",
-    "water_frequency_days": 10,
-    "light": "bright_indirect",
-    "humidity": "medium",
-    "toxic_to_pets": false,
-    "common_issues": ["no_flowers_from_low_light", "yellow_leaves_from_overwatering"],
-    "tips": "Let soil dry between waterings. Blooms on old vines — don't cut them."
-  },
-  "peperomia_obtusifolia": {
-    "common_name": "Peperomia",
-    "aliases": ["peperomia", "baby rubber plant"],
-    "type": "indoor",
-    "water_frequency_days": 7,
-    "light": "medium",
-    "humidity": "medium",
-    "toxic_to_pets": false,
-    "common_issues": ["wilting_from_underwatering", "mushy_stem_from_overwatering"],
-    "tips": "Thick leaves store water — err on the side of underwatering."
-  },
-  "tradescantia_zebrina": {
-    "common_name": "Tradescantia",
-    "aliases": ["tradescantia", "wandering jew", "inch plant", "zebrina"],
-    "type": "indoor",
-    "water_frequency_days": 5,
-    "light": "bright_indirect",
-    "humidity": "medium",
-    "toxic_to_pets": false,
-    "common_issues": ["leggy_growth_from_low_light", "brown_tips_from_low_humidity"],
-    "tips": "Pinch regularly to keep bushy. Roots easily in water."
-  },
-  "scindapsus_pictus": {
-    "common_name": "Satin Pothos",
-    "aliases": ["satin pothos", "scindapsus", "silver pothos"],
-    "type": "indoor",
-    "water_frequency_days": 7,
-    "light": "low",
-    "humidity": "medium",
-    "toxic_to_pets": true,
-    "common_issues": ["yellow_leaves_from_overwatering", "brown_tips_from_low_humidity"],
-    "tips": "Similar care to pothos but prefers slightly more humidity."
-  },
-  "maranta_leuconeura": {
-    "common_name": "Prayer Plant",
-    "aliases": ["prayer plant", "maranta", "herringbone plant"],
-    "type": "indoor",
-    "water_frequency_days": 5,
-    "light": "medium",
-    "humidity": "high",
-    "toxic_to_pets": false,
-    "common_issues": ["brown_edges_from_low_humidity", "yellow_leaves_from_overwatering"],
-    "tips": "Leaves fold up at night like hands in prayer. Use distilled water."
-  },
-  "dieffenbachia_seguine": {
-    "common_name": "Dieffenbachia",
-    "aliases": ["dieffenbachia", "dumb cane"],
-    "type": "indoor",
-    "water_frequency_days": 7,
-    "light": "medium",
-    "humidity": "medium",
-    "toxic_to_pets": true,
-    "common_issues": ["yellow_leaves_from_overwatering", "brown_tips_from_low_humidity"],
-    "tips": "Keep away from pets and children — sap is toxic."
+    "ideal_humidity_percent": 40,
+    "min_temp_celsius": 15.0,
+    "max_temp_celsius": 30.0,
+    "tips": "Prefers low light and ~40% humidity. Native range: Kenya.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/613586648/original.jpg"
   },
   "aglaonema_commutatum": {
     "common_name": "Chinese Evergreen",
-    "aliases": ["chinese evergreen", "aglaonema"],
+    "scientific_name": "Aglaonema commutatum",
+    "aliases": [
+      "aglaonema commutatum",
+      "aglaonema_commutatum",
+      "chinese evergreen"
+    ],
     "type": "indoor",
     "water_frequency_days": 10,
     "light": "low",
-    "humidity": "medium",
-    "toxic_to_pets": true,
-    "common_issues": ["yellow_leaves_from_overwatering", "brown_tips_from_cold_drafts"],
-    "tips": "One of the most tolerant low-light plants. Avoid cold drafts."
+    "ideal_humidity_percent": 50,
+    "min_temp_celsius": 16.0,
+    "max_temp_celsius": 28.0,
+    "tips": "Prefers low light and ~50% humidity. Native range: Caribbean.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/609503106/original.jpg"
+  },
+  "syngonium_podophyllum": {
+    "common_name": "Arrowhead Vine",
+    "scientific_name": "Syngonium podophyllum",
+    "aliases": [
+      "african evergreen",
+      "arrowhead vine",
+      "syngonium podophyllum",
+      "syngonium_podophyllum"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 7,
+    "light": "bright_indirect",
+    "ideal_humidity_percent": 60,
+    "min_temp_celsius": 16.0,
+    "max_temp_celsius": 28.0,
+    "tips": "Prefers bright_indirect light and ~60% humidity. Native range: Amazonas, Antioquia, Boyac\u00e1, Caldas, Caquet\u00e1, Cauca, Choc\u00f3, Cundinamarca, Huila, Magdalena, Meta, Nari\u00f1o, Putumayo, Quin.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/604613846/original.jpg"
+  },
+  "dieffenbachia_seguine": {
+    "common_name": "Dumb Cane",
+    "scientific_name": "Dieffenbachia seguine",
+    "aliases": [
+      "dieffenbachia seguine",
+      "dieffenbachia_seguine",
+      "dumb cane",
+      "dumb-cane"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 7,
+    "light": "medium",
+    "ideal_humidity_percent": 60,
+    "min_temp_celsius": 16.0,
+    "max_temp_celsius": 28.0,
+    "tips": "Prefers medium light and ~60% humidity. Native range: Caribbean.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/606335823/original.jpg"
+  },
+  "dracaena_trifasciata": {
+    "common_name": "Snake Plant",
+    "scientific_name": "Dracaena trifasciata",
+    "aliases": [
+      "dracaena trifasciata",
+      "dracaena_trifasciata",
+      "snake plant",
+      "snake plant, mother-in-law's tongue, viper's bowstring hemp, snake sansevieria, bowstring hemp, good luck plant, mother-in-law's nose"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 14,
+    "light": "low",
+    "ideal_humidity_percent": 30,
+    "min_temp_celsius": 10.0,
+    "max_temp_celsius": 35.0,
+    "tips": "Prefers low light and ~30% humidity. Native range: Africa.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/604529562/original.jpg"
+  },
+  "chlorophytum_comosum": {
+    "common_name": "Spider Plant",
+    "scientific_name": "Chlorophytum comosum",
+    "aliases": [
+      "airplane plant",
+      "bracket plant",
+      "chlorophytum comosum",
+      "chlorophytum_comosum",
+      "lili paris",
+      "spider plant"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 7,
+    "light": "bright_indirect",
+    "ideal_humidity_percent": 50,
+    "min_temp_celsius": 10.0,
+    "max_temp_celsius": 30.0,
+    "tips": "Prefers bright_indirect light and ~50% humidity. Native range: East Africa.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/607547399/original.jpg"
+  },
+  "dracaena_fragrans": {
+    "common_name": "Corn Plant",
+    "scientific_name": "Dracaena fragrans",
+    "aliases": [
+      "corn plant",
+      "dracaena 'janet craig compact'",
+      "dracaena fragrans",
+      "dracaena_fragrans"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 10,
+    "light": "medium",
+    "ideal_humidity_percent": 40,
+    "min_temp_celsius": 15.0,
+    "max_temp_celsius": 30.0,
+    "tips": "Prefers medium light and ~40% humidity. Native range: Caribbean.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/606113429/original.jpg"
+  },
+  "yucca_gigantea": {
+    "common_name": "Spineless Yucca",
+    "scientific_name": "Yucca gigantea",
+    "aliases": [
+      "spineless yucca",
+      "yucca gigantea",
+      "yucca_gigantea"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 14,
+    "light": "direct",
+    "ideal_humidity_percent": 30,
+    "min_temp_celsius": 10.0,
+    "max_temp_celsius": 35.0,
+    "tips": "Prefers direct light and ~30% humidity. Native range: Caribbean.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/605089699/original.jpg"
+  },
+  "beaucarnea_recurvata": {
+    "common_name": "Ponytail Palm",
+    "scientific_name": "Beaucarnea recurvata",
+    "aliases": [
+      "beaucarnea recurvata",
+      "beaucarnea_recurvata",
+      "elephant's-foot",
+      "ponytail palm"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 14,
+    "light": "direct",
+    "ideal_humidity_percent": 30,
+    "min_temp_celsius": 10.0,
+    "max_temp_celsius": 35.0,
+    "tips": "Prefers direct light and ~30% humidity. Native range: Global.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/609062240/original.jpg"
   },
   "asparagus_setaceus": {
     "common_name": "Asparagus Fern",
-    "aliases": ["asparagus fern", "foxtail fern", "lace fern"],
+    "scientific_name": "Asparagus setaceus",
+    "aliases": [
+      "= asparagus setaceus (kunth) jessop",
+      "asparagus fern",
+      "asparagus setaceus",
+      "asparagus_setaceus"
+    ],
     "type": "indoor",
     "water_frequency_days": 5,
-    "light": "medium",
-    "humidity": "high",
-    "toxic_to_pets": true,
-    "common_issues": ["yellow_needles_from_underwatering", "needle_drop_from_low_humidity"],
-    "tips": "Loves humidity — mist regularly. Not a true fern."
+    "light": "bright_indirect",
+    "ideal_humidity_percent": 60,
+    "min_temp_celsius": 10.0,
+    "max_temp_celsius": 28.0,
+    "tips": "Prefers bright_indirect light and ~60% humidity. Native range: Africa.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/604980978/original.jpg"
   },
-  "crassula_ovata": {
-    "common_name": "Jade Plant",
-    "aliases": ["jade plant", "jade", "money plant", "crassula"],
+  "ficus_lyrata": {
+    "common_name": "Fiddle Leaf Fig",
+    "scientific_name": "Ficus lyrata",
+    "aliases": [
+      "ficus lyrata",
+      "ficus_lyrata",
+      "fiddle leaf fig",
+      "fiddle-leaf fig",
+      "ketapang biola"
+    ],
     "type": "indoor",
-    "water_frequency_days": 14,
+    "water_frequency_days": 7,
     "light": "direct",
-    "humidity": "low",
-    "toxic_to_pets": true,
-    "common_issues": ["mushy_leaves_from_overwatering", "wrinkled_leaves_from_underwatering"],
-    "tips": "Succulent — let soil dry completely between waterings."
+    "ideal_humidity_percent": 60,
+    "min_temp_celsius": 15.0,
+    "max_temp_celsius": 30.0,
+    "tips": "Prefers direct light and ~60% humidity. Native range: Armenia | Monter\u00eda.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/611639718/original.jpg"
   },
-  "haworthia_fasciata": {
-    "common_name": "Haworthia",
-    "aliases": ["haworthia", "zebra plant", "zebra haworthia"],
+  "ficus_elastica": {
+    "common_name": "Rubber Tree",
+    "scientific_name": "Ficus elastica",
+    "aliases": [
+      "ficus elastica",
+      "ficus_elastica",
+      "india rubber tree",
+      "rubber tree"
+    ],
     "type": "indoor",
-    "water_frequency_days": 14,
-    "light": "direct",
-    "humidity": "low",
-    "toxic_to_pets": false,
-    "common_issues": ["mushy_leaves_from_overwatering", "brown_tips_from_too_much_sun"],
-    "tips": "Small succulent, perfect for desks. Needs bright light."
+    "water_frequency_days": 7,
+    "light": "bright_indirect",
+    "ideal_humidity_percent": 50,
+    "min_temp_celsius": 15.0,
+    "max_temp_celsius": 30.0,
+    "tips": "Prefers bright_indirect light and ~50% humidity. Native range: AI.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/605480894/original.jpg"
   },
-  "cactus_cereus": {
-    "common_name": "Cereus Cactus",
-    "aliases": ["cactus", "cereus", "peruvian apple cactus"],
+  "ficus_benjamina": {
+    "common_name": "Weeping Fig",
+    "scientific_name": "Ficus benjamina",
+    "aliases": [
+      "ficus",
+      "ficus benjamina",
+      "ficus_benjamina",
+      "weeping fig"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 7,
+    "light": "direct",
+    "ideal_humidity_percent": 50,
+    "min_temp_celsius": 16.0,
+    "max_temp_celsius": 30.0,
+    "tips": "Prefers direct light and ~50% humidity. Native range: Benin [I].",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/605714058/original.jpg"
+  },
+  "ficus_pumila": {
+    "common_name": "Creeping Fig",
+    "scientific_name": "Ficus pumila",
+    "aliases": [
+      "climbing fig",
+      "creeping fig",
+      "ficus pumila",
+      "ficus_pumila"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 5,
+    "light": "bright_indirect",
+    "ideal_humidity_percent": 65,
+    "min_temp_celsius": 15.0,
+    "max_temp_celsius": 28.0,
+    "tips": "Prefers bright_indirect light and ~65% humidity. Native range: Bogot\u00e1.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/605313744/original.jpg"
+  },
+  "schlumbergera_truncata": {
+    "common_name": "Christmas Cactus",
+    "scientific_name": "Schlumbergera truncata",
+    "aliases": [
+      "christmas cactus",
+      "false christmas cactus",
+      "schlumbergera truncata",
+      "schlumbergera_truncata"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 10,
+    "light": "direct",
+    "ideal_humidity_percent": 50,
+    "min_temp_celsius": 15.0,
+    "max_temp_celsius": 28.0,
+    "tips": "Prefers direct light and ~50% humidity. Native range: BR.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/658908935/original.jpg"
+  },
+  "opuntia_microdasys": {
+    "common_name": "Bunny Ears Cactus",
+    "scientific_name": "Opuntia microdasys",
+    "aliases": [
+      "angel's-wings",
+      "bunny ears cactus",
+      "opuntia microdasys",
+      "opuntia_microdasys"
+    ],
     "type": "indoor",
     "water_frequency_days": 21,
     "light": "direct",
-    "humidity": "low",
-    "toxic_to_pets": false,
-    "common_issues": ["mushy_stem_from_overwatering", "etiolation_from_low_light"],
-    "tips": "Water sparingly — once every 2-3 weeks. Needs full sun."
+    "ideal_humidity_percent": 20,
+    "min_temp_celsius": 10.0,
+    "max_temp_celsius": 38.0,
+    "tips": "Prefers direct light and ~20% humidity. Native range: Algeria.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/605491279/original.jpg"
   },
-  "orchidaceae_phal": {
-    "common_name": "Phalaenopsis Orchid",
-    "aliases": ["orchid", "phalaenopsis", "moth orchid", "phal"],
+  "kroenleinia_grusonii": {
+    "common_name": "Golden Barrel Cactus",
+    "scientific_name": "Kroenleinia grusonii",
+    "aliases": [
+      "barrel cactus",
+      "golden barrel cactus",
+      "kroenleinia grusonii",
+      "kroenleinia_grusonii"
+    ],
     "type": "indoor",
-    "water_frequency_days": 7,
-    "light": "bright_indirect",
-    "humidity": "high",
-    "toxic_to_pets": false,
-    "common_issues": ["root_rot_from_overwatering", "bud_blast_from_cold_drafts"],
-    "tips": "Water by soaking bark medium, not by schedule. Needs airflow around roots."
+    "water_frequency_days": 21,
+    "light": "direct",
+    "ideal_humidity_percent": 20,
+    "min_temp_celsius": 10.0,
+    "max_temp_celsius": 40.0,
+    "tips": "Prefers direct light and ~20% humidity. Native range: BR.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/682813170/original.jpg"
   },
-  "anthurium_andraeanum": {
-    "common_name": "Anthurium",
-    "aliases": ["anthurium", "flamingo flower", "laceleaf"],
+  "mammillaria_hahniana": {
+    "common_name": "Old Lady Cactus",
+    "scientific_name": "Mammillaria hahniana",
+    "aliases": [
+      "mammillaria hahniana",
+      "mammillaria_hahniana",
+      "old lady cactus",
+      "old woman cactus"
+    ],
     "type": "indoor",
-    "water_frequency_days": 7,
-    "light": "bright_indirect",
-    "humidity": "high",
-    "toxic_to_pets": true,
-    "common_issues": ["brown_tips_from_low_humidity", "yellow_leaves_from_overwatering"],
-    "tips": "Blooms best with bright indirect light and high humidity."
+    "water_frequency_days": 21,
+    "light": "direct",
+    "ideal_humidity_percent": 20,
+    "min_temp_celsius": 10.0,
+    "max_temp_celsius": 35.0,
+    "tips": "Prefers direct light and ~20% humidity. Native range: BR.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/672204698/original.jpg"
   },
-  "begonia_rex": {
-    "common_name": "Rex Begonia",
-    "aliases": ["begonia", "rex begonia", "painted leaf begonia"],
+  "crassula_ovata": {
+    "common_name": "Jade Plant",
+    "scientific_name": "Crassula ovata",
+    "aliases": [
+      "crassula ovata",
+      "crassula_ovata",
+      "jade plant"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 14,
+    "light": "direct",
+    "ideal_humidity_percent": 30,
+    "min_temp_celsius": 10.0,
+    "max_temp_celsius": 30.0,
+    "tips": "Prefers direct light and ~30% humidity. Native range: California.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/605200286/original.jpg"
+  },
+  "echeveria_elegans": {
+    "common_name": "Mexican Snowball",
+    "scientific_name": "Echeveria elegans",
+    "aliases": [
+      "echeveria elegans",
+      "echeveria_elegans",
+      "mexican snowball"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 14,
+    "light": "direct",
+    "ideal_humidity_percent": 30,
+    "min_temp_celsius": 10.0,
+    "max_temp_celsius": 32.0,
+    "tips": "Prefers direct light and ~30% humidity. Native range: BR.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/613510512/original.jpg"
+  },
+  "sedum_morganianum": {
+    "common_name": "Burro's Tail",
+    "scientific_name": "Sedum morganianum",
+    "aliases": [
+      "burro's tail",
+      "donkeytail",
+      "sedum morganianum",
+      "sedum_morganianum"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 14,
+    "light": "direct",
+    "ideal_humidity_percent": 30,
+    "min_temp_celsius": 10.0,
+    "max_temp_celsius": 30.0,
+    "tips": "Prefers direct light and ~30% humidity. Native range: BR.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/657232888/original.jpg"
+  },
+  "kalanchoe_tomentosa": {
+    "common_name": "Panda Plant",
+    "scientific_name": "Kalanchoe tomentosa",
+    "aliases": [
+      "kalanchoe tomentosa",
+      "kalanchoe_tomentosa",
+      "panda plant"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 14,
+    "light": "direct",
+    "ideal_humidity_percent": 30,
+    "min_temp_celsius": 12.0,
+    "max_temp_celsius": 30.0,
+    "tips": "Prefers direct light and ~30% humidity. Native range: BR.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/615683589/original.jpg"
+  },
+  "maranta_leuconeura": {
+    "common_name": "Prayer Plant",
+    "scientific_name": "Maranta leuconeura",
+    "aliases": [
+      "maranta leuconeura",
+      "maranta_leuconeura",
+      "prayer plant",
+      "prayerplant"
+    ],
     "type": "indoor",
     "water_frequency_days": 5,
-    "light": "medium",
-    "humidity": "high",
-    "toxic_to_pets": true,
-    "common_issues": ["powdery_mildew", "brown_edges_from_low_humidity"],
-    "tips": "Avoid getting water on leaves. Water from below."
+    "light": "bright_indirect",
+    "ideal_humidity_percent": 70,
+    "min_temp_celsius": 18.0,
+    "max_temp_celsius": 28.0,
+    "tips": "Prefers bright_indirect light and ~70% humidity. Native range: Brazil Northeast.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/629101118/original.jpg"
   },
-  "syngonium_podophyllum": {
-    "common_name": "Arrowhead Plant",
-    "aliases": ["arrowhead plant", "syngonium", "arrowhead vine"],
+  "goeppertia_insignis": {
+    "common_name": "Rattlesnake Plant",
+    "scientific_name": "Goeppertia insignis",
+    "aliases": [
+      "goeppertia insignis",
+      "goeppertia_insignis",
+      "rattlesnake plant",
+      "rattlesnake-plant"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 5,
+    "light": "bright_indirect",
+    "ideal_humidity_percent": 70,
+    "min_temp_celsius": 18.0,
+    "max_temp_celsius": 28.0,
+    "tips": "Prefers bright_indirect light and ~70% humidity. Native range: BR.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/664072566/original.jpg"
+  },
+  "peperomia_obtusifolia": {
+    "common_name": "Baby Rubber Plant",
+    "scientific_name": "Peperomia obtusifolia",
+    "aliases": [
+      "american rubberplant",
+      "baby rubber plant",
+      "peperomia obtusifolia",
+      "peperomia_obtusifolia"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 10,
+    "light": "bright_indirect",
+    "ideal_humidity_percent": 50,
+    "min_temp_celsius": 15.0,
+    "max_temp_celsius": 28.0,
+    "tips": "Prefers bright_indirect light and ~50% humidity. Native range: Armenia.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/608460572/original.jpg"
+  },
+  "peperomia_argyreia": {
+    "common_name": "Watermelon Peperomia",
+    "scientific_name": "Peperomia argyreia",
+    "aliases": [
+      "peperomia argyreia",
+      "peperomia_argyreia",
+      "watermelon peperomia",
+      "watermelon pepper"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 7,
+    "light": "bright_indirect",
+    "ideal_humidity_percent": 55,
+    "min_temp_celsius": 15.0,
+    "max_temp_celsius": 28.0,
+    "tips": "Prefers bright_indirect light and ~55% humidity. Native range: BR.",
+    "image_url": "https://cdn.floridamuseum.ufl.edu/Herbarium/4f6046ea-bd7a-48f0-afc4-b8cf9e9d1c10"
+  },
+  "streptocarpus_ionanthus": {
+    "common_name": "African Violet",
+    "scientific_name": "Streptocarpus ionanthus",
+    "aliases": [
+      "african violet",
+      "streptocarpus ionanthus",
+      "streptocarpus_ionanthus"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 7,
+    "light": "bright_indirect",
+    "ideal_humidity_percent": 60,
+    "min_temp_celsius": 18.0,
+    "max_temp_celsius": 26.0,
+    "tips": "Prefers bright_indirect light and ~60% humidity. Native range: Chagos Archipelago.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/613179630/original.jpg"
+  },
+  "aeschynanthus_radicans": {
+    "common_name": "Lipstick Plant",
+    "scientific_name": "Aeschynanthus radicans",
+    "aliases": [
+      "aeschynanthus radicans",
+      "aeschynanthus_radicans",
+      "lipstick plant",
+      "lipstickplant"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 7,
+    "light": "direct",
+    "ideal_humidity_percent": 60,
+    "min_temp_celsius": 18.0,
+    "max_temp_celsius": 28.0,
+    "tips": "Prefers direct light and ~60% humidity. Native range: Borneo.",
+    "image_url": "https://bs.plantnet.org/image/o/2fe1d8a96fad0459f17b368fa3be772be1d22d74"
+  },
+  "guzmania_lingulata": {
+    "common_name": "Scarlet Star Bromeliad",
+    "scientific_name": "Guzmania lingulata",
+    "aliases": [
+      "droophead tufted airplant",
+      "guzmania lingulata",
+      "guzmania_lingulata",
+      "scarlet star bromeliad"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 7,
+    "light": "direct",
+    "ideal_humidity_percent": 60,
+    "min_temp_celsius": 16.0,
+    "max_temp_celsius": 30.0,
+    "tips": "Prefers direct light and ~60% humidity. Native range: Caribbean.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/605359831/original.jpg"
+  },
+  "wallisia_cyanea": {
+    "common_name": "Pink Quill",
+    "scientific_name": "Wallisia cyanea",
+    "aliases": [
+      "blue torch",
+      "pink quill",
+      "wallisia cyanea",
+      "wallisia_cyanea"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 7,
+    "light": "direct",
+    "ideal_humidity_percent": 60,
+    "min_temp_celsius": 15.0,
+    "max_temp_celsius": 30.0,
+    "tips": "Prefers direct light and ~60% humidity. Native range: Ecuador.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/610292207/original.jpg"
+  },
+  "ludisia_discolor": {
+    "common_name": "Jewel Orchid",
+    "scientific_name": "Ludisia discolor",
+    "aliases": [
+      "jewel orchid",
+      "ludisia discolor",
+      "ludisia_discolor"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 5,
+    "light": "low",
+    "ideal_humidity_percent": 70,
+    "min_temp_celsius": 18.0,
+    "max_temp_celsius": 28.0,
+    "tips": "Prefers low light and ~70% humidity. Native range: .",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/628012923/original.jpg"
+  },
+  "nephrolepis_exaltata": {
+    "common_name": "Boston Fern",
+    "scientific_name": "Nephrolepis exaltata",
+    "aliases": [
+      "boston fern",
+      "boston swordfern",
+      "nephrolepis exaltata",
+      "nephrolepis_exaltata",
+      "pakis boston",
+      "paku pedang"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 4,
+    "light": "bright_indirect",
+    "ideal_humidity_percent": 75,
+    "min_temp_celsius": 15.0,
+    "max_temp_celsius": 28.0,
+    "tips": "Prefers bright_indirect light and ~75% humidity. Native range: Algeria.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/606089924/original.jpg"
+  },
+  "platycerium_bifurcatum": {
+    "common_name": "Staghorn Fern",
+    "scientific_name": "Platycerium bifurcatum",
+    "aliases": [
+      "elkhorn fern",
+      "platycerium bifurcatum",
+      "platycerium_bifurcatum",
+      "staghorn fern"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 7,
+    "light": "direct",
+    "ideal_humidity_percent": 70,
+    "min_temp_celsius": 15.0,
+    "max_temp_celsius": 30.0,
+    "tips": "Prefers direct light and ~70% humidity. Native range: Bogot\u00e1.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/604976366/original.jpg"
+  },
+  "phlebodium_aureum": {
+    "common_name": "Blue Star Fern",
+    "scientific_name": "Phlebodium aureum",
+    "aliases": [
+      "blue star fern",
+      "gold-foot fern",
+      "phlebodium aureum",
+      "phlebodium_aureum"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 5,
+    "light": "bright_indirect",
+    "ideal_humidity_percent": 70,
+    "min_temp_celsius": 15.0,
+    "max_temp_celsius": 28.0,
+    "tips": "Prefers bright_indirect light and ~70% humidity. Native range: Barrancabermeja | Manizales.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/605714609/original.jpg"
+  },
+  "chamaedorea_elegans": {
+    "common_name": "Parlor Palm",
+    "scientific_name": "Chamaedorea elegans",
+    "aliases": [
+      "chamaedorea elegans",
+      "chamaedorea_elegans",
+      "neanthe bella palm",
+      "parlor palm"
+    ],
     "type": "indoor",
     "water_frequency_days": 7,
     "light": "low",
-    "humidity": "medium",
-    "toxic_to_pets": true,
-    "common_issues": ["brown_tips_from_low_humidity", "leggy_growth_from_low_light"],
-    "tips": "Vining plant — pinch tips to encourage bushiness."
+    "ideal_humidity_percent": 50,
+    "min_temp_celsius": 15.0,
+    "max_temp_celsius": 28.0,
+    "tips": "Prefers low light and ~50% humidity. Native range: INTRODUCED.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/616161780/original.jpg"
   },
-  "lavandula_angustifolia": {
-    "common_name": "Lavender",
-    "aliases": ["lavender", "english lavender"],
-    "type": "outdoor",
+  "dypsis_lutescens": {
+    "common_name": "Areca Palm",
+    "scientific_name": "Dypsis lutescens",
+    "aliases": [
+      "areca palm",
+      "dypsis lutescens",
+      "dypsis_lutescens"
+    ],
+    "type": "indoor",
     "water_frequency_days": 7,
-    "water_needs_inches_weekly": 0.5,
     "light": "direct",
-    "humidity": "low",
-    "toxic_to_pets": false,
-    "common_issues": ["root_rot_from_overwatering", "woody_growth_from_no_pruning"],
-    "tips": "Loves full sun and well-draining soil. Prune after flowering."
+    "ideal_humidity_percent": 60,
+    "min_temp_celsius": 16.0,
+    "max_temp_celsius": 30.0,
+    "tips": "Prefers direct light and ~60% humidity. Native range: Africa.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/604561548/original.jpg"
+  },
+  "ravenea_rivularis": {
+    "common_name": "Majesty Palm",
+    "scientific_name": "Ravenea rivularis",
+    "aliases": [
+      "majestic palm",
+      "majesty palm",
+      "ravenea rivularis",
+      "ravenea_rivularis"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 5,
+    "light": "direct",
+    "ideal_humidity_percent": 65,
+    "min_temp_celsius": 16.0,
+    "max_temp_celsius": 30.0,
+    "tips": "Prefers direct light and ~65% humidity. Native range: Africa.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/628078973/original.jpg"
+  },
+  "begonia_maculata": {
+    "common_name": "Polka Dot Begonia",
+    "scientific_name": "Begonia maculata",
+    "aliases": [
+      "begonia maculata",
+      "begonia_maculata",
+      "cane begonia",
+      "polka dot begonia"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 5,
+    "light": "direct",
+    "ideal_humidity_percent": 65,
+    "min_temp_celsius": 16.0,
+    "max_temp_celsius": 28.0,
+    "tips": "Prefers direct light and ~65% humidity. Native range: Argentina Northeast.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/607963509/original.jpg"
+  },
+  "begonia_rex_cultorum": {
+    "common_name": "Rex Begonia",
+    "scientific_name": "Begonia rex-cultorum",
+    "aliases": [
+      "beefsteak-geranium",
+      "begonia rex-cultorum",
+      "begonia_rex_cultorum",
+      "rex begonia"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 7,
+    "light": "bright_indirect",
+    "ideal_humidity_percent": 60,
+    "min_temp_celsius": 16.0,
+    "max_temp_celsius": 26.0,
+    "tips": "Prefers bright_indirect light and ~60% humidity. Native range: .",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/465769018/original.jpeg"
+  },
+  "pilea_peperomioides": {
+    "common_name": "Chinese Money Plant",
+    "scientific_name": "Pilea peperomioides",
+    "aliases": [
+      "chinese money plant",
+      "pilea peperomioides",
+      "pilea_peperomioides"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 7,
+    "light": "direct",
+    "ideal_humidity_percent": 50,
+    "min_temp_celsius": 13.0,
+    "max_temp_celsius": 30.0,
+    "tips": "Prefers direct light and ~50% humidity. Native range: BR.",
+    "image_url": "https://bs.plantnet.org/image/o/fe798e9da8fec7086ea36d72a7568bf463c9dc53"
+  },
+  "pilea_involucrata": {
+    "common_name": "Friendship Plant",
+    "scientific_name": "Pilea involucrata",
+    "aliases": [
+      "clearweed",
+      "friendship plant",
+      "pilea involucrata",
+      "pilea_involucrata"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 5,
+    "light": "bright_indirect",
+    "ideal_humidity_percent": 65,
+    "min_temp_celsius": 16.0,
+    "max_temp_celsius": 28.0,
+    "tips": "Prefers bright_indirect light and ~65% humidity. Native range: Alabama.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/605027934/original.jpg"
+  },
+  "euphorbia_trigona": {
+    "common_name": "African Milk Tree",
+    "scientific_name": "Euphorbia trigona",
+    "aliases": [
+      "african milk tree",
+      "african milktree",
+      "euphorbia trigona",
+      "euphorbia_trigona"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 14,
+    "light": "direct",
+    "ideal_humidity_percent": 30,
+    "min_temp_celsius": 15.0,
+    "max_temp_celsius": 32.0,
+    "tips": "Prefers direct light and ~30% humidity. Native range: Africa.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/615572683/original.jpg"
+  },
+  "codiaeum_variegatum": {
+    "common_name": "Croton",
+    "scientific_name": "Codiaeum variegatum",
+    "aliases": [
+      "codiaeum variegatum",
+      "codiaeum_variegatum",
+      "croton",
+      "garden croton"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 7,
+    "light": "direct",
+    "ideal_humidity_percent": 60,
+    "min_temp_celsius": 16.0,
+    "max_temp_celsius": 30.0,
+    "tips": "Prefers direct light and ~60% humidity. Native range: Andaman Is..",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/604986001/original.jpg"
+  },
+  "plectranthus_verticillatus": {
+    "common_name": "Swedish Ivy",
+    "scientific_name": "Plectranthus verticillatus",
+    "aliases": [
+      "gossip spurflower",
+      "plectranthus verticillatus",
+      "plectranthus_verticillatus",
+      "swedish ivy"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 7,
+    "light": "direct",
+    "ideal_humidity_percent": 50,
+    "min_temp_celsius": 15.0,
+    "max_temp_celsius": 28.0,
+    "tips": "Prefers direct light and ~50% humidity. Native range: Africa.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/606313393/original.jpg"
+  },
+  "coleus_scutellarioides": {
+    "common_name": "Coleus",
+    "scientific_name": "Coleus scutellarioides",
+    "aliases": [
+      "coleus",
+      "coleus scutellarioides",
+      "coleus_scutellarioides"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 5,
+    "light": "direct",
+    "ideal_humidity_percent": 55,
+    "min_temp_celsius": 15.0,
+    "max_temp_celsius": 30.0,
+    "tips": "Prefers direct light and ~55% humidity. Native range: Australia.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/604800589/original.jpg"
+  },
+  "hoya_carnosa": {
+    "common_name": "Wax Plant",
+    "scientific_name": "Hoya carnosa",
+    "aliases": [
+      "common wax-plant",
+      "hoya carnosa",
+      "hoya_carnosa",
+      "wax plant"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 10,
+    "light": "direct",
+    "ideal_humidity_percent": 50,
+    "min_temp_celsius": 15.0,
+    "max_temp_celsius": 30.0,
+    "tips": "Prefers direct light and ~50% humidity. Native range: Bangladesh.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/605045860/original.jpg"
+  },
+  "ceropegia_woodii": {
+    "common_name": "String of Hearts",
+    "scientific_name": "Ceropegia woodii",
+    "aliases": [
+      "ceropegia woodii",
+      "ceropegia_woodii",
+      "rosary vine",
+      "string of hearts"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 10,
+    "light": "direct",
+    "ideal_humidity_percent": 40,
+    "min_temp_celsius": 15.0,
+    "max_temp_celsius": 30.0,
+    "tips": "Prefers direct light and ~40% humidity. Native range: Bismarck Archipelago.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/615469819/original.jpg"
+  },
+  "hedera_helix": {
+    "common_name": "English Ivy",
+    "scientific_name": "Hedera helix",
+    "aliases": [
+      "english ivy",
+      "hedera helix",
+      "hedera_helix"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 7,
+    "light": "bright_indirect",
+    "ideal_humidity_percent": 50,
+    "min_temp_celsius": 10.0,
+    "max_temp_celsius": 25.0,
+    "tips": "Prefers bright_indirect light and ~50% humidity. Native range: East Africa.",
+    "image_url": "https://live.staticflickr.com/65535/55022246482_5b16b26edb_b.jpg"
+  },
+  "tradescantia_zebrina": {
+    "common_name": "Wandering Dude",
+    "scientific_name": "Tradescantia zebrina",
+    "aliases": [
+      "inch-plant",
+      "tradescantia zebrina",
+      "tradescantia_zebrina",
+      "wandering dude"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 7,
+    "light": "direct",
+    "ideal_humidity_percent": 50,
+    "min_temp_celsius": 15.0,
+    "max_temp_celsius": 28.0,
+    "tips": "Prefers direct light and ~50% humidity. Native range: Caribbean.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/604613500/original.jpg"
+  },
+  "tradescantia_fluminensis": {
+    "common_name": "Small-Leaf Spiderwort",
+    "scientific_name": "Tradescantia fluminensis",
+    "aliases": [
+      "small-leaf spiderwort",
+      "tradescantia fluminensis",
+      "tradescantia_fluminensis"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 7,
+    "light": "bright_indirect",
+    "ideal_humidity_percent": 50,
+    "min_temp_celsius": 15.0,
+    "max_temp_celsius": 28.0,
+    "tips": "Prefers bright_indirect light and ~50% humidity. Native range: Africa.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/604466701/original.jpg"
+  },
+  "oxalis_triangularis": {
+    "common_name": "False Shamrock",
+    "scientific_name": "Oxalis triangularis",
+    "aliases": [
+      "false shamrock",
+      "oxalis triangularis",
+      "oxalis_triangularis",
+      "wood sorrel"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 7,
+    "light": "direct",
+    "ideal_humidity_percent": 50,
+    "min_temp_celsius": 15.0,
+    "max_temp_celsius": 26.0,
+    "tips": "Prefers direct light and ~50% humidity. Native range: Argentina Northeast.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/609308690/original.jpg"
+  },
+  "aloe_vera": {
+    "common_name": "Aloe Vera",
+    "scientific_name": "Aloe vera",
+    "aliases": [
+      "aloe",
+      "aloe vera",
+      "aloe_vera",
+      "lidah buaya"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 14,
+    "light": "direct",
+    "ideal_humidity_percent": 30,
+    "min_temp_celsius": 13.0,
+    "max_temp_celsius": 32.0,
+    "tips": "Prefers direct light and ~30% humidity. Native range: Africa.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/605428931/original.jpg"
+  },
+  "fittonia_albivenis": {
+    "common_name": "Nerve Plant",
+    "scientific_name": "Fittonia albivenis",
+    "aliases": [
+      "fittonia albivenis",
+      "fittonia_albivenis",
+      "mosaic-plant",
+      "nerve plant"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 5,
+    "light": "low",
+    "ideal_humidity_percent": 75,
+    "min_temp_celsius": 18.0,
+    "max_temp_celsius": 28.0,
+    "tips": "Prefers low light and ~75% humidity. Native range: Armenia | Barrancabermeja | Monter\u00eda | Yopal | Villavicencio | Manizales.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/608483280/original.jpg"
+  },
+  "hypoestes_phyllostachya": {
+    "common_name": "Polka Dot Plant",
+    "scientific_name": "Hypoestes phyllostachya",
+    "aliases": [
+      "baby's tears",
+      "hypoestes phyllostachya",
+      "hypoestes_phyllostachya",
+      "polka dot plant"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 5,
+    "light": "direct",
+    "ideal_humidity_percent": 60,
+    "min_temp_celsius": 18.0,
+    "max_temp_celsius": 28.0,
+    "tips": "Prefers direct light and ~60% humidity. Native range: Armenia | Manizales | Pasto.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/609153221/original.jpg"
+  },
+  "bougainvillea_glabra": {
+    "common_name": "Paper Flower",
+    "scientific_name": "Bougainvillea glabra",
+    "aliases": [
+      "bougainvillea",
+      "bougainvillea glabra",
+      "bougainvillea_glabra",
+      "paper flower"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 10,
+    "light": "direct",
+    "ideal_humidity_percent": 40,
+    "min_temp_celsius": 15.0,
+    "max_temp_celsius": 35.0,
+    "tips": "Prefers direct light and ~40% humidity. Native range: Algeria.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/610263561/original.jpg"
+  },
+  "hibiscus_rosa_sinensis": {
+    "common_name": "Chinese Hibiscus",
+    "scientific_name": "Hibiscus rosa-sinensis",
+    "aliases": [
+      "china-rose",
+      "chinese hibiscus",
+      "hibiscus rosa-sinensis",
+      "hibiscus_rosa_sinensis"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 5,
+    "light": "direct",
+    "ideal_humidity_percent": 60,
+    "min_temp_celsius": 15.0,
+    "max_temp_celsius": 32.0,
+    "tips": "Prefers direct light and ~60% humidity. Native range: Armenia | Leticia | Manizales | Pasto.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/606423816/original.jpg"
+  },
+  "pachira_aquatica": {
+    "common_name": "Money Tree",
+    "scientific_name": "Pachira aquatica",
+    "aliases": [
+      "guiana-chestnut",
+      "money tree",
+      "pachira aquatica",
+      "pachira_aquatica"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 7,
+    "light": "direct",
+    "ideal_humidity_percent": 55,
+    "min_temp_celsius": 16.0,
+    "max_temp_celsius": 30.0,
+    "tips": "Prefers direct light and ~55% humidity. Native range: Amazonia nororiental de Colombia, departamento del Guain\u00eda, municipio de In\u00edrida..",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/608285375/original.jpg"
+  },
+  "cyclamen_persicum": {
+    "common_name": "Florist's Cyclamen",
+    "scientific_name": "Cyclamen persicum",
+    "aliases": [
+      "common cyclamen",
+      "cyclamen persicum",
+      "cyclamen_persicum",
+      "florist's cyclamen"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 7,
+    "light": "direct",
+    "ideal_humidity_percent": 50,
+    "min_temp_celsius": 10.0,
+    "max_temp_celsius": 20.0,
+    "tips": "Prefers direct light and ~50% humidity. Native range: Algeria.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/605023474/original.jpg"
+  },
+  "aphelandra_squarrosa": {
+    "common_name": "Zebra Plant",
+    "scientific_name": "Aphelandra squarrosa",
+    "aliases": [
+      "aphelandra squarrosa",
+      "aphelandra_squarrosa",
+      "zebra plant",
+      "zebra-plant"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 6,
+    "light": "bright_indirect",
+    "ideal_humidity_percent": 65,
+    "min_temp_celsius": 16.0,
+    "max_temp_celsius": 28.0,
+    "tips": "Prefers bright_indirect light and ~65% humidity. Native range: Ascension.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/610950357/original.jpg"
+  },
+  "justicia_brandegeeana": {
+    "common_name": "Shrimp Plant",
+    "scientific_name": "Justicia brandegeeana",
+    "aliases": [
+      "honolulu-salvia",
+      "justicia brandegeeana",
+      "justicia_brandegeeana",
+      "shrimp plant"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 6,
+    "light": "direct",
+    "ideal_humidity_percent": 65,
+    "min_temp_celsius": 16.0,
+    "max_temp_celsius": 28.0,
+    "tips": "Prefers direct light and ~65% humidity. Native range: Assam.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/605073390/original.jpg"
+  },
+  "ruellia_makoyana": {
+    "common_name": "Monkey Plant",
+    "scientific_name": "Ruellia makoyana",
+    "aliases": [
+      "monkey plant",
+      "monkey-plant",
+      "ruellia makoyana",
+      "ruellia_makoyana"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 6,
+    "light": "bright_indirect",
+    "ideal_humidity_percent": 65,
+    "min_temp_celsius": 16.0,
+    "max_temp_celsius": 28.0,
+    "tips": "Prefers bright_indirect light and ~65% humidity. Native range: Brazil Southeast.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/612989450/original.jpg"
+  },
+  "strobilanthes_auriculata_dyeriana": {
+    "common_name": "Persian Shield",
+    "scientific_name": "Strobilanthes auriculata dyeriana",
+    "aliases": [
+      "persian shield",
+      "strobilanthes auriculata dyeriana",
+      "strobilanthes_auriculata_dyeriana"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 6,
+    "light": "direct",
+    "ideal_humidity_percent": 65,
+    "min_temp_celsius": 16.0,
+    "max_temp_celsius": 28.0,
+    "tips": "Prefers direct light and ~65% humidity. Native range: Bangladesh.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/654756274/original.jpg"
+  },
+  "faucaria_tigrina": {
+    "common_name": "Tiger Jaws",
+    "scientific_name": "Faucaria tigrina",
+    "aliases": [
+      "faucaria tigrina",
+      "faucaria_tigrina",
+      "tiger jaws",
+      "tiger tigerfig"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 18,
+    "light": "direct",
+    "ideal_humidity_percent": 25,
+    "min_temp_celsius": 10.0,
+    "max_temp_celsius": 35.0,
+    "tips": "Prefers direct light and ~25% humidity. Native range: BR.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/396716913/original.jpg"
+  },
+  "fenestraria_rhopalophylla": {
+    "common_name": "Baby Toes",
+    "scientific_name": "Fenestraria rhopalophylla",
+    "aliases": [
+      "baby toes",
+      "fenestraria rhopalophylla",
+      "fenestraria_rhopalophylla",
+      "windowplant"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 18,
+    "light": "direct",
+    "ideal_humidity_percent": 25,
+    "min_temp_celsius": 10.0,
+    "max_temp_celsius": 35.0,
+    "tips": "Prefers direct light and ~25% humidity. Native range: BR.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/637220861/original.jpg"
+  },
+  "lithops_aucampiae": {
+    "common_name": "Living Stones",
+    "scientific_name": "Lithops aucampiae",
+    "aliases": [
+      "aucamps living stone",
+      "lithops aucampiae",
+      "lithops_aucampiae",
+      "living stones"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 18,
+    "light": "direct",
+    "ideal_humidity_percent": 25,
+    "min_temp_celsius": 10.0,
+    "max_temp_celsius": 35.0,
+    "tips": "Prefers direct light and ~25% humidity. Native range: BR.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/640631306/original.jpg"
+  },
+  "ceropegia_linearis": {
+    "common_name": "String of Needles",
+    "scientific_name": "Ceropegia linearis",
+    "aliases": [
+      "ceropegia linearis",
+      "ceropegia_linearis",
+      "heartleaf lanternvine",
+      "string of needles"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 18,
+    "light": "direct",
+    "ideal_humidity_percent": 25,
+    "min_temp_celsius": 10.0,
+    "max_temp_celsius": 35.0,
+    "tips": "Prefers direct light and ~25% humidity. Native range: BR.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/624121678/original.jpg"
+  },
+  "dischidia_nummularia": {
+    "common_name": "String of Nickels",
+    "scientific_name": "Dischidia nummularia",
+    "aliases": [
+      "button orchid",
+      "dischidia nummularia",
+      "dischidia_nummularia",
+      "string of nickels"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 18,
+    "light": "direct",
+    "ideal_humidity_percent": 25,
+    "min_temp_celsius": 10.0,
+    "max_temp_celsius": 35.0,
+    "tips": "Prefers direct light and ~25% humidity. Native range: Andaman Is..",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/611790591/original.jpg"
+  },
+  "hoya_kerrii": {
+    "common_name": "Sweetheart Hoya",
+    "scientific_name": "Hoya kerrii",
+    "aliases": [
+      "heart hoya",
+      "hoya kerrii",
+      "hoya_kerrii",
+      "sweetheart hoya"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 18,
+    "light": "direct",
+    "ideal_humidity_percent": 25,
+    "min_temp_celsius": 10.0,
+    "max_temp_celsius": 35.0,
+    "tips": "Prefers direct light and ~25% humidity. Native range: BR.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/606576289/original.jpg"
+  },
+  "mandevilla_sanderi": {
+    "common_name": "Brazilian Jasmine",
+    "scientific_name": "Mandevilla sanderi",
+    "aliases": [
+      "brazilian jasmine",
+      "mandevilla sanderi",
+      "mandevilla_sanderi"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 7,
+    "light": "direct",
+    "ideal_humidity_percent": 55,
+    "min_temp_celsius": 16.0,
+    "max_temp_celsius": 30.0,
+    "tips": "Prefers direct light and ~55% humidity. Native range: BR.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/610223574/original.jpg"
+  },
+  "alocasia_cuprea": {
+    "common_name": "Mirror Plant",
+    "scientific_name": "Alocasia cuprea",
+    "aliases": [
+      "alocasia cuprea",
+      "alocasia_cuprea",
+      "giant caladium",
+      "mirror plant"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 7,
+    "light": "direct",
+    "ideal_humidity_percent": 55,
+    "min_temp_celsius": 16.0,
+    "max_temp_celsius": 30.0,
+    "tips": "Prefers direct light and ~55% humidity. Native range: BR.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/616578386/original.jpg"
+  },
+  "alocasia_macrorrhizos": {
+    "common_name": "Giant Taro",
+    "scientific_name": "Alocasia macrorrhizos",
+    "aliases": [
+      "alocasia macrorrhizos",
+      "alocasia_macrorrhizos",
+      "giant taro"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 7,
+    "light": "direct",
+    "ideal_humidity_percent": 55,
+    "min_temp_celsius": 16.0,
+    "max_temp_celsius": 30.0,
+    "tips": "Prefers direct light and ~55% humidity. Native range: Caribbean.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/604729623/original.jpg"
+  },
+  "alocasia_reginula": {
+    "common_name": "Black Velvet Alocasia",
+    "scientific_name": "Alocasia reginula",
+    "aliases": [
+      "alocasia reginula",
+      "alocasia_reginula",
+      "black velvet alocasia"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 7,
+    "light": "bright_indirect",
+    "ideal_humidity_percent": 55,
+    "min_temp_celsius": 16.0,
+    "max_temp_celsius": 30.0,
+    "tips": "Prefers bright_indirect light and ~55% humidity. Native range: Borneo.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/619563869/original.jpg"
+  },
+  "anthurium_crystallinum": {
+    "common_name": "Crystal Anthurium",
+    "scientific_name": "Anthurium crystallinum",
+    "aliases": [
+      "anthurium crystallinum",
+      "anthurium_crystallinum",
+      "crystal anthurium"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 7,
+    "light": "direct",
+    "ideal_humidity_percent": 55,
+    "min_temp_celsius": 16.0,
+    "max_temp_celsius": 30.0,
+    "tips": "Prefers direct light and ~55% humidity. Native range: .",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/571901999/original.jpg"
+  },
+  "epipremnum_pinnatum": {
+    "common_name": "Cebu Blue Pothos",
+    "scientific_name": "Epipremnum pinnatum",
+    "aliases": [
+      "cebu blue pothos",
+      "centipede tongavine",
+      "epipremnum pinnatum",
+      "epipremnum_pinnatum"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 7,
+    "light": "bright_indirect",
+    "ideal_humidity_percent": 55,
+    "min_temp_celsius": 16.0,
+    "max_temp_celsius": 30.0,
+    "tips": "Prefers bright_indirect light and ~55% humidity. Native range: Caribbean.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/605329944/original.jpg"
+  },
+  "monstera_adansonii": {
+    "common_name": "Swiss Cheese Vine",
+    "scientific_name": "Monstera adansonii",
+    "aliases": [
+      "adanson's monstera",
+      "monstera adansonii",
+      "monstera_adansonii",
+      "swiss cheese vine"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 7,
+    "light": "bright_indirect",
+    "ideal_humidity_percent": 55,
+    "min_temp_celsius": 16.0,
+    "max_temp_celsius": 30.0,
+    "tips": "Prefers bright_indirect light and ~55% humidity. Native range: Amazonas, Antioquia, Arauca, Atl\u00e1ntico, Bol\u00edvar, Boyac\u00e1, Caldas, Caquet\u00e1, Casanare, Cesar, Choc\u00f3, C\u00f3rdoba, Cundinamarca,.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/604861825/original.jpg"
+  },
+  "monstera_obliqua": {
+    "common_name": "Monstera Obliqua",
+    "scientific_name": "Monstera obliqua",
+    "aliases": [
+      "monstera obliqua",
+      "monstera_obliqua",
+      "window-leaf monstera"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 7,
+    "light": "direct",
+    "ideal_humidity_percent": 55,
+    "min_temp_celsius": 16.0,
+    "max_temp_celsius": 30.0,
+    "tips": "Prefers direct light and ~55% humidity. Native range: Amazonas, Antioquia, Caldas, Caquet\u00e1, Cauca, Choc\u00f3, Cundinamarca, Meta, Putumayo, Quind\u00edo, Risaralda, Valle del Cauca, V.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/612938879/original.jpg"
+  },
+  "philodendron_erubescens": {
+    "common_name": "Blushing Philodendron",
+    "scientific_name": "Philodendron erubescens",
+    "aliases": [
+      "blushing philodendron",
+      "philodendron",
+      "philodendron erubescens",
+      "philodendron_erubescens"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 7,
+    "light": "bright_indirect",
+    "ideal_humidity_percent": 55,
+    "min_temp_celsius": 16.0,
+    "max_temp_celsius": 30.0,
+    "tips": "Prefers bright_indirect light and ~55% humidity. Native range: Armenia.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/611189284/original.jpg"
+  },
+  "philodendron_hederaceum_hederaceum": {
+    "common_name": "Velvet Leaf Philodendron",
+    "scientific_name": "Philodendron hederaceum hederaceum",
+    "aliases": [
+      "philodendron hederaceum hederaceum",
+      "philodendron_hederaceum_hederaceum",
+      "sweetheart plant",
+      "velvet leaf philodendron"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 7,
+    "light": "bright_indirect",
+    "ideal_humidity_percent": 55,
+    "min_temp_celsius": 16.0,
+    "max_temp_celsius": 30.0,
+    "tips": "Prefers bright_indirect light and ~55% humidity. Native range: Caribbean.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/605747249/original.jpg"
+  },
+  "philodendron_melanochrysum": {
+    "common_name": "Black Gold Philodendron",
+    "scientific_name": "Philodendron melanochrysum",
+    "aliases": [
+      "black gold philodendron",
+      "black-gold philodendron",
+      "philodendron melanochrysum",
+      "philodendron_melanochrysum"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 7,
+    "light": "direct",
+    "ideal_humidity_percent": 55,
+    "min_temp_celsius": 16.0,
+    "max_temp_celsius": 30.0,
+    "tips": "Prefers direct light and ~55% humidity. Native range: Antioquia.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/612969013/original.jpg"
+  },
+  "rhaphidophora_tetrasperma": {
+    "common_name": "Mini Monstera",
+    "scientific_name": "Rhaphidophora tetrasperma",
+    "aliases": [
+      "mini monstera",
+      "rhaphidophora tetrasperma",
+      "rhaphidophora_tetrasperma"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 7,
+    "light": "direct",
+    "ideal_humidity_percent": 55,
+    "min_temp_celsius": 16.0,
+    "max_temp_celsius": 30.0,
+    "tips": "Prefers direct light and ~55% humidity. Native range: Malaya.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/683933371/original.jpg"
+  },
+  "spathiphyllum_floribundum": {
+    "common_name": "Snowflower",
+    "scientific_name": "Spathiphyllum floribundum",
+    "aliases": [
+      "snow flower (peace lily)",
+      "snowflower",
+      "spathiphyllum floribundum",
+      "spathiphyllum_floribundum"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 7,
+    "light": "low",
+    "ideal_humidity_percent": 55,
+    "min_temp_celsius": 16.0,
+    "max_temp_celsius": 30.0,
+    "tips": "Prefers low light and ~55% humidity. Native range: Colombia.",
+    "image_url": "https://web.corral.tacc.utexas.edu/brit/BRIT/BRIT1154000/BRIT1154877.jpg"
+  },
+  "xanthosoma_sagittifolium": {
+    "common_name": "Arrowleaf Elephant Ear",
+    "scientific_name": "Xanthosoma sagittifolium",
+    "aliases": [
+      "arrowleaf elephant ear",
+      "arrowleaf elephant's ear",
+      "xanthosoma sagittifolium",
+      "xanthosoma_sagittifolium"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 7,
+    "light": "direct",
+    "ideal_humidity_percent": 55,
+    "min_temp_celsius": 16.0,
+    "max_temp_celsius": 30.0,
+    "tips": "Prefers direct light and ~55% humidity. Native range: Amazonas, Antioquia, Choc\u00f3, Cundinamarca, La Guajira, Nari\u00f1o, Risaralda, Santander, Tolima, Valle del Cauca.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/604926112/original.jpg"
+  },
+  "hedera_canariensis": {
+    "common_name": "Algerian Ivy",
+    "scientific_name": "Hedera canariensis",
+    "aliases": [
+      "algerian ivy",
+      "hedera canariensis",
+      "hedera_canariensis"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 7,
+    "light": "bright_indirect",
+    "ideal_humidity_percent": 55,
+    "min_temp_celsius": 16.0,
+    "max_temp_celsius": 30.0,
+    "tips": "Prefers bright_indirect light and ~55% humidity. Native range: BR.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/604661494/original.jpg"
+  },
+  "polyscias_fruticosa": {
+    "common_name": "Ming Aralia",
+    "scientific_name": "Polyscias fruticosa",
+    "aliases": [
+      "ming aralia",
+      "polyscias fruticosa",
+      "polyscias_fruticosa"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 7,
+    "light": "direct",
+    "ideal_humidity_percent": 55,
+    "min_temp_celsius": 16.0,
+    "max_temp_celsius": 30.0,
+    "tips": "Prefers direct light and ~55% humidity. Native range: Andaman Is..",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/609455871/original.jpg"
+  },
+  "polyscias_scutellaria": {
+    "common_name": "Shield Aralia",
+    "scientific_name": "Polyscias scutellaria",
+    "aliases": [
+      "polyscias scutellaria",
+      "polyscias_scutellaria",
+      "shield aralia"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 7,
+    "light": "direct",
+    "ideal_humidity_percent": 55,
+    "min_temp_celsius": 16.0,
+    "max_temp_celsius": 30.0,
+    "tips": "Prefers direct light and ~55% humidity. Native range: Caribbean.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/608389605/original.jpg"
+  },
+  "caryota_mitis": {
+    "common_name": "Fishtail Palm",
+    "scientific_name": "Caryota mitis",
+    "aliases": [
+      "burmese fishtail palm",
+      "caryota mitis",
+      "caryota_mitis",
+      "fishtail palm"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 7,
+    "light": "direct",
+    "ideal_humidity_percent": 55,
+    "min_temp_celsius": 16.0,
+    "max_temp_celsius": 30.0,
+    "tips": "Prefers direct light and ~55% humidity. Native range: Gal\u00e1pagos Islands.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/605401723/original.jpg"
+  },
+  "chamaedorea_seifrizii": {
+    "common_name": "Bamboo Palm",
+    "scientific_name": "Chamaedorea seifrizii",
+    "aliases": [
+      "bamboo palm",
+      "chamaedorea seifrizii",
+      "chamaedorea_seifrizii",
+      "seifriz's chamaedorea"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 7,
+    "light": "bright_indirect",
+    "ideal_humidity_percent": 55,
+    "min_temp_celsius": 16.0,
+    "max_temp_celsius": 30.0,
+    "tips": "Prefers bright_indirect light and ~55% humidity. Native range: INTRODUCED.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/628753602/original.jpg"
+  },
+  "licuala_grandis": {
+    "common_name": "Ruffled Fan Palm",
+    "scientific_name": "Licuala grandis",
+    "aliases": [
+      "grosse licuala palm",
+      "licuala grandis",
+      "licuala_grandis",
+      "ruffled fan palm"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 7,
+    "light": "direct",
+    "ideal_humidity_percent": 55,
+    "min_temp_celsius": 16.0,
+    "max_temp_celsius": 30.0,
+    "tips": "Prefers direct light and ~55% humidity. Native range: INTRODUCED.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/605923997/original.jpg"
+  },
+  "agave_victoriae_reginae": {
+    "common_name": "Queen Victoria Agave",
+    "scientific_name": "Agave victoriae-reginae",
+    "aliases": [
+      "agave victoriae-reginae",
+      "agave_victoriae_reginae",
+      "queen victoria agave"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 7,
+    "light": "direct",
+    "ideal_humidity_percent": 55,
+    "min_temp_celsius": 16.0,
+    "max_temp_celsius": 30.0,
+    "tips": "Prefers direct light and ~55% humidity. Native range: BR.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/605461242/original.jpg"
+  },
+  "dracaena_sanderiana": {
+    "common_name": "Lucky Bamboo",
+    "scientific_name": "Dracaena sanderiana",
+    "aliases": [
+      "belgian evergreen",
+      "dracaena sanderiana",
+      "dracaena_sanderiana",
+      "lucky bamboo"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 7,
+    "light": "low",
+    "ideal_humidity_percent": 55,
+    "min_temp_celsius": 16.0,
+    "max_temp_celsius": 30.0,
+    "tips": "Prefers low light and ~55% humidity. Native range: Angola.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/610142513/original.jpg"
+  },
+  "senecio_macroglossus": {
+    "common_name": "Wax Ivy",
+    "scientific_name": "Senecio macroglossus",
+    "aliases": [
+      "cape-ivy",
+      "senecio macroglossus",
+      "senecio_macroglossus",
+      "wax ivy"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 7,
+    "light": "direct",
+    "ideal_humidity_percent": 50,
+    "min_temp_celsius": 15.0,
+    "max_temp_celsius": 28.0,
+    "tips": "Prefers direct light and ~50% humidity. Native range: Congo [Brazzaville] [I].",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/613292592/original.jpg"
+  },
+  "begonia_bowerae": {
+    "common_name": "Eyelash Begonia",
+    "scientific_name": "Begonia bowerae",
+    "aliases": [
+      "begonia bowerae",
+      "begonia_bowerae",
+      "eyelash begonia"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 6,
+    "light": "bright_indirect",
+    "ideal_humidity_percent": 65,
+    "min_temp_celsius": 16.0,
+    "max_temp_celsius": 28.0,
+    "tips": "Prefers bright_indirect light and ~65% humidity. Native range: BR.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/375957538/original.jpg"
+  },
+  "begonia_coccinea": {
+    "common_name": "Angel Wing Begonia",
+    "scientific_name": "Begonia coccinea",
+    "aliases": [
+      "angel wing begonia",
+      "begonia coccinea",
+      "begonia_coccinea",
+      "scarlet begonia"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 6,
+    "light": "direct",
+    "ideal_humidity_percent": 65,
+    "min_temp_celsius": 16.0,
+    "max_temp_celsius": 28.0,
+    "tips": "Prefers direct light and ~65% humidity. Native range: Bogot\u00e1.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/618997228/original.jpg"
+  },
+  "begonia_luxurians": {
+    "common_name": "Palm Leaf Begonia",
+    "scientific_name": "Begonia luxurians",
+    "aliases": [
+      "begonia luxurians",
+      "begonia_luxurians",
+      "palm leaf begonia"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 6,
+    "light": "direct",
+    "ideal_humidity_percent": 65,
+    "min_temp_celsius": 16.0,
+    "max_temp_celsius": 28.0,
+    "tips": "Prefers direct light and ~65% humidity. Native range: BR.",
+    "image_url": "http://jbrj-public-img.s3-sa-east-1.amazonaws.com/JPG/rbr/rbr/0/6/16/7/rbr00061607.jpg"
+  },
+  "tradescantia_pallida": {
+    "common_name": "Purple Heart",
+    "scientific_name": "Tradescantia pallida",
+    "aliases": [
+      "\"wandering jew\"",
+      "purple heart",
+      "tradescantia pallida",
+      "tradescantia_pallida"
+    ],
+    "type": "indoor",
+    "water_frequency_days": 7,
+    "light": "direct",
+    "ideal_humidity_percent": 55,
+    "min_temp_celsius": 16.0,
+    "max_temp_celsius": 30.0,
+    "tips": "Prefers direct light and ~55% humidity. Native range: Caribbean.",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/605738794/original.jpg"
   },
   "solanum_lycopersicum": {
     "common_name": "Tomato",
-    "aliases": ["tomato", "tomat", "garden tomato", "cherry tomato"],
+    "scientific_name": "Solanum lycopersicum",
+    "aliases": [
+      "garden tomato",
+      "solanum lycopersicum",
+      "solanum_lycopersicum",
+      "tomat",
+      "tomato"
+    ],
     "type": "outdoor_crop",
     "water_needs_inches_weekly": 1.5,
+    "water_frequency_days": 5,
     "light": "direct",
     "days_to_harvest": 70,
     "weeks_before_last_frost": 6,
-    "companions": ["basil", "marigold"],
-    "enemies": ["fennel", "potato"],
-    "toxic_to_pets": false,
-    "common_issues": ["blossom_end_rot", "early_blight", "hornworms"],
+    "companions": [
+      "basil",
+      "marigold",
+      "alliums"
+    ],
+    "enemies": [
+      "fennel",
+      "potato",
+      "corn"
+    ],
     "tips": "Stake or cage plants. Provide consistent moisture to prevent blossom end rot."
   },
   "ocimum_basilicum": {
     "common_name": "Basil",
-    "aliases": ["basil", "sweet basil", "kemangi"],
+    "scientific_name": "Ocimum basilicum",
+    "aliases": [
+      "basil",
+      "kemangi",
+      "ocimum basilicum",
+      "ocimum_basilicum",
+      "selasih",
+      "sweet basil"
+    ],
     "type": "outdoor_crop",
     "water_needs_inches_weekly": 1.0,
+    "water_frequency_days": 7,
     "light": "direct",
     "days_to_harvest": 30,
     "weeks_before_last_frost": 4,
-    "companions": ["tomato", "pepper"],
-    "enemies": ["rue"],
-    "toxic_to_pets": false,
-    "common_issues": ["downy_mildew", "aphids"],
-    "tips": "Pinch flowers to keep leaves producing. Harvest regularly."
+    "companions": [
+      "tomatoes",
+      "peppers",
+      "marigold"
+    ],
+    "enemies": [
+      "rue"
+    ],
+    "tips": "Pinch flower buds to prolong leaf harvest."
   },
   "capsicum_annuum": {
     "common_name": "Pepper",
-    "aliases": ["pepper", "bell pepper", "chili pepper", "cabai", "lombok"],
+    "scientific_name": "Capsicum annuum",
+    "aliases": [
+      "bell pepper",
+      "cabai",
+      "capsicum annuum",
+      "capsicum_annuum",
+      "chili",
+      "lombok",
+      "pepper"
+    ],
     "type": "outdoor_crop",
     "water_needs_inches_weekly": 1.5,
+    "water_frequency_days": 5,
     "light": "direct",
     "days_to_harvest": 70,
     "weeks_before_last_frost": 8,
-    "companions": ["basil", "marigold"],
-    "enemies": ["fennel"],
-    "toxic_to_pets": false,
-    "common_issues": ["blossom_end_rot_from_inconsistent_watering", "aphids"],
-    "tips": "Needs consistent moisture. Mulch to retain soil moisture."
+    "companions": [
+      "basil",
+      "tomatoes",
+      "onions"
+    ],
+    "enemies": [
+      "fennel",
+      "kohlrabi"
+    ],
+    "tips": "Needs warm soil and consistent moisture."
   },
   "cucumis_sativus": {
     "common_name": "Cucumber",
-    "aliases": ["cucumber", "timun", "ketimun"],
+    "scientific_name": "Cucumis sativus",
+    "aliases": [
+      "cucumber",
+      "cucumis sativus",
+      "cucumis_sativus",
+      "mentimun",
+      "timun"
+    ],
     "type": "outdoor_crop",
     "water_needs_inches_weekly": 1.5,
+    "water_frequency_days": 5,
     "light": "direct",
     "days_to_harvest": 55,
     "weeks_before_last_frost": 4,
-    "companions": ["beans", "radish"],
-    "enemies": ["potato"],
-    "toxic_to_pets": false,
-    "common_issues": ["powdery_mildew", "cucumber_beetles"],
-    "tips": "Give them a trellis to climb. Keep soil consistently moist."
+    "companions": [
+      "beans",
+      "corn",
+      "radish"
+    ],
+    "enemies": [
+      "potato",
+      "aromatic herbs"
+    ],
+    "tips": "Trellis vines to save garden space and keep fruit clean."
   },
   "lactuca_sativa": {
     "common_name": "Lettuce",
-    "aliases": ["lettuce", "selada"],
+    "scientific_name": "Lactuca sativa",
+    "aliases": [
+      "lactuca sativa",
+      "lactuca_sativa",
+      "lettuce",
+      "selada"
+    ],
     "type": "outdoor_crop",
     "water_needs_inches_weekly": 1.0,
+    "water_frequency_days": 7,
     "light": "medium",
     "days_to_harvest": 45,
     "weeks_before_last_frost": 4,
-    "companions": ["carrot", "radish"],
+    "companions": [
+      "carrots",
+      "radish",
+      "strawberries"
+    ],
     "enemies": [],
-    "toxic_to_pets": false,
-    "common_issues": ["bolting_from_heat", "slugs"],
-    "tips": "Shallow roots — water frequently but lightly. Bolts in heat."
+    "tips": "Shallow roots require frequent light watering."
   },
   "daucus_carota": {
     "common_name": "Carrot",
-    "aliases": ["carrot", "wortel"],
+    "scientific_name": "Daucus carota",
+    "aliases": [
+      "carrot",
+      "daucus carota",
+      "daucus_carota",
+      "wortel"
+    ],
     "type": "outdoor_crop",
     "water_needs_inches_weekly": 1.0,
+    "water_frequency_days": 7,
     "light": "direct",
     "days_to_harvest": 70,
     "weeks_before_last_frost": 3,
-    "companions": ["lettuce", "onion"],
-    "enemies": ["dill"],
-    "toxic_to_pets": false,
-    "common_issues": ["forked_roots_from_rocky_soil", "carrot_fly"],
-    "tips": "Needs loose, deep soil. Thin seedlings to 2 inches apart."
+    "companions": [
+      "lettuce",
+      "onions",
+      "rosemary"
+    ],
+    "enemies": [
+      "fennel",
+      "dill"
+    ],
+    "tips": "Plant in deep, loose, stone-free soil."
   },
   "spinacia_oleracea": {
     "common_name": "Spinach",
-    "aliases": ["spinach", "bayam"],
+    "scientific_name": "Spinacia oleracea",
+    "aliases": [
+      "bayam",
+      "spinach",
+      "spinacia oleracea",
+      "spinacia_oleracea"
+    ],
     "type": "outdoor_crop",
     "water_needs_inches_weekly": 1.0,
+    "water_frequency_days": 7,
     "light": "medium",
     "days_to_harvest": 40,
     "weeks_before_last_frost": 6,
-    "companions": ["strawberry", "pea"],
+    "companions": [
+      "strawberries",
+      "peas"
+    ],
     "enemies": [],
-    "toxic_to_pets": false,
-    "common_issues": ["bolting_from_heat", "downy_mildew"],
-    "tips": "Cool-season crop. Plant in spring and fall."
+    "tips": "Cool season crop. Harvest outer leaves continuously."
   },
   "phaseolus_vulgaris": {
     "common_name": "Green Bean",
-    "aliases": ["green bean", "bush bean", "string bean", "buncis"],
+    "scientific_name": "Phaseolus vulgaris",
+    "aliases": [
+      "buncis",
+      "green bean",
+      "kacang buncis",
+      "phaseolus vulgaris",
+      "phaseolus_vulgaris"
+    ],
     "type": "outdoor_crop",
     "water_needs_inches_weekly": 1.0,
+    "water_frequency_days": 7,
     "light": "direct",
     "days_to_harvest": 55,
     "weeks_before_last_frost": 2,
-    "companions": ["cucumber", "corn"],
-    "enemies": ["onion"],
-    "toxic_to_pets": false,
-    "common_issues": ["bean_beetles", "rust"],
-    "tips": "Fixes nitrogen in soil. Don't plant near onions."
+    "companions": [
+      "corn",
+      "cucumbers",
+      "potatoes"
+    ],
+    "enemies": [
+      "onions",
+      "garlic"
+    ],
+    "tips": "Fixes nitrogen in soil. Avoid planting near alliums."
   },
   "zea_mays": {
     "common_name": "Corn",
-    "aliases": ["corn", "sweet corn", "maize", "jagung"],
+    "scientific_name": "Zea mays",
+    "aliases": [
+      "corn",
+      "jagung",
+      "sweet corn",
+      "zea mays",
+      "zea_mays"
+    ],
     "type": "outdoor_crop",
     "water_needs_inches_weekly": 1.5,
+    "water_frequency_days": 5,
     "light": "direct",
     "days_to_harvest": 80,
     "weeks_before_last_frost": 2,
-    "companions": ["beans", "squash"],
-    "enemies": ["tomato"],
-    "toxic_to_pets": false,
-    "common_issues": ["corn_earworm", "poor_pollination_from_single_row"],
-    "tips": "Plant in blocks for better pollination. Heavy feeder."
-  },
-  "cucurbita_pepo": {
-    "common_name": "Zucchini",
-    "aliases": ["zucchini", "courgette", "summer squash", "labu"],
-    "type": "outdoor_crop",
-    "water_needs_inches_weekly": 1.5,
-    "light": "direct",
-    "days_to_harvest": 50,
-    "weeks_before_last_frost": 3,
-    "companions": ["corn", "beans"],
-    "enemies": ["potato"],
-    "toxic_to_pets": false,
-    "common_issues": ["powdery_mildew", "squash_vine_borer"],
-    "tips": "One plant produces abundantly. Harvest when small for best flavor."
+    "companions": [
+      "beans",
+      "squash",
+      "cucumbers"
+    ],
+    "enemies": [
+      "tomatoes"
+    ],
+    "tips": "Plant in dense blocks rather than single rows for wind pollination."
   },
   "allium_cepa": {
     "common_name": "Onion",
-    "aliases": ["onion", "bawang", "bawang merah"],
+    "scientific_name": "Allium cepa",
+    "aliases": [
+      "allium cepa",
+      "allium_cepa",
+      "bawang",
+      "bawang bombay",
+      "bawang merah",
+      "onion"
+    ],
     "type": "outdoor_crop",
     "water_needs_inches_weekly": 1.0,
+    "water_frequency_days": 7,
     "light": "direct",
     "days_to_harvest": 100,
     "weeks_before_last_frost": 6,
-    "companions": ["carrot", "lettuce"],
-    "enemies": ["beans", "peas"],
-    "toxic_to_pets": true,
-    "common_issues": ["onion_fly", "neck_rot"],
-    "tips": "Stop watering when tops start falling over — bulbs are maturing."
+    "companions": [
+      "carrots",
+      "beets",
+      "lettuce"
+    ],
+    "enemies": [
+      "beans",
+      "peas"
+    ],
+    "tips": "Natural pest deterrent. Stop watering when tops fall over."
   },
   "solanum_tuberosum": {
     "common_name": "Potato",
-    "aliases": ["potato", "kentang"],
+    "scientific_name": "Solanum tuberosum",
+    "aliases": [
+      "kentang",
+      "potato",
+      "solanum tuberosum",
+      "solanum_tuberosum"
+    ],
     "type": "outdoor_crop",
     "water_needs_inches_weekly": 1.5,
+    "water_frequency_days": 5,
     "light": "direct",
     "days_to_harvest": 90,
     "weeks_before_last_frost": 4,
-    "companions": ["beans", "corn"],
-    "enemies": ["cucumber", "zucchini"],
-    "toxic_to_pets": false,
-    "common_issues": ["late_blight", "colorado_potato_beetle"],
-    "tips": "Hill soil around stems as they grow. Don't plant near cucumbers."
-  },
-  "fragaria_ananassa": {
-    "common_name": "Strawberry",
-    "aliases": ["strawberry", "stroberi"],
-    "type": "outdoor_crop",
-    "water_needs_inches_weekly": 1.0,
-    "light": "direct",
-    "days_to_harvest": 60,
-    "weeks_before_last_frost": 6,
-    "companions": ["spinach", "lettuce"],
-    "enemies": [],
-    "toxic_to_pets": false,
-    "common_issues": ["gray_mold", "slugs"],
-    "tips": "Mulch with straw to keep berries off soil. Remove runners for bigger fruit."
+    "companions": [
+      "beans",
+      "corn",
+      "marigold"
+    ],
+    "enemies": [
+      "cucumbers",
+      "tomatoes",
+      "squash"
+    ],
+    "tips": "Hill soil around stems as foliage grows."
   },
   "mentha_spicata": {
     "common_name": "Mint",
-    "aliases": ["mint", "spearmint", "peppermint"],
-    "type": "outdoor",
-    "water_frequency_days": 5,
+    "scientific_name": "Mentha spicata",
+    "aliases": [
+      "daun mint",
+      "mentha spicata",
+      "mentha_spicata",
+      "mint",
+      "spearmint"
+    ],
+    "type": "outdoor_crop",
     "water_needs_inches_weekly": 1.0,
+    "water_frequency_days": 7,
     "light": "medium",
-    "humidity": "medium",
-    "toxic_to_pets": false,
-    "common_issues": ["rust", "spider_mites"],
-    "tips": "Extremely invasive — always plant in containers."
-  },
-  "rosmarinus_officinalis": {
-    "common_name": "Rosemary",
-    "aliases": ["rosemary"],
-    "type": "outdoor",
-    "water_frequency_days": 7,
-    "water_needs_inches_weekly": 0.5,
-    "light": "direct",
-    "humidity": "low",
-    "toxic_to_pets": false,
-    "common_issues": ["root_rot_from_overwatering", "powdery_mildew"],
-    "tips": "Drought tolerant once established. Loves full sun and good drainage."
-  },
-  "thymus_vulgaris": {
-    "common_name": "Thyme",
-    "aliases": ["thyme", "common thyme"],
-    "type": "outdoor",
-    "water_frequency_days": 7,
-    "water_needs_inches_weekly": 0.5,
-    "light": "direct",
-    "humidity": "low",
-    "toxic_to_pets": false,
-    "common_issues": ["root_rot_from_overwatering"],
-    "tips": "Loves heat and poor soil. Water sparingly."
-  },
-  "helianthus_annuus": {
-    "common_name": "Sunflower",
-    "aliases": ["sunflower", "bunga matahari"],
-    "type": "outdoor",
-    "water_frequency_days": 7,
-    "water_needs_inches_weekly": 1.0,
-    "light": "direct",
-    "humidity": "medium",
-    "toxic_to_pets": false,
-    "common_issues": ["powdery_mildew", "birds_eating_seeds"],
-    "tips": "Follows the sun. Stake tall varieties."
-  },
-  "rosa_chinensis": {
-    "common_name": "Rose",
-    "aliases": ["rose", "mawar"],
-    "type": "outdoor",
-    "water_frequency_days": 5,
-    "water_needs_inches_weekly": 1.5,
-    "light": "direct",
-    "humidity": "medium",
-    "toxic_to_pets": false,
-    "common_issues": ["black_spot", "aphids", "powdery_mildew"],
-    "tips": "Water at the base, not on leaves. Prune in early spring."
+    "days_to_harvest": 60,
+    "weeks_before_last_frost": 4,
+    "companions": [
+      "cabbage",
+      "tomatoes"
+    ],
+    "enemies": [],
+    "tips": "Vigorous spreader \u2014 best grown in containers."
   },
   "tagetes_erecta": {
     "common_name": "Marigold",
-    "aliases": ["marigold", "tagetes", "gemitir"],
-    "type": "outdoor",
-    "water_frequency_days": 5,
-    "water_needs_inches_weekly": 1.0,
-    "light": "direct",
-    "humidity": "medium",
-    "toxic_to_pets": false,
-    "common_issues": ["spider_mites", "root_rot_from_overwatering"],
-    "tips": "Great companion plant — repels many pests."
-  },
-  "pisum_sativum": {
-    "common_name": "Pea",
-    "aliases": ["pea", "garden pea", "kacang polong"],
+    "scientific_name": "Tagetes erecta",
+    "aliases": [
+      "bunga tai ayam",
+      "gemitir",
+      "marigold",
+      "tagetes erecta",
+      "tagetes_erecta"
+    ],
     "type": "outdoor_crop",
     "water_needs_inches_weekly": 1.0,
+    "water_frequency_days": 7,
     "light": "direct",
-    "days_to_harvest": 60,
-    "weeks_before_last_frost": 6,
-    "companions": ["carrot", "corn"],
-    "enemies": ["onion"],
-    "toxic_to_pets": false,
-    "common_issues": ["powdery_mildew", "pea_weevil"],
-    "tips": "Cool-season crop. Give them a trellis to climb."
-  },
-  "brassica_oleracea": {
-    "common_name": "Cabbage",
-    "aliases": ["cabbage", "kol", "kubis"],
-    "type": "outdoor_crop",
-    "water_needs_inches_weekly": 1.5,
-    "light": "direct",
-    "days_to_harvest": 80,
-    "weeks_before_last_frost": 8,
-    "companions": ["onion", "dill"],
-    "enemies": ["strawberry"],
-    "toxic_to_pets": false,
-    "common_issues": ["cabbage_worm", "clubroot"],
-    "tips": "Heavy feeder. Keep soil consistently moist."
-  },
-  "raphanus_sativus": {
-    "common_name": "Radish",
-    "aliases": ["radish", "lobak"],
-    "type": "outdoor_crop",
-    "water_needs_inches_weekly": 0.5,
-    "light": "direct",
-    "days_to_harvest": 25,
-    "weeks_before_last_frost": 3,
-    "companions": ["lettuce", "carrot"],
-    "enemies": [],
-    "toxic_to_pets": false,
-    "common_issues": ["flea_beetles", "splitting_from_inconsistent_watering"],
-    "tips": "Fastest vegetable to grow. Ready in 3-4 weeks."
-  },
-  "coriandrum_sativum": {
-    "common_name": "Cilantro",
-    "aliases": ["cilantro", "coriander", "ketumbar"],
-    "type": "outdoor_crop",
-    "water_needs_inches_weekly": 0.5,
-    "light": "medium",
-    "days_to_harvest": 45,
+    "days_to_harvest": 50,
     "weeks_before_last_frost": 4,
-    "companions": ["spinach", "lettuce"],
-    "enemies": ["fennel"],
-    "toxic_to_pets": false,
-    "common_issues": ["bolting_from_heat"],
-    "tips": "Bolts quickly in heat. Plant successive crops every 2 weeks."
+    "companions": [
+      "tomatoes",
+      "peppers",
+      "cucumbers"
+    ],
+    "enemies": [],
+    "tips": "Excellent companion plant that repels nematodes and garden pests."
   }
 }
