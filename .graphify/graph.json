@@ -1696,7 +1696,21 @@
   },
   {
    "source": "tasks/day-01",
-   "target": "docs/decisions",
+   "target": "CLAUDE",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "tasks/day-01",
+   "target": "docs/architecture",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "tasks/day-01",
+   "target": "plan",
    "relation": "links_to",
    "confidence": "EXTRACTED",
    "weight": 1
@@ -2215,6 +2229,153 @@
   {
    "source": "tasks/kanban",
    "target": "specification",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "tasks/kanban",
+   "target": "docs/data-model",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "tasks/kanban",
+   "target": "docs/data-model",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "tasks/kanban",
+   "target": "docs/backend-api",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "tasks/kanban",
+   "target": "docs/ui-ux-overview",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "tasks/kanban",
+   "target": "specification",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "tasks/kanban",
+   "target": "docs/backend-api",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "tasks/kanban",
+   "target": "docs/api-integrations",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "tasks/kanban",
+   "target": "docs/webmcp-tools",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "tasks/kanban",
+   "target": "docs/testing-strategy",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "tasks/kanban",
+   "target": "docs/diagnosis-engine",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "tasks/kanban",
+   "target": "docs/diagnosis-engine",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "tasks/kanban",
+   "target": "docs/ui-ux-overview",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "tasks/kanban",
+   "target": "docs/testing-strategy",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "tasks/kanban",
+   "target": "docs/backend-api",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "tasks/kanban",
+   "target": "docs/api-integrations",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "tasks/kanban",
+   "target": "docs/ui-ux-overview",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "tasks/kanban",
+   "target": "docs/deployment",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "tasks/kanban",
+   "target": "PlantNeeds-SRD",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "tasks/kanban",
+   "target": "PlantNeeds-SRD",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "tasks/kanban",
+   "target": "docs/testing-strategy",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "tasks/kanban",
+   "target": "docs/testing-strategy",
    "relation": "links_to",
    "confidence": "EXTRACTED",
    "weight": 1
@@ -2229,153 +2390,6 @@
   {
    "source": "tasks/kanban",
    "target": "docs/database-schema",
-   "relation": "links_to",
-   "confidence": "EXTRACTED",
-   "weight": 1
-  },
-  {
-   "source": "tasks/kanban",
-   "target": "docs/data-model",
-   "relation": "links_to",
-   "confidence": "EXTRACTED",
-   "weight": 1
-  },
-  {
-   "source": "tasks/kanban",
-   "target": "docs/data-model",
-   "relation": "links_to",
-   "confidence": "EXTRACTED",
-   "weight": 1
-  },
-  {
-   "source": "tasks/kanban",
-   "target": "docs/backend-api",
-   "relation": "links_to",
-   "confidence": "EXTRACTED",
-   "weight": 1
-  },
-  {
-   "source": "tasks/kanban",
-   "target": "docs/ui-ux-overview",
-   "relation": "links_to",
-   "confidence": "EXTRACTED",
-   "weight": 1
-  },
-  {
-   "source": "tasks/kanban",
-   "target": "specification",
-   "relation": "links_to",
-   "confidence": "EXTRACTED",
-   "weight": 1
-  },
-  {
-   "source": "tasks/kanban",
-   "target": "docs/backend-api",
-   "relation": "links_to",
-   "confidence": "EXTRACTED",
-   "weight": 1
-  },
-  {
-   "source": "tasks/kanban",
-   "target": "docs/api-integrations",
-   "relation": "links_to",
-   "confidence": "EXTRACTED",
-   "weight": 1
-  },
-  {
-   "source": "tasks/kanban",
-   "target": "docs/webmcp-tools",
-   "relation": "links_to",
-   "confidence": "EXTRACTED",
-   "weight": 1
-  },
-  {
-   "source": "tasks/kanban",
-   "target": "docs/testing-strategy",
-   "relation": "links_to",
-   "confidence": "EXTRACTED",
-   "weight": 1
-  },
-  {
-   "source": "tasks/kanban",
-   "target": "docs/diagnosis-engine",
-   "relation": "links_to",
-   "confidence": "EXTRACTED",
-   "weight": 1
-  },
-  {
-   "source": "tasks/kanban",
-   "target": "docs/diagnosis-engine",
-   "relation": "links_to",
-   "confidence": "EXTRACTED",
-   "weight": 1
-  },
-  {
-   "source": "tasks/kanban",
-   "target": "docs/ui-ux-overview",
-   "relation": "links_to",
-   "confidence": "EXTRACTED",
-   "weight": 1
-  },
-  {
-   "source": "tasks/kanban",
-   "target": "docs/testing-strategy",
-   "relation": "links_to",
-   "confidence": "EXTRACTED",
-   "weight": 1
-  },
-  {
-   "source": "tasks/kanban",
-   "target": "docs/backend-api",
-   "relation": "links_to",
-   "confidence": "EXTRACTED",
-   "weight": 1
-  },
-  {
-   "source": "tasks/kanban",
-   "target": "docs/api-integrations",
-   "relation": "links_to",
-   "confidence": "EXTRACTED",
-   "weight": 1
-  },
-  {
-   "source": "tasks/kanban",
-   "target": "docs/ui-ux-overview",
-   "relation": "links_to",
-   "confidence": "EXTRACTED",
-   "weight": 1
-  },
-  {
-   "source": "tasks/kanban",
-   "target": "docs/deployment",
-   "relation": "links_to",
-   "confidence": "EXTRACTED",
-   "weight": 1
-  },
-  {
-   "source": "tasks/kanban",
-   "target": "PlantNeeds-SRD",
-   "relation": "links_to",
-   "confidence": "EXTRACTED",
-   "weight": 1
-  },
-  {
-   "source": "tasks/kanban",
-   "target": "PlantNeeds-SRD",
-   "relation": "links_to",
-   "confidence": "EXTRACTED",
-   "weight": 1
-  },
-  {
-   "source": "tasks/kanban",
-   "target": "docs/testing-strategy",
-   "relation": "links_to",
-   "confidence": "EXTRACTED",
-   "weight": 1
-  },
-  {
-   "source": "tasks/kanban",
-   "target": "docs/testing-strategy",
    "relation": "links_to",
    "confidence": "EXTRACTED",
    "weight": 1

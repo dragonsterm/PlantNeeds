@@ -78,7 +78,7 @@ Days 1-2                     Days 3-6                      Days 7-8             
 
 > Update this table as milestones complete (agents: check off + date).
 
-- [ ] 🏁 Day 2 gate — foundation solid
+- [ ] 🏁 Day 2 gate — foundation solid *(Day 1 ✅ scaffold+DB foundation `45d343f` 2026-09-01; gate closes Day 2 pending live Postgres connect)*
 - [ ] 🏁 Day 4 gate — human-usable app
 - [ ] 🏁 Day 6 gate — agent-callable app
 - [ ] 🏁 Day 8 gate — demo scenario passes in ChatGPT browser

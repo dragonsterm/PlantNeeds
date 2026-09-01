@@ -11,8 +11,6 @@ type: tracker
 ## 📋 Backlog
 | ID | Task | Day | Links |
 |---|---|---|---|
-| T-01 | Scaffold Vite client + Express server + repo structure | 1 | [[specification#1. Technology Stack (Locked)|spec §1]] |
-| T-02 | PostgreSQL schema (`migrate.sql`) + `db/pool.js` + reactive store | 1 | [[docs/database-schema]] |
 | T-03 | plants-db.json — 50 species seed data | 2 | [[docs/data-model#Plant Database Format|data-model]] |
 | T-04 | Species matching (aliases, fallback profile) | 2 | [[docs/data-model#Species Matching (agent-friendly)|matching]] |
 | T-05 | Auth endpoints: register/login/me (JWT + bcrypt) + auth middleware | 2 | [[docs/backend-api#Authentication\|backend-api]] |
@@ -41,4 +39,7 @@ _(empty — pull from Backlog)_
 _(log with repro steps — see [[docs/testing-strategy#Bug Protocol|bug protocol]])_
 
 ## ✅ Done
-_(move completed tasks here with completion date)_
+| ID | Task | Day | Completed | Links |
+|---|---|---|---|---|
+| T-01 | Scaffold Vite client + Express server + repo structure | 1 | 2026-09-01 (`45d343f`) | [[specification#1. Technology Stack (Locked)|spec §1]] |
+| T-02 | PostgreSQL schema (`migrate.sql`) + `db/pool.js` + reactive store | 1 | 2026-09-01 (`45d343f`) | [[docs/database-schema]] |
