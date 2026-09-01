@@ -9,6 +9,7 @@
  *   NODE_ENV      — 'production' enables SSL (Render managed Postgres requires it)
  */
 import pg from 'pg';
+import 'dotenv/config';
 
 const { Pool } = pg;
 
@@ -32,6 +33,9 @@ pool.on('error', (err) => {
 export function query(text, params) {
   return pool.query(text, params);
 }
+
+/** Export db alias for query */
+export const db = { query };
 
 /** Lightweight connectivity check used by /api/health. */
 export async function dbUp() {

@@ -18,7 +18,7 @@ async function apiRequest(endpoint, options = {}) {
   const { method = 'GET', body = null, headers = {} } = options;
   
   return new Promise((resolve, reject) => {
-    const url = new URL(endpoint, BASE_URL);
+    const url = new URL(endpoint.startsWith('/') ? endpoint.slice(1) : endpoint, BASE_URL.endsWith('/') ? BASE_URL : BASE_URL + '/');
     
     const postData = body ? JSON.stringify(body) : null;
     const reqOptions = {

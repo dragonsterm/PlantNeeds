@@ -7,6 +7,7 @@
  */
 import { Router } from 'express';
 import { requireAuth } from '../middleware/auth.js';
+import { db } from '../db/pool.js';
 import { addPlant as addPlantLogic, getCareSchedule as getScheduleLogic, logCareActivity as logCareLogic } from '../logic/plants.js';
 import { logGrowth, getGrowthHistory } from '../logic/planner.js';
 
@@ -28,7 +29,7 @@ router.get('/', async (req, res) => {
     
     query += ` ORDER BY created_at ASC`;
     
-    const result = await req.db.query(query, queryParams);
+    const result = await db.query(query, queryParams);
     
     res.json({ plants: result.rows });
   } catch (error) {
@@ -57,7 +58,7 @@ router.post('/', async (req, res) => {
     );
     
     // Fetch full plant object
-    const plantResult = await req.db.query('SELECT * FROM plants WHERE id = $1', [result.plantId]);
+    const plantResult = await db.query('SELECT * FROM plants WHERE id = $1', [result.plantId]);
     
     res.status(201).json({
       success: true,
@@ -70,10 +71,25 @@ router.post('/', async (req, res) => {
   }
 });
 
+/** GET /api/plants/schedule - Care schedule */
+router.get('/schedule', async (req, res) => {
+  try {
+    const plant_id = req.query.plant_id?.toString() || null;
+    const days_ahead = parseInt(req.query.days_ahead?.toString() || '7');
+    
+    const schedule = await getScheduleLogic(req.userId, { plant_id, days_ahead });
+    
+    res.json({ schedule });
+  } catch (error) {
+    console.error('Error getting schedule:', error);
+    res.status(500).json({ error: 'Failed to fetch care schedule' });
+  }
+});
+
 /** GET /api/plants/:id - Get single plant */
 router.get('/:id', async (req, res) => {
   try {
-    const result = await req.db.query(
+    const result = await db.query(
       'SELECT id, name, species, location, light_exposure, pot_has_drainage, acquired_date, water_frequency_days, last_watered FROM plants WHERE id = $1 AND user_id = $2',
       [req.params.id, req.userId]
     );
@@ -114,7 +130,7 @@ router.patch('/:id', async (req, res) => {
     
     const query = `UPDATE plants SET ${fields.join(', ')} WHERE id = $${idx} AND user_id = $${idx + 1} RETURNING *`;
     
-    const result = await req.db.query(query, values);
+    const result = await db.query(query, values);
     
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Plant not found' });
@@ -130,7 +146,7 @@ router.patch('/:id', async (req, res) => {
 /** DELETE /api/plants/:id - Delete plant */
 router.delete('/:id', async (req, res) => {
   try {
-    const result = await req.db.query(
+    const result = await db.query(
       'DELETE FROM plants WHERE id = $1 AND user_id = $2 RETURNING id',
       [req.params.id, req.userId]
     );
@@ -146,20 +162,6 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-/** GET /api/plants/schedule - Care schedule */
-router.get('/schedule', async (req, res) => {
-  try {
-    const plant_id = req.query.plant_id?.toString() || null;
-    const days_ahead = parseInt(req.query.days_ahead?.toString() || '7');
-    
-    const schedule = await getScheduleLogic(req.userId, { plant_id, days_ahead });
-    
-    res.json({ schedule });
-  } catch (error) {
-    console.error('Error getting schedule:', error);
-    res.status(500).json({ error: 'Failed to fetch care schedule' });
-  }
-});
 
 /** POST /api/plants/:id/care - Log care activity */
 router.post('/:id/care', async (req, res) => {

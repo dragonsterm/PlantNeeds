@@ -5,6 +5,7 @@
  * Render + smoke tests. Business logic lives in server/logic/ (C4); routes are
  * thin validators that delegate.
  */
+import 'dotenv/config';
 import express from 'express';
 import { runMigrations } from './db/migrate.js';
 import { dbUp } from './db/pool.js';
@@ -16,6 +17,15 @@ import plannerRoutes from './routes/planner.js';
 
 const app = express();
 app.use(express.json());
+
+// CORS middleware (local dev + WebMCP origin)
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  if (req.method === 'OPTIONS') return res.sendStatus(200);
+  next();
+});
 
 // --- Routes (all under /api) ---
 app.use('/api/auth', authRoutes);
@@ -55,8 +65,7 @@ async function start() {
   app.listen(PORT, () => console.log(`[api] PlantNeeds API listening on :${PORT}`));
 }
 
-// Run only when executed directly (so tests can import `app` without listening).
-const isMain = process.argv[1] && import.meta.url === `file://${process.argv[1].replace(/\\/g, '/')}`;
-if (isMain) start();
+// Always start server on listen unless explicitly disabled by env
+start();
 
 export default app;
