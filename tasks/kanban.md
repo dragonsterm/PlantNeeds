@@ -11,26 +11,28 @@ type: tracker
 ## 📋 Backlog
 | ID | Task | Day | Links |
 |---|---|---|---|
-| T-01 | Scaffold Vite app + repo structure | 1 | [[specification#1. Technology Stack (Locked)|spec §1]] |
-| T-02 | IndexedDB schema via Dexie + store.js event bus | 1 | [[docs/data-model]] |
+| T-01 | Scaffold Vite client + Express server + repo structure | 1 | [[specification#1. Technology Stack (Locked)|spec §1]] |
+| T-02 | PostgreSQL schema (`migrate.sql`) + `db/pool.js` + reactive store | 1 | [[docs/database-schema]] |
 | T-03 | plants-db.json — 50 species seed data | 2 | [[docs/data-model#Plant Database Format|data-model]] |
 | T-04 | Species matching (aliases, fallback profile) | 2 | [[docs/data-model#Species Matching (agent-friendly)|matching]] |
-| T-05 | Plant list + AddPlantForm UI | 3 | [[docs/ui-ux-overview]] |
-| T-06 | Care schedule view + DueBadge | 3 | [[specification#3.1 plants.js|spec §3.1]] |
-| T-07 | Open-Meteo fetch + cache + fallback | 4 | [[docs/api-integrations]] |
-| T-08 | getWateringForecast logic + weather widget | 4 | [[docs/api-integrations#Forecast Logic (FR-3.x) — implemented in logic/weather.js|forecast logic]] |
-| T-09 | registerAllTools() — all 7 wrappers | 5 | [[docs/webmcp-tools]] |
-| T-10 | Chrome WebMCP flag test pass (T1–T6) | 5 | [[docs/testing-strategy#2. WebMCP Tool Tests (manual — Chrome)|tool tests]] |
-| T-11 | symptoms-matrix.json — 20 causes | 6 | [[docs/diagnosis-engine#Target Coverage (~20 causes — Day 6 work, tasks/day-06)|coverage]] |
-| T-12 | diagnoseProblem scoring + evidence strings | 6 | [[docs/diagnosis-engine]] |
-| T-13 | DiagnosisPanel UI | 6 | [[docs/ui-ux-overview]] |
-| T-14 | ChatGPT-browser E2E pass + description iteration | 7 | [[docs/testing-strategy#3. E2E Agent Scenario (manual — ChatGPT in-app browser)|E2E]] |
-| T-15 | Growth journal UI + log_growth tool verify | 8 | [[specification#3.4 planner.js (secondary)|spec §3.4]] |
-| T-16 | Seasonal planting planner | 8 | [[docs/api-integrations#Seasonal Planner Use|planner]] |
-| T-17 | Live-sync toasts/animations polish | 8 | [[docs/ui-ux-overview#The Live-Sync Mechanism (C5) — HOW agent actions become visible|live-sync]] |
-| T-18 | Deploy to Render Static Site | 9 | [[docs/deployment]] |
-| T-19 | Demo video (<3 min, audio) | 9 | [[PlantNeeds-SRD#16. Hackathon Submission Checklist|SRD §16]] |
-| T-20 | README + LICENSE + submission text | 10 | [[PlantNeeds-SRD#16. Hackathon Submission Checklist|SRD §16]] |
+| T-05 | Auth endpoints: register/login/me (JWT + bcrypt) + auth middleware | 2 | [[docs/backend-api#Authentication\|backend-api]] |
+| T-06 | Plant list + AddPlantForm + login/register UI | 3 | [[docs/ui-ux-overview]] |
+| T-07 | Care schedule view + DueBadge | 3 | [[specification#3.2 Client orchestration|spec §3.2]] |
+| T-08 | Plants CRUD + care-log API endpoints | 4 | [[docs/backend-api#Plants (collection + tracker)\|plants API]] |
+| T-09 | Open-Meteo proxy + cache + `getWateringForecast` logic + widget | 4 | [[docs/api-integrations]] |
+| T-10 | registerAllTools() — all 7 wrappers (over client/logic → API) | 5 | [[docs/webmcp-tools]] |
+| T-11 | Chrome WebMCP flag test pass (T1–T6, with auth) | 5 | [[docs/testing-strategy#3. WebMCP Tool Tests (manual — Chrome)|tool tests]] |
+| T-12 | symptoms-matrix.json — 20 causes | 6 | [[docs/diagnosis-engine#Target Coverage (~20 causes — Day 6 work, tasks/day-06)|coverage]] |
+| T-13 | diagnoseProblem scoring + `/api/diagnose` endpoint | 6 | [[docs/diagnosis-engine]] |
+| T-14 | DiagnosisPanel UI | 6 | [[docs/ui-ux-overview]] |
+| T-15 | ChatGPT-browser E2E pass + description iteration | 7 | [[docs/testing-strategy#4. E2E Agent Scenario (manual — ChatGPT in-app browser)|E2E]] |
+| T-16 | Growth journal UI + log_growth endpoint | 8 | [[docs/backend-api]] |
+| T-17 | Seasonal planting planner | 8 | [[docs/api-integrations#Seasonal Planner Use|planner]] |
+| T-18 | Live-sync toasts/animations polish | 8 | [[docs/ui-ux-overview#The Live-Sync Mechanism (C5) — HOW agent actions become visible|live-sync]] |
+| T-19 | Deploy: Render Static + Web Service + Postgres (`render.yaml`) | 9 | [[docs/deployment]] |
+| T-20 | Demo video (<3 min, audio) | 9 | [[PlantNeeds-SRD#16. Hackathon Submission Checklist|SRD §16]] |
+| T-21 | README + LICENSE + submission text | 10 | [[PlantNeeds-SRD#16. Hackathon Submission Checklist|SRD §16]] |
+| T-22 | API & auth test pass (A1–A10) | 4,6 | [[docs/testing-strategy#2. API & Auth Tests (scripted — HTTP against running server)|api tests]] |
 
 ## 🔨 In Progress
 _(empty — pull from Backlog)_

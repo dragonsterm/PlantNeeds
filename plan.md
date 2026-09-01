@@ -17,16 +17,17 @@ status: active
 Phase 1: FOUNDATION          Phase 2: CORE FEATURES        Phase 3: AGENT LAYER         Phase 4: POLISH & SUBMIT
 Days 1-2                     Days 3-6                      Days 7-8                     Days 9-10
 ───────────────────────────  ────────────────────────────  ───────────────────────────  ──────────────────────────
-• Scaffold app               • Human UI (dashboard, cards) • Test in ChatGPT browser    • Deploy to Render
-• IndexedDB layer            • Weather integration         • Refine tool descriptions   • Demo video (<3 min)
-• plants-db.json (50 sp.)    • All 7 tools registered      • Diagnosis engine deep pass • README + license
-• Reactive store             • Live UI↔tool sync           • Growth journal + planner   • Submission text
+• Scaffold client+server     • Human UI (dashboard, cards) • Test in ChatGPT browser    • Deploy Render (Static+API+DB)
+• PostgreSQL schema + pool   • Auth (register/login/JWT)   • Refine tool descriptions   • Demo video (<3 min)
+• plants-db.json (50 sp.)    • Weather integration         • Diagnosis engine deep pass • README + license
+• Reactive store             • All 7 tools registered       • Growth journal + planner   • Submission text
+                             • Live UI↔tool sync
 ```
 
 **Milestone gates:**
-- 🏁 **End Day 2** — app boots, data persists, plant DB loads
-- 🏁 **End Day 4** — human can use the app fully without any agent
-- 🏁 **End Day 6** — all 7 tools callable in Chrome (WebMCP flag), UI syncs live
+- 🏁 **End Day 2** — server boots, Postgres connected, schema migrated, plant DB loads
+- 🏁 **End Day 4** — human can register/login and use the app fully (no agent)
+- 🏁 **End Day 6** — all 7 tools callable in Chrome (WebMCP flag) with auth, UI syncs live
 - 🏁 **End Day 8** — full demo scenario ([[PlantNeeds-SRD#6. The Demo Scenario (How It All Comes Together)|SRD §6]]) works in ChatGPT's browser
 - 🏁 **Day 10** — SUBMITTED ✅
 
@@ -36,15 +37,15 @@ Days 1-2                     Days 3-6                      Days 7-8             
 
 | Day | Focus | Key Deliverables | Details |
 |---|---|---|---|
-| **1** | Scaffold + data layer | Repo, build tooling (Vite), IndexedDB schema via Dexie, reactive store | [[tasks/day-01]] |
-| **2** | Plant database | `plants-db.json` (~50 species), generic fallback profile, DB seed/load logic | [[tasks/day-02]] |
-| **3** | Human UI v1 | Plant list, add-plant form, care schedule view (functional, minimal styling — design TBD) | [[tasks/day-03]] |
-| **4** | Weather feature | Open-Meteo wiring, `getWateringForecast()` logic, weather widget, offline fallback | [[tasks/day-04]] |
-| **5** | WebMCP tools | All 7 `registerTool()` calls as thin wrappers over `src/logic/`; test in Chrome flag | [[tasks/day-05]] |
-| **6** | Diagnosis engine | `symptoms-matrix.json` (~20 mappings), likelihood scoring vs. care history, diagnosis panel | [[tasks/day-06]] |
+| **1** | Scaffold + backend foundation | Repo, Vite (client), Express (server), PostgreSQL schema (`migrate.sql`) + pool, reactive store | [[tasks/day-01]] |
+| **2** | Auth + plant database | `plants-db.json` (~50 species), auth endpoints (register/login/JWT, bcrypt), species matching | [[tasks/day-02]] |
+| **3** | Human UI v1 | Login/register form, plant list, add-plant form, care schedule view (functional, design TBD) | [[tasks/day-03]] |
+| **4** | Plants API + weather | Plants CRUD + care-log endpoints, Open-Meteo proxy + `getWateringForecast()` logic, weather widget | [[tasks/day-04]] |
+| **5** | WebMCP tools | All 7 `registerTool()` calls as thin wrappers over `client/logic/` → API; test in Chrome flag | [[tasks/day-05]] |
+| **6** | Diagnosis engine | `symptoms-matrix.json` (~20 mappings), likelihood scoring vs. care history, diagnosis panel + endpoint | [[tasks/day-06]] |
 | **7** | Agent browser pass | End-to-end test in **ChatGPT in-app browser**; iterate tool descriptions until agent picks correctly | [[tasks/day-07]] |
 | **8** | Secondary features | Growth journal, seasonal planting planner, live-sync animations, edge cases | [[tasks/day-08]] |
-| **9** | Ship assets | Deploy to Render ([[docs/deployment]]), record demo video, README with screenshots | [[tasks/day-09]] |
+| **9** | Ship assets | Deploy to Render (Static + Web Service + Postgres, [[docs/deployment]]), record demo video, README | [[tasks/day-09]] |
 | **10** | Submit | License file, submission text per [[PlantNeeds-SRD#16. Hackathon Submission Checklist|SRD §16]], final QA, SUBMIT | [[tasks/day-10]] |
 
 ---
@@ -53,7 +54,8 @@ Days 1-2                     Days 3-6                      Days 7-8             
 
 | Stream | Owner | Docs |
 |---|---|---|
-| 🧠 Logic layer (`src/logic/`) | Agent/human | [[docs/architecture]], [[specification]] |
+| 🧠 Server logic (`server/logic/`) | Agent/human | [[docs/architecture]], [[specification]] |
+| 🔐 Auth + API (`server/routes/`) | Agent/human | [[docs/backend-api]], [[docs/database-schema]] |
 | 🌦️ Weather integration | Agent/human | [[docs/api-integrations]] |
 | 🔧 WebMCP tools | Agent/human | [[docs/webmcp-tools]] |
 | 🎨 UI components | Agent (functional only — **design TBD by human**) | [[docs/ui-ux-overview]] |

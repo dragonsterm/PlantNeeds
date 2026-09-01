@@ -4,82 +4,112 @@ type: doc
 ---
 # 🚀 Deployment — Render
 
-> How PlantNeeds ships to production. Platform: **Render** (chosen in [[docs/decisions#ADR-008: Deploy to Render (not Vercel/Netlify)|ADR-008]]).
+> **Status: server-backed (revised 2026-08-28, [[docs/decisions#ADR-009: Add a backend — Node/Express + PostgreSQL on Render|ADR-009]]).** How PlantNeeds ships to production on Render.
 > **⚠️ NOTE: this doc is about the APP deployment. The Obsidian vault itself is local-only and is NOT deployed** (see "Vault vs App" below).
 
 ## Vault vs App (important distinction)
 
-| | Obsidian Vault (`C:\Project\PlantNeeds`) | The App (future `src/` code) |
+| | Obsidian Vault (`C:\Project\PlantNeeds`) | The App (`client/` + `server/`) |
 |---|---|---|
 | What | Documentation, plans, canvas, knowledge graph | The actual web application |
-| Deployed? | **NO** — local + git only | **YES** — Render Static Site |
+| Deployed? | **NO** — local + git only | **YES** — Render (Static + Web Service + Postgres) |
 | Graphify role | `.graphify/graph.json` mirrors doc links | none |
 
-The graph-sync setup ([[docs/graph-sync]]) is entirely unaffected by hosting — it runs locally via `python scripts/sync-graphify.py`.
+The graph-sync setup ([[docs/graph-sync]]) is unaffected by hosting — it runs locally via `python scripts/sync-graphify.py`.
 
-## Why Render (and not Workflows)
+## Render Topology (3 resources)
 
-Render has several products. Choosing correctly matters:
-
-| Render product | Fits PlantNeeds? | Why |
+| Resource | Type | Purpose |
 |---|---|---|
-| **Static Sites** | ✅ **YES — use this** | Hosts our Vite build output; free tier; global CDN; automatic HTTPS; auto-deploy from git |
-| Workflows | ❌ No | Long-running background tasks in ephemeral containers — we have no backend jobs (constraint C1/C2) |
-| Web Services | ❌ No | For servers — we deliberately have none |
-| Cron Jobs | ❌ No | Nothing scheduled server-side |
+| `plantneeds-web` | **Static Site** | serves the `client/` build |
+| `plantneeds-api` | **Web Service** | runs the `server/` Node/Express API |
+| `plantneeds-db` | **PostgreSQL** (managed) | persistent data ([[docs/database-schema]]) |
 
-**Bonus:** Render is a WebMCP Challenge sponsor ($300 credits for winners) — deploying on Render is thematically aligned and free regardless.
+Render is a WebMCP Challenge sponsor ($300 credits/winner) — thematically aligned and free-tier friendly.
 
-## Deployment Configuration
-
-### Build & Publish Settings
-| Setting | Value |
+### Which Render products we do NOT use
+| Product | Why not |
 |---|---|
-| Service type | **Static Site** |
-| Repository | the public GitHub repo (hackathon requires it anyway) |
-| Build command | `npm run build` |
-| Publish directory | `dist` |
-| Auto-deploy | On commit to `main` (default) |
+| Workflows | Long-running background jobs — none needed |
+| Cron Jobs | Nothing scheduled server-side |
+| Key Value | Postgres covers persistence |
 
-### `render.yaml` (Infrastructure as Code — optional but recommended)
+## `render.yaml` (Infrastructure as Code)
 
-Commit at repo root so the deploy is reproducible and visible to judges:
+Commit at repo root so the whole stack is reproducible:
 
 ```yaml
 services:
-  - type: web                     # 'web' + env: static = Static Site
-    name: plantneeds
+  # --- Static frontend ---
+  - type: web
+    name: plantneeds-web
     env: static
-    buildCommand: npm run build
-    staticPublishPath: dist
+    buildCommand: cd client && npm install && npm run build
+    staticPublishPath: client/dist
     routes:
-      - type: rewrite             # SPA fallback: all paths -> index.html
+      - type: rewrite            # SPA fallback
         source: /*
         destination: /index.html
-    headers:
-      - path: /*
-        name: X-Content-Type-Options
-        value: nosniff
-      - path: /assets/*
-        name: Cache-Control
-        value: public, max-age=31536000, immutable   # Vite hashed assets
+    envVars:
+      - key: VITE_API_URL
+        value: https://plantneeds-api.onrender.com
+
+  # --- Backend API ---
+  - type: web
+    name: plantneeds-api
+    env: node
+    rootDir: server
+    buildCommand: npm install
+    startCommand: node index.js
+    healthCheckPath: /api/health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: plantneeds-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: NODE_ENV
+        value: production
+
+databases:
+  - name: plantneeds-db
+    plan: free                     # free Postgres (expires after 30 days — fine for hackathon demo)
 ```
 
-### SPA Routing Note
-PlantNeeds is a single-page app. The rewrite rule above ensures deep links serve `index.html` instead of 404ing.
+## Environment Variables
+
+| Var | Where | Notes |
+|---|---|---|
+| `DATABASE_URL` | Web Service | from managed Postgres (auto-injected) |
+| `JWT_SECRET` | Web Service | generated secret ([[docs/decisions#ADR-010: Authentication — username/password + JWT (bcrypt hash)|ADR-010]]) |
+| `VITE_API_URL` | Static Site | API base URL baked into client build |
+| `NODE_ENV` | Web Service | `production` |
+
+**Never commit secrets.** Only `.env.example` (placeholder names) may be committed.
+
+## Database Migrations
+
+`server/db/migrate.sql` runs idempotently (`IF NOT EXISTS`) on Web Service startup, or manually via the Render shell:
+```bash
+psql $DATABASE_URL -f db/migrate.sql
+```
+Requires `CREATE EXTENSION IF NOT EXISTS pgcrypto;` (for `gen_random_uuid()`).
 
 ## Pre-Deploy Checklist ([[tasks/day-09|Day 9]])
 
-- [ ] `npm run build` succeeds locally with no warnings
-- [ ] `dist/` loads via any static server (`npx serve dist`) — all features work
-- [ ] WebMCP tools register when served over **HTTPS** (Render provides it — required since some browser capabilities are secure-context only)
-- [ ] No secrets in repo (we have none — keyless API only, constraint C3)
-- [ ] `render.yaml` committed
-- [ ] After deploy: run the full E2E scenario on the **live URL** in ChatGPT's browser ([[docs/testing-strategy#3. E2E Agent Scenario (manual — ChatGPT in-app browser)|E2E test]])
+- [ ] `client`: `npm run build` succeeds; `dist/` works via `npx serve`
+- [ ] `server`: boots locally against a local/test Postgres; `/api/health` returns `db: up`
+- [ ] Register → login → add plant → log care works end-to-end over HTTP + JWT
+- [ ] WebMCP tools register when served over **HTTPS** (Render provides it)
+- [ ] `render.yaml` committed; env vars set on Render dashboard
+- [ ] After deploy: run the full E2E agent scenario on the **live URL** in ChatGPT's browser ([[docs/testing-strategy#3. E2E Agent Scenario (manual — ChatGPT in-app browser)|E2E]])
 
-## Rollback & Availability
+## Availability & Cost
 
-- Render keeps deploy history → one-click rollback to any previous deploy
-- Free static sites are served from a global CDN — no cold starts, no server to crash during judging (supports ADR-001's availability goal)
+- Static Site: free, global CDN, no cold starts
+- Web Service: free tier (spins down on idle — first request may be slow; acceptable for demo)
+- Postgres free plan: **expires after 30 days** — fine for the hackathon window; upgrade if the app lives longer
+- Deploy history → one-click rollback per service
 
-**Related:** [[docs/architecture]] · [[docs/decisions]] · [[tasks/day-09]] · [[plan]]
+**Related:** [[docs/architecture]] · [[docs/backend-api]] · [[docs/database-schema]] · [[docs/decisions]] · [[tasks/day-09]] · [[plan]]

@@ -3,18 +3,19 @@ tags: [tasks, day-log]
 type: day
 day: 4
 ---
-# 📅 Day 04 — Weather Feature
+# 📅 Day 04 — Plants API + Weather
 
-> Tasks: **T-07, T-08** (see [[tasks/kanban]]) · Roadmap: [[plan]]
+> Tasks: **T-08, T-09, T-22** (see [[tasks/kanban]]) · Roadmap: [[plan]]
 
 ## Checklist
-- [ ] Implement Open-Meteo fetch + 30-min localStorage cache ([[docs/api-integrations]])
-- [ ] Implement `getWateringForecast()` per [[docs/api-integrations#Forecast Logic (FR-3.x) — implemented in logic/weather.js|forecast logic]]
-- [ ] WeatherWidget + TodayBanner UI
-- [ ] Offline fallback banner (data_source:'unavailable')
+- [ ] Plants CRUD endpoints + care-log: `GET/POST /plants`, `GET /plants/schedule`, `POST /plants/:id/care` ([[docs/backend-api]])
+- [ ] All queries scoped by `user_id` (verify A7: cross-user read blocked)
+- [ ] Open-Meteo proxy + 30-min cache + `getWateringForecast()` logic ([[docs/api-integrations]])
+- [ ] WeatherWidget + TodayBanner UI; offline→`data_source:'unavailable'` fallback
+- [ ] Run API & auth tests A1–A10 ([[docs/testing-strategy#2. API & Auth Tests (scripted — HTTP against running server)|api tests]])
 
 ## ✅ Gate / Acceptance
-Tests L5–L7 pass; Seattle→SKIP, Phoenix→WATER 🏁 **Day 4 gate: human-usable app**
+Tests L5–L7 + A1–A10 pass; Seattle→SKIP, Phoenix→WATER 🏁 **Day 4 gate: human-usable app**
 
 ## 📝 Notes & Decisions
 _(log surprises, blockers, and any ADR-worthy decisions here; significant ones → [[docs/decisions]])_

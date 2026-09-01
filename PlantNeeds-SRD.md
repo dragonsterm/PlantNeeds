@@ -52,7 +52,7 @@ Nobody has built a plant app that **reasons**. Doing so requires an AI agent tha
 ### ✅ Goals (What We WILL Build)
 | # | Goal |
 |---|---|
-| G1 | A working web app where users manage a plant collection (add, view, edit, remove plants) |
+| G1 | A working web app with **user accounts** where users manage their own plant collection (add, view, edit, remove) |
 | G2 | Automatic care scheduling (when to water/fertilize each plant) |
 | G3 | **Weather-aware watering advice** using a real, free weather API (Open-Meteo) |
 | G4 | A symptom-based **plant problem diagnosis** feature that considers the plant's actual care history |
@@ -60,16 +60,18 @@ Nobody has built a plant app that **reasons**. Doing so requires an AI agent tha
 | G6 | **7 WebMCP tools** registered in the page so AI agents can do everything above |
 | G7 | A visual UI that **updates live** when the agent performs an action |
 | G8 | Deployed public URL + open-source repo + demo video (hackathon requirements) |
+| G9 | **Server-side persistence**: per-user data (collection, tracker, journal) stored in PostgreSQL, synced across devices |
 
 ### ❌ Non-Goals (What We Will NOT Build)
 | # | Exclusion | Why |
 |---|---|---|
-| N1 | No user accounts / login system | Keep it simple; data lives in the browser (IndexedDB) |
-| N2 | No backend server | Static site deployment (Render) — zero cost |
+| N1 | ~~No user accounts~~ → **We DO have accounts now** (username/password + JWT, server-side) | Revised 2026-08-28 (ADR-009) — accounts are a goal |
+| N2 | ~~No backend server~~ → **We DO have a backend now** (Node/Express + PostgreSQL on Render) | Revised 2026-08-28 (ADR-009) — server-side persistence |
 | N3 | No photo-based disease detection (AI image recognition) | Too large for a 10-day build; symptom checklists cover the use case |
 | N4 | No mobile native app | Web app only; mobile-responsive in browser |
 | N5 | No plant store / e-commerce | Out of scope by design |
 | N6 | No social features (sharing, feeds) | Out of scope for v1 |
+| N7 | No third-party OAuth (Google/GitHub login) | Username/password only — keeps auth simple for hackathon |
 
 ---
 
@@ -267,23 +269,27 @@ The UI button "Mark as Watered" and the agent tool `log_care_activity` call the 
 |          +-----------+--------------+                |
 |                      v                               |
 |           +---------------------+    BOTH call the   |
-|           |   SHARED LOGIC      |    SAME functions  |
-|           |   (waterPlant,      |                    |
-|           |    diagnose, etc.)  |                    |
+|           |   CLIENT LOGIC      |    SAME endpoints  |
+|           |   (calls the API)   |    (via HTTP+JWT)  |
 |           +---------+-----------+                    |
-|                     v                                |
-|           +---------------------+                    |
-|           |   LOCAL DATA STORE  |    IndexedDB       |
-|           |   (plants, logs)    |    (in browser)    |
-|           +---------------------+                    |
-|                      +                               |
-|           +---------------------+                    |
-|           |   Open-Meteo API    |    FREE, no key    |
-|           |   (weather data)    |                    |
-|           +---------------------+                    |
-+------------------------------------------------------+
++---------------------|--------------------------------+
+                      v  HTTP + JWT
++======================================================+
+|   REST API (Node/Express on Render Web Service)      |
+|     auth middleware -> business logic (server/logic) |
++=========================+============================+
+                          v  SQL
+           +---------------------+
+           |   PostgreSQL        |    SINGLE SOURCE
+           |   users, plants,    |    OF TRUTH
+           |   care_log, etc.    |
+           +---------------------+
+                      +
+           +---------------------+
+           |   Open-Meteo API    |    FREE, no key (via server proxy)
+           +---------------------+
 
-Deployment: Static site on Render (Static Site). NO backend. NO database server. NO cost.
+Deployment: Render Static Site (client) + Web Service (API) + managed PostgreSQL.
 ```
 
 ## 9.2 The Three-Layer Sync Rule
@@ -291,34 +297,40 @@ Deployment: Static site on Render (Static Site). NO backend. NO database server.
    UI Layer      <- humans see this (buttons, cards, charts)
      ^v  (reactive updates)
    Tool Layer    <- agents call this (registerTool execute functions)
-     ^v  (both call the SAME functions!)
-   State Layer   <- single source of truth (IndexedDB)
+     ^v  (both call the SAME API endpoints!)
+   Server+DB     <- single source of truth (PostgreSQL)
 ```
-When an agent waters a plant via a tool call, the state changes -> the UI re-renders automatically -> the human **sees the agent's action live on screen**. This is the demo superpower.
+When an agent waters a plant via a tool call, the tool calls the API -> the server writes to Postgres -> the client store refreshes -> the UI re-renders -> the human **sees the agent's action live on screen**. This is the demo superpower.
 
 ## 9.3 Technology Choices
 | Layer | Choice | Why |
 |---|---|---|
-| Frontend | React (or vanilla JS if preferred) | Reactive re-rendering makes agent->UI sync easy |
-| Local storage | IndexedDB (via Dexie.js or idb) | Structured, queryable, survives page reloads |
+| Frontend | Vanilla JS + Vite (React optional) | Reactive re-rendering makes agent->UI sync easy |
+| Backend API | Node.js + Express | Standard REST, easy to host on Render |
+| Database | PostgreSQL (Render managed) | Server-side per-user persistence, cross-device sync |
+| Auth | JWT + bcrypt | Stateless, hackathon-appropriate (username/password) |
+| Client state | pub/sub store | UI + tools share the same view of server data |
 | Weather | Open-Meteo API | Free, no API key, includes past + forecast precipitation |
-| Hosting | Render Static Site | Free static hosting, auto-deploy from git, hackathon sponsor |
+| Hosting | Render (Static + Web Service + Postgres) | One platform, free tier, hackathon sponsor |
 | WebMCP | `document.modelContext.registerTool()` | The standard being tested |
-| Plant data | Built-in `plants-db.json` (~50 species) | No external dependency, works offline |
+| Plant data | Built-in `plants-db.json` (~50 species) | Static reference, no external dependency |
 
-## 9.4 Data Model (What We Store)
+## 9.4 Data Model (What We Store — in PostgreSQL)
 ```
+users
+  id, username, password_hash, created_at
+
 plants
-  id, name, species, location (indoor/outdoor),
+  id, user_id, name, species, location (indoor/outdoor),
   light_exposure, pot_has_drainage, acquired_date,
   water_frequency_days, water_needs_inches_weekly (outdoor),
   last_watered
 
 care_log
-  id, plant_id, activity (watered/fertilized/...), date, notes
+  id, plant_id, activity (watered/fertilized/...), date, notes, source (human/agent)
 
 growth_log
-  id, plant_id, milestone, height_cm, notes, date
+  id, plant_id, milestone, height_cm, notes, date, source
 ```
 
 ## 9.5 Built-In Plant Database (seed data, example entry)
@@ -356,7 +368,7 @@ growth_log
 ## 10.2 The "Live Sync" Demo Moment
 When the judge says *"water my monstera"* to the AI:
 1. Agent calls `log_care_activity`
-2. Shared logic updates IndexedDB
+2. Tool calls the API → shared server logic writes to PostgreSQL
 3. UI reacts: monstera card animates, badge "3 due" -> "2 due", toast appears: "Monstera marked as watered"
 4. **The judge watches the agent act inside the app.** That is the winning moment.
 
@@ -371,10 +383,10 @@ When the judge says *"water my monstera"* to the AI:
 | ID | Category | Requirement |
 |---|---|---|
 | NFR-1 | **Performance** | Page loads in under 3 seconds on average broadband |
-| NFR-2 | **Offline behavior** | Core features (schedule, journal, diagnosis) work offline; only weather features need internet |
-| NFR-3 | **Privacy** | All plant data stays in the user's browser (IndexedDB). No accounts, no tracking, no data leaves the device except the anonymous weather API call (lat/long only) |
+| NFR-2 | **Offline behavior** | Core reads (schedule, journal) render from cache offline; mutations + weather require connectivity |
+| NFR-3 | **Privacy & Security** | Passwords bcrypt-hashed; JWT auth; all plant data scoped per user; only the anonymous Open-Meteo call (lat/long) leaves our infrastructure. Secrets (`DATABASE_URL`, `JWT_SECRET`) in env vars, never committed |
 | NFR-4 | **Compatibility** | Works in Chrome/Edge (WebMCP flag) and ChatGPT's in-app browser; degrades gracefully in other browsers |
-| NFR-5 | **Cost** | Zero running cost — static hosting free tier, free API, no keys |
+| NFR-5 | **Cost** | Free tier — Render Static Site + Web Service + free Postgres (30-day), keyless weather API |
 | NFR-6 | **Maintainability** | Open source with clear README, MIT/Apache license file visible at repo top (hackathon requirement) |
 | NFR-7 | **Safety** | Diagnosis results include a disclaimer: "Guidance for common issues — consult a local nursery/extension service for serious problems" |
 
@@ -395,7 +407,7 @@ Agents decide which tool to call by reading the **tool descriptions**. This mean
 
 | Day | Task | Deliverable |
 |---|---|---|
-| 1-2 | Scaffold app, IndexedDB layer, plant DB JSON (~50 species) | App skeleton + data layer |
+| 1-2 | Scaffold client+server, PostgreSQL schema + pool, plant DB JSON (~50 species) | App skeleton + data layer |
 | 3 | Human UI: plant list, add-plant form, care schedule view | Usable-by-human v1 |
 | 4 | Wire Open-Meteo API + `get_watering_forecast` logic | Weather feature working |
 | 5 | Register all 7 WebMCP tools; test in Chrome with the WebMCP flag | Agent can call tools |
@@ -462,7 +474,9 @@ Agents decide which tool to call by reading the **tool descriptions**. This mean
 | **Agent** | An AI assistant (like ChatGPT) that can act on your behalf |
 | **Tool** | A function a website registers (name + description + inputs + code) that an agent can call |
 | `registerTool()` | The JavaScript method websites use to publish their tools |
-| **IndexedDB** | A database built into every web browser — stores our plant data locally |
+| **PostgreSQL** | The server database that stores user accounts, plants, and logs (single source of truth) |
+| **JWT** | JSON Web Token — the signed token a client uses to prove it's logged in |
+| **Express** | The Node.js framework our REST API is built with |
 | **Open-Meteo** | A free weather API requiring no signup or API key |
 | **MoSCoW** | Priority system: Must have, Should have, Could have, Won't have |
 | **SRD** | Software Requirements Document — this file |

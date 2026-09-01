@@ -8,11 +8,11 @@
 		{"id":"fc540d0cd39647ca","type":"text","text":"6️⃣ **plan_seasonal_planting**\nin: lat, long, crops[]\n→ planting calendar","x":-520,"y":300,"width":340,"height":150,"color":"6"},
 		{"id":"685c233b6cba40a9","type":"text","text":"7️⃣ **log_growth**\nin: plant_id, milestone\n→ journal timeline","x":-140,"y":300,"width":340,"height":150,"color":"6"},
 		{"id":"05a3b9788e7f45ad","type":"text","text":"🔧 **registerAllTools()**\n`src/tools/register-tools.js`\n7 thin wrappers over src/logic\n(guarded by feature detection — C6)","x":-160,"y":-40,"width":340,"height":150,"color":"1"},
-		{"id":"ab8e268578cc4ebd","type":"file","file":"docs/ui-ux-overview.md","x":560,"y":-420,"width":360,"height":240},
 		{"id":"e475deeaa34640b5","type":"text","text":"🖥️ **UI SYNC TARGETS**\n• PlantGrid / PlantCard\n• DueBadge\n• TodayBanner + WeatherWidget\n• DiagnosisPanel\n• ActivityTimeline ('by agent')\n• GrowthJournal","x":560,"y":-80,"width":360,"height":220,"color":"5"},
 		{"id":"0298ca255de44f93","type":"file","file":"docs/diagnosis-engine.md","x":240,"y":-620,"width":360,"height":160},
 		{"id":"2663d718e4f347a8","type":"file","file":"docs/api-integrations.md","x":-140,"y":-640,"width":360,"height":180},
-		{"id":"24f579ab34ff408d","type":"file","file":"specification.md","x":560,"y":220,"width":360,"height":220}
+		{"id":"24f579ab34ff408d","type":"file","file":"specification.md","x":560,"y":220,"width":360,"height":220},
+		{"id":"ab8e268578cc4ebd","type":"file","file":"docs/ui-ux-overview.md","x":600,"y":-420,"width":360,"height":240}
 	],
 	"edges":[
 		{"id":"b95f3436667c4bfc","fromNode":"05a3b9788e7f45ad","fromSide":"left","toNode":"85c635aa247b44d0","toSide":"right"},

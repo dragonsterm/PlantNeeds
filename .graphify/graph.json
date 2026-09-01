@@ -44,10 +44,26 @@
    "community_name": "Deep-dive docs"
   },
   {
+   "id": "docs/backend-api",
+   "label": "backend-api.md",
+   "file_type": "doc",
+   "source_file": "docs/backend-api.md",
+   "community": 1,
+   "community_name": "Deep-dive docs"
+  },
+  {
    "id": "docs/data-model",
    "label": "data-model.md",
    "file_type": "doc",
    "source_file": "docs/data-model.md",
+   "community": 1,
+   "community_name": "Deep-dive docs"
+  },
+  {
+   "id": "docs/database-schema",
+   "label": "database-schema.md",
+   "file_type": "doc",
+   "source_file": "docs/database-schema.md",
    "community": 1,
    "community_name": "Deep-dive docs"
   },
@@ -301,7 +317,35 @@
   },
   {
    "source": "CLAUDE",
+   "target": "docs/decisions",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "CLAUDE",
+   "target": "docs/architecture",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "CLAUDE",
    "target": "docs/deployment",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "CLAUDE",
+   "target": "docs/backend-api",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "CLAUDE",
+   "target": "docs/database-schema",
    "relation": "links_to",
    "confidence": "EXTRACTED",
    "weight": 1
@@ -351,6 +395,20 @@
   {
    "source": "CLAUDE",
    "target": "docs/webmcp-tools",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "CLAUDE",
+   "target": "docs/backend-api",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "CLAUDE",
+   "target": "docs/database-schema",
    "relation": "links_to",
    "confidence": "EXTRACTED",
    "weight": 1
@@ -518,7 +576,28 @@
   },
   {
    "source": "docs/architecture",
+   "target": "docs/decisions",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "docs/architecture",
+   "target": "docs/database-schema",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "docs/architecture",
    "target": "docs/data-model",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "docs/architecture",
+   "target": "docs/backend-api",
    "relation": "links_to",
    "confidence": "EXTRACTED",
    "weight": 1
@@ -539,6 +618,13 @@
   },
   {
    "source": "docs/architecture",
+   "target": "docs/deployment",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "docs/architecture",
    "target": "specification",
    "relation": "links_to",
    "confidence": "EXTRACTED",
@@ -546,14 +632,21 @@
   },
   {
    "source": "docs/architecture",
-   "target": "docs/ui-ux-overview",
+   "target": "docs/backend-api",
    "relation": "links_to",
    "confidence": "EXTRACTED",
    "weight": 1
   },
   {
    "source": "docs/architecture",
-   "target": "docs/api-integrations",
+   "target": "docs/database-schema",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "docs/architecture",
+   "target": "docs/data-model",
    "relation": "links_to",
    "confidence": "EXTRACTED",
    "weight": 1
@@ -573,7 +666,77 @@
    "weight": 1
   },
   {
-   "source": "docs/data-model",
+   "source": "docs/backend-api",
+   "target": "docs/database-schema",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "docs/backend-api",
+   "target": "docs/decisions",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "docs/backend-api",
+   "target": "docs/architecture",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "docs/backend-api",
+   "target": "docs/data-model",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "docs/backend-api",
+   "target": "docs/api-integrations",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "docs/backend-api",
+   "target": "docs/diagnosis-engine",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "docs/backend-api",
+   "target": "docs/architecture",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "docs/backend-api",
+   "target": "docs/database-schema",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "docs/backend-api",
+   "target": "docs/data-model",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "docs/backend-api",
+   "target": "docs/webmcp-tools",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "docs/backend-api",
    "target": "specification",
    "relation": "links_to",
    "confidence": "EXTRACTED",
@@ -581,7 +744,28 @@
   },
   {
    "source": "docs/data-model",
-   "target": "docs/architecture",
+   "target": "docs/decisions",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "docs/data-model",
+   "target": "docs/database-schema",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "docs/data-model",
+   "target": "docs/backend-api",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "docs/data-model",
+   "target": "specification",
    "relation": "links_to",
    "confidence": "EXTRACTED",
    "weight": 1
@@ -595,7 +779,14 @@
   },
   {
    "source": "docs/data-model",
-   "target": "specification",
+   "target": "docs/database-schema",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "docs/data-model",
+   "target": "docs/backend-api",
    "relation": "links_to",
    "confidence": "EXTRACTED",
    "weight": 1
@@ -610,6 +801,69 @@
   {
    "source": "docs/data-model",
    "target": "docs/diagnosis-engine",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "docs/database-schema",
+   "target": "docs/decisions",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "docs/database-schema",
+   "target": "docs/backend-api",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "docs/database-schema",
+   "target": "docs/data-model",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "docs/database-schema",
+   "target": "docs/data-model",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "docs/database-schema",
+   "target": "docs/diagnosis-engine",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "docs/database-schema",
+   "target": "docs/backend-api",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "docs/database-schema",
+   "target": "docs/data-model",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "docs/database-schema",
+   "target": "docs/architecture",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "docs/database-schema",
+   "target": "docs/deployment",
    "relation": "links_to",
    "confidence": "EXTRACTED",
    "weight": 1
@@ -638,6 +892,27 @@
   {
    "source": "docs/decisions",
    "target": "docs/deployment",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "docs/decisions",
+   "target": "docs/database-schema",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "docs/decisions",
+   "target": "docs/backend-api",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "docs/decisions",
+   "target": "docs/backend-api",
    "relation": "links_to",
    "confidence": "EXTRACTED",
    "weight": 1
@@ -679,6 +954,20 @@
   },
   {
    "source": "docs/deployment",
+   "target": "docs/database-schema",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "docs/deployment",
+   "target": "docs/decisions",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "docs/deployment",
    "target": "tasks/day-09",
    "relation": "links_to",
    "confidence": "EXTRACTED",
@@ -694,6 +983,20 @@
   {
    "source": "docs/deployment",
    "target": "docs/architecture",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "docs/deployment",
+   "target": "docs/backend-api",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "docs/deployment",
+   "target": "docs/database-schema",
    "relation": "links_to",
    "confidence": "EXTRACTED",
    "weight": 1
@@ -798,6 +1101,13 @@
   },
   {
    "source": "docs/testing-strategy",
+   "target": "docs/backend-api",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "docs/testing-strategy",
    "target": "PlantNeeds-SRD",
    "relation": "links_to",
    "confidence": "EXTRACTED",
@@ -827,6 +1137,13 @@
   {
    "source": "docs/testing-strategy",
    "target": "specification",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "docs/testing-strategy",
+   "target": "docs/backend-api",
    "relation": "links_to",
    "confidence": "EXTRACTED",
    "weight": 1
@@ -1085,6 +1402,20 @@
   },
   {
    "source": "plan",
+   "target": "docs/backend-api",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "plan",
+   "target": "docs/database-schema",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "plan",
    "target": "docs/api-integrations",
    "relation": "links_to",
    "confidence": "EXTRACTED",
@@ -1169,6 +1500,27 @@
   },
   {
    "source": "specification",
+   "target": "docs/decisions",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "specification",
+   "target": "docs/database-schema",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "specification",
+   "target": "docs/backend-api",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "specification",
    "target": "docs/api-integrations",
    "relation": "links_to",
    "confidence": "EXTRACTED",
@@ -1183,6 +1535,13 @@
   },
   {
    "source": "specification",
+   "target": "docs/database-schema",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "specification",
    "target": "docs/data-model",
    "relation": "links_to",
    "confidence": "EXTRACTED",
@@ -1191,6 +1550,20 @@
   {
    "source": "specification",
    "target": "docs/data-model",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "specification",
+   "target": "docs/diagnosis-engine",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "specification",
+   "target": "docs/api-integrations",
    "relation": "links_to",
    "confidence": "EXTRACTED",
    "weight": 1
@@ -1246,6 +1619,20 @@
   },
   {
    "source": "specification",
+   "target": "docs/backend-api",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "specification",
+   "target": "docs/database-schema",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "specification",
    "target": "docs/data-model",
    "relation": "links_to",
    "confidence": "EXTRACTED",
@@ -1268,6 +1655,13 @@
   {
    "source": "specification",
    "target": "docs/webmcp-tools",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "specification",
+   "target": "docs/deployment",
    "relation": "links_to",
    "confidence": "EXTRACTED",
    "weight": 1
@@ -1295,7 +1689,7 @@
   },
   {
    "source": "tasks/day-01",
-   "target": "docs/data-model",
+   "target": "docs/database-schema",
    "relation": "links_to",
    "confidence": "EXTRACTED",
    "weight": 1
@@ -1345,6 +1739,13 @@
   {
    "source": "tasks/day-02",
    "target": "docs/data-model",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "tasks/day-02",
+   "target": "docs/backend-api",
    "relation": "links_to",
    "confidence": "EXTRACTED",
    "weight": 1
@@ -1442,7 +1843,7 @@
   },
   {
    "source": "tasks/day-04",
-   "target": "docs/api-integrations",
+   "target": "docs/backend-api",
    "relation": "links_to",
    "confidence": "EXTRACTED",
    "weight": 1
@@ -1450,6 +1851,13 @@
   {
    "source": "tasks/day-04",
    "target": "docs/api-integrations",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "tasks/day-04",
+   "target": "docs/testing-strategy",
    "relation": "links_to",
    "confidence": "EXTRACTED",
    "weight": 1
@@ -1820,7 +2228,7 @@
   },
   {
    "source": "tasks/kanban",
-   "target": "docs/data-model",
+   "target": "docs/database-schema",
    "relation": "links_to",
    "confidence": "EXTRACTED",
    "weight": 1
@@ -1835,6 +2243,13 @@
   {
    "source": "tasks/kanban",
    "target": "docs/data-model",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "tasks/kanban",
+   "target": "docs/backend-api",
    "relation": "links_to",
    "confidence": "EXTRACTED",
    "weight": 1
@@ -1855,7 +2270,7 @@
   },
   {
    "source": "tasks/kanban",
-   "target": "docs/api-integrations",
+   "target": "docs/backend-api",
    "relation": "links_to",
    "confidence": "EXTRACTED",
    "weight": 1
@@ -1911,7 +2326,7 @@
   },
   {
    "source": "tasks/kanban",
-   "target": "specification",
+   "target": "docs/backend-api",
    "relation": "links_to",
    "confidence": "EXTRACTED",
    "weight": 1
@@ -1947,6 +2362,13 @@
   {
    "source": "tasks/kanban",
    "target": "PlantNeeds-SRD",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "tasks/kanban",
+   "target": "docs/testing-strategy",
    "relation": "links_to",
    "confidence": "EXTRACTED",
    "weight": 1

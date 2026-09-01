@@ -33,7 +33,7 @@ The docs are a linked knowledge graph. To get the full experience (clickable lin
 | [`specification.md`](specification.md) | Technical contract — data shapes, function signatures, tool schemas |
 | [`docs/architecture.md`](docs/architecture.md) | 3-layer sync pattern (UI ↔ WebMCP tools ↔ state) |
 | [`docs/webmcp-tools.md`](docs/webmcp-tools.md) | All 7 tool schemas + description-writing rules |
-| [`docs/data-model.md`](docs/data-model.md) | IndexedDB schema, plant DB format |
+| [`docs/data-model.md`](docs/data-model.md) | Server data model (PostgreSQL) + API payloads, plant DB format |
 | [`docs/diagnosis-engine.md`](docs/diagnosis-engine.md) | Symptom→cause scoring with care-history reasoning |
 | [`docs/api-integrations.md`](docs/api-integrations.md) | Open-Meteo weather API (keyless) |
 | [`docs/ui-ux-overview.md`](docs/ui-ux-overview.md) | Components + live-sync (⚠️ visual design TBD) |
@@ -56,7 +56,7 @@ This regenerates `.graphify/graph.json` so Obsidian Graph View and Graphify stay
 
 - ✅ Requirements, specs, docs, plan — complete
 - ⬜ App code (`src/`) — not started; see [`plan.md`](plan.md)
-- **Deploy target:** Render Static Site · **External API:** Open-Meteo (no key) · **Storage:** IndexedDB (no backend)
+- **Deploy target:** Render (Static + Web Service + Postgres) · **External API:** Open-Meteo (no key) · **Storage:** PostgreSQL (server-side, per-user)
 
 ## 📄 License
 

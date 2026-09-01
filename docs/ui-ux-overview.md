@@ -40,7 +40,7 @@ on('weather-updated',() => { renderTodayBanner(); renderWeatherWidget(); });
 on('growth-logged',  () => { renderJournal(); });
 ```
 
-Agent calls `log_care_activity` → wrapper → `logCareActivity()` (with `source:'agent'`) → writes IndexedDB → `emit('care-logged')` + `emit('plants-changed')` → **UI re-renders + toast "💧 Monstera watered by agent"**. No page reload. This is the demo's jaw-drop moment ([[PlantNeeds-SRD#10.2 The "Live Sync" Demo Moment|SRD §10.2]]).
+Agent calls `log_care_activity` → wrapper → `logCareActivity()` (with `source:'agent'`) → API writes to PostgreSQL → `emit('care-logged')` + `emit('plants-changed')` → **UI re-renders + toast "💧 Monstera watered by agent"**. No page reload. This is the demo's jaw-drop moment ([[PlantNeeds-SRD#10.2 The "Live Sync" Demo Moment|SRD §10.2]]).
 
 ### Toast Notifications
 Transient, top-right, announce ALL state changes with source attribution:

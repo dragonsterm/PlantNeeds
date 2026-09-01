@@ -5,10 +5,12 @@ day: 9
 ---
 # 📅 Day 09 — Deploy + Demo Assets
 
-> Tasks: **T-18, T-19** (see [[tasks/kanban]]) · Roadmap: [[plan]]
+> Tasks: **T-19, T-20** (see [[tasks/kanban]]) · Roadmap: [[plan]]
 
 ## Checklist
-- [ ] Deploy to Render Static Site per [[docs/deployment]] (commit `render.yaml`, auto-deploy from `main`); verify production build works with WebMCP over HTTPS
+- [ ] Commit `render.yaml` (Static Site + Web Service + Postgres) per [[docs/deployment]]
+- [ ] Set env vars on Render: `DATABASE_URL`, `JWT_SECRET`, `VITE_API_URL`
+- [ ] Deploy; verify production build registers WebMCP tools over HTTPS
 - [ ] Record <3-min demo video with audio per SRD §16
 - [ ] README: screenshots, setup, privacy note ([[docs/api-integrations#Privacy Note (NFR-3)|privacy]])
 
