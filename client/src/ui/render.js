@@ -7,6 +7,7 @@ import { on, clearCache } from '../state/store.js';
 import { hasToken, clearToken, setToken } from '../api/client.js';
 import { renderAuthForm } from './components/auth-form.js';
 import { renderLightDashboard } from './components/render-light-dashboard.js';
+import { renderCareScheduleView } from './components/care-schedule-view.js';
 import { renderAddPlantModal } from './components/add-plant-form.js';
 import { renderScheduleModal } from './components/schedule-modal.js';
 import { renderDiagnosisModal } from './components/diagnosis-panel.js';
@@ -49,7 +50,8 @@ export function mountUi() {
 
   async function render() {
     const currentHash = window.location.hash || '';
-    const isLightDashboard = currentHash.includes('light') || currentHash.includes('dashboard') || currentHash.includes('garden');
+    const isScheduleView = currentHash === '#schedule';
+    const isLightDashboard = currentHash.includes('light') || currentHash.includes('dashboard') || currentHash.includes('garden') || isScheduleView;
     const isDarkDashboard = currentHash.includes('dark');
     const isDashboardActive = isLightDashboard || isDarkDashboard;
     
@@ -92,6 +94,12 @@ export function mountUi() {
 
     // Keep store cache synchronized for WebMCP tools (Single Source of Truth)
     setCache('plants', userPlants);
+
+    // Dedicated Care Activity Tree & Schedule View (#schedule)
+    if (isScheduleView) {
+      renderCareScheduleView(root, { plants: userPlants, onUpdate: () => render() });
+      return;
+    }
 
     // Render Light Dashboard (Default for #light-dashboard / #dashboard)
     if (isLightDashboard && !isDarkDashboard) {

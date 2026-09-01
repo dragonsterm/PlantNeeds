@@ -132,6 +132,14 @@
    "community_name": "Deep-dive docs"
   },
   {
+   "id": "GPT Browser Report",
+   "label": "GPT Browser Report.md",
+   "file_type": "doc",
+   "source_file": "GPT Browser Report.md",
+   "community": 0,
+   "community_name": "Core documents"
+  },
+  {
    "id": "plan",
    "label": "plan.md",
    "file_type": "doc",
