@@ -1,7 +1,7 @@
 /**
  * client/src/ui/render.js
  * Central UI render controller & reactive store subscriptions.
- * EXACT 1:1 Implementation of Google Stitch Export (code.html).
+ * EXACT 1:1 Implementation of Google Stitch Export (code.html) with custom logo test.
  */
 import { on, clearCache } from '../state/store.js';
 import { hasToken, clearToken, setToken } from '../api/client.js';
@@ -80,15 +80,18 @@ export function mountUi() {
       // Fallback
     }
 
-    // Exact Markup matching Stitch Reference
+    // Exact Markup matching Stitch Reference with Tested Logo
     root.innerHTML = `
+      <!-- Dashboard Background (Dark Moody Foliage with Raindrops) -->
+      <div class="bg-layer"></div>
+
       <!-- TopNavBar -->
       <div class="fixed top-4 left-4 right-4 z-50 max-w-7xl mx-auto">
-        <nav class="glass-panel rounded-full px-6 py-3 shadow-sm transition-all duration-300">
+        <nav class="glass-panel rounded-full px-6 py-2.5 shadow-sm transition-all duration-300">
           <div class="flex justify-between items-center w-full">
             <!-- Logo Area -->
             <div class="flex items-center gap-3 cursor-pointer">
-              <span class="material-symbols-outlined text-primary-fixed text-3xl" style="font-variation-settings: 'FILL' 1; color: #bcf0ae;">potted_plant</span>
+              <img src="/assets/plantneeds-leaf-drop-logo.png" alt="PlantNeeds Logo" style="height: 34px; width: auto; object-fit: contain;" />
               <span class="font-headline-lg text-headline-lg font-bold text-white">PlantNeeds</span>
             </div>
             <!-- Navigation Links (Web) -->
@@ -142,10 +145,10 @@ export function mountUi() {
               <h2 class="font-headline-xl text-headline-xl text-white drop-shadow-sm">My Plants</h2>
               <div class="flex gap-2">
                 <button class="p-2 rounded-full bg-white/20 hover:bg-white/30 transition text-white border border-white/20">
-                  <span class="material-symbols-outlined">grid_view</span>
+                  <span class="material-symbols-outlined" style="font-size: 18px;">grid_view</span>
                 </button>
                 <button class="p-2 rounded-full bg-white/10 hover:bg-white/20 transition text-white border border-white/10">
-                  <span class="material-symbols-outlined">format_list_bulleted</span>
+                  <span class="material-symbols-outlined" style="font-size: 18px;">format_list_bulleted</span>
                 </button>
               </div>
             </div>
@@ -212,7 +215,7 @@ export function mountUi() {
               </div>
             </div>
 
-            <!-- Smart Care Insights Widget (Exact Icons & Styling from Stitch) -->
+            <!-- Smart Care Insights Widget -->
             <div class="glass-dark rounded-3xl p-6">
               <div class="flex items-center gap-3 mb-6">
                 <span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">lightbulb</span>
