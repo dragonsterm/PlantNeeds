@@ -7,8 +7,8 @@
 import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
-import pool from '../db/pool.js';
-import { getSpeciesProfile } from './species.js';
+import { pool } from '../db/pool.js';
+import { matchSpecies, FALLBACK_PROFILE } from './species.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -177,7 +177,8 @@ export async function diagnoseProblem(userId, { plant_id, symptoms }) {
         ? Math.max(0, Math.round((now - new Date(plant.acquired_date)) / (1000 * 60 * 60 * 24)))
         : 999);
 
-  const speciesInfo = getSpeciesProfile(plant.species);
+  const matched = await matchSpecies(plant.species);
+  const speciesInfo = matched?.profile || FALLBACK_PROFILE;
   const recommendedGap = plant.water_frequency_days || (speciesInfo?.water_frequency_days ?? 7);
   const recommendedLight = speciesInfo?.light || 'medium';
   const humidityPref = speciesInfo?.humidity || 'medium';
