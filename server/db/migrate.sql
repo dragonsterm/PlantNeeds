@@ -60,3 +60,10 @@ CREATE TABLE IF NOT EXISTS growth_log (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS idx_growth_plant ON growth_log(plant_id);
+
+-- Weather cache (for Open-Meteo responses, 30-min TTL)
+CREATE TABLE IF NOT EXISTS weather_cache (
+  key         TEXT PRIMARY KEY,
+  payload     JSONB NOT NULL,
+  expires_at  TIMESTAMPTZ NOT NULL
+);
