@@ -3,22 +3,31 @@ tags: [tasks, day-log]
 type: day
 day: 8
 ---
-# 📅 Day 08 — Secondary Features + Polish
+# 📅 Day 08 — Secondary Features, Planner & Live-Sync Polish
 
-> Tasks: **T-15, T-16, T-17** (see [[tasks/kanban]]) · Roadmap: [[plan]]
+> Tasks: **T-16, T-17, T-18, T-18B, T-18C** (see [[tasks/kanban]]) · Roadmap: [[plan]]
 
 ## Checklist
-- [ ] Growth journal UI + verify log_growth tool
-- [ ] Seasonal planting planner ([[docs/api-integrations#Seasonal Planner Use|planner]])
-- [ ] Toast/animation polish for live-sync moments
-- [ ] Edge cases: empty states, unknown species, offline mode
-- [ ] ⚠️ If behind schedule: DROP T-16 first (stretch)
+- [ ] **T-16 (Growth Journal)**:
+  - Implement `server/logic/planner.js` (`logGrowth()`) and endpoint `POST /api/plants/:id/growth`
+  - Build UI Timeline component for growth milestones (height cm, first leaf, notes)
+  - Verify WebMCP Tool #7 (`log_growth`)
+- [ ] **T-17 (Seasonal Planting Planner)**:
+  - Implement `server/logic/planner.js` (`planSeasonalPlanting()`) and endpoint `POST /api/planner/seasonal`
+  - Compute sowing, indoor-start, and harvest calendar with companion planting hints (e.g. Tomatoes + Basil vs Fennel)
+  - Build UI Seasonal Planner modal & verify WebMCP Tool #6 (`plan_seasonal_planting`)
+- [ ] **T-18 (Live-Sync & Toast Feedback - Constraint C5)**:
+  - Add green Agent Pulse ripple animation on plant cards during agent mutations
+  - Implement dual-state toast notifications (`🤖 Monstera watered by agent` vs `💧 Monstera marked as watered`)
+- [ ] **T-18B (Plant Management Operations - FR-1.3)**:
+  - Add Edit & Delete plant actions in UI (connecting to `PATCH/DELETE /api/plants/:id`)
+  - Add Location filter tabs (*All*, *Indoor*, *Outdoor*) on My Plants dashboard
+- [ ] **T-18C (Resilience & Compliance)**:
+  - Add medical/gardening disclaimer footer on DiagnosisPanel (NFR-7)
+  - Ensure graceful offline/cached fallback indicator for weather data (NFR-2)
 
 ## ✅ Gate / Acceptance
-App feels complete; all MoSCoW Musts+Shoulds done
-
-## 📝 Notes & Decisions
-_(log surprises, blockers, and any ADR-worthy decisions here; significant ones → [[docs/decisions]])_
+All MoSCoW Musts and Shoulds complete; app provides a full, polished, multi-feature experience with zero console errors 🏁 **Day 8 gate**
 
 ---
 [[tasks/day-07|← Day 7]] · [[tasks/kanban|Kanban]] · [[tasks/day-09|Day 9 →]]

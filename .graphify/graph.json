@@ -1935,20 +1935,6 @@
   },
   {
    "source": "tasks/day-07",
-   "target": "docs/testing-strategy",
-   "relation": "links_to",
-   "confidence": "EXTRACTED",
-   "weight": 1
-  },
-  {
-   "source": "tasks/day-07",
-   "target": "docs/decisions",
-   "relation": "links_to",
-   "confidence": "EXTRACTED",
-   "weight": 1
-  },
-  {
-   "source": "tasks/day-07",
    "target": "tasks/day-06",
    "relation": "links_to",
    "confidence": "EXTRACTED",
@@ -1978,20 +1964,6 @@
   {
    "source": "tasks/day-08",
    "target": "plan",
-   "relation": "links_to",
-   "confidence": "EXTRACTED",
-   "weight": 1
-  },
-  {
-   "source": "tasks/day-08",
-   "target": "docs/api-integrations",
-   "relation": "links_to",
-   "confidence": "EXTRACTED",
-   "weight": 1
-  },
-  {
-   "source": "tasks/day-08",
-   "target": "docs/decisions",
    "relation": "links_to",
    "confidence": "EXTRACTED",
    "weight": 1
@@ -2145,28 +2117,42 @@
   },
   {
    "source": "tasks/kanban",
-   "target": "docs/testing-strategy",
+   "target": "tasks/day-07",
    "relation": "links_to",
    "confidence": "EXTRACTED",
    "weight": 1
   },
   {
    "source": "tasks/kanban",
-   "target": "docs/backend-api",
+   "target": "tasks/day-08",
    "relation": "links_to",
    "confidence": "EXTRACTED",
    "weight": 1
   },
   {
    "source": "tasks/kanban",
-   "target": "docs/api-integrations",
+   "target": "tasks/day-08",
    "relation": "links_to",
    "confidence": "EXTRACTED",
    "weight": 1
   },
   {
    "source": "tasks/kanban",
-   "target": "docs/ui-ux-overview",
+   "target": "tasks/day-08",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "tasks/kanban",
+   "target": "tasks/day-08",
+   "relation": "links_to",
+   "confidence": "EXTRACTED",
+   "weight": 1
+  },
+  {
+   "source": "tasks/kanban",
+   "target": "tasks/day-08",
    "relation": "links_to",
    "confidence": "EXTRACTED",
    "weight": 1
