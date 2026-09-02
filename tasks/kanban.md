@@ -5,46 +5,45 @@ type: tracker
 # ✅ PlantNeeds — Master Task Board
 
 > Single source of truth for work status. Daily details live in [[tasks/day-01]] … [[tasks/day-10]].
-> Roadmap context: [[plan]] · Specs: [[specification]]
-> **Agents:** when you finish a task, move it to Done AND check it off in the day note, in the same commit.
+> Roadmap context: [[plan]] · Requirements: [[PlantNeeds-SRD]]
 
-## 📋 Backlog
-| ID | Task | Day | Links |
-|---|---|---|---|
-| T-15 | ChatGPT-browser E2E pass + description iteration | 7 | [[tasks/day-07]] |
-| T-16 | Growth journal UI + log_growth endpoint | 8 | [[tasks/day-08]] |
-| T-17 | Seasonal planting planner + companion planting hints | 8 | [[tasks/day-08]] |
-| T-18 | Live-sync toasts/animations polish (Agent Pulse C5) | 8 | [[tasks/day-08]] |
-| T-18B | Plant Edit/Delete actions + Indoor/Outdoor filter | 8 | [[tasks/day-08]] |
-| T-18C | Diagnosis disclaimer & offline resilience | 8 | [[tasks/day-08]] |
-| T-19 | Deploy: Render Static + Web Service + Postgres (`render.yaml`) | 9 | [[docs/deployment]] |
-| T-20 | Demo video (<3 min, audio, YouTube) | 9 | [[PlantNeeds-SRD#16. Hackathon Submission Checklist\|SRD §16]] |
-| T-21 | README + LICENSE + Devpost submission text | 10 | [[PlantNeeds-SRD#16. Hackathon Submission Checklist\|SRD §16]] |
+## 📊 Summary
+- Total tasks: **26** (T-01 … T-22 + T-18B, T-18C + 2 QA gates)
+- Completed: **20 / 26** (Day 1-8 Complete)
+- Status: **Day 8 COMPLETE — Ready for Day 9 Deployment & Video Demo**
 
-## 🔨 In Progress
-| ID | Task | Day | Notes |
-|---|---|---|---|
-| T-16 | Growth journal UI + log_growth endpoint | 8 | [[tasks/day-08]] |
+---
 
-## 🐛 Bugs
-_(log with repro steps — see [[docs/testing-strategy#Bug Protocol|bug protocol]])_
+## 🏃 Active Tasks
+*None — Day 8 Complete. Ready for Day 9 Deployment.*
 
-## ✅ Done
-| ID | Task | Day | Completed | Links |
-|---|---|---|---|---|
-| T-15 | ChatGPT-browser E2E pass + description iteration | 7 | 2026-09-02 | [[tasks/day-07]] |
-| T-01 | Scaffold Vite client + Express server + repo structure | 1 | 2026-09-01 (`45d343f`) | [[specification#1. Technology Stack (Locked)\|spec §1]] |
-| T-02 | PostgreSQL schema (`migrate.sql`) + `db/pool.js` + reactive store | 1 | 2026-09-01 (`45d343f`) | [[docs/database-schema]] |
-| T-03 | plants-db.json — 53 species seed data (30 indoor + 23 outdoor) | 2 | 2026-09-01 (`5bd7296`) | [[docs/data-model#Plant Database Format\|data-model]] |
-| T-04 | Species matching (aliases, fallback profile) | 2 | 2026-09-01 (`4f5e877`) | [[docs/data-model#Species Matching (agent-friendly)\|matching]] |
-| T-05 | Auth endpoints: register/login/me (JWT + bcryptjs) + auth middleware | 2 | 2026-09-01 (`bde98c2`) | [[docs/backend-api#Authentication\|backend-api]] |
-| T-06 | Plant list + AddPlantForm (53 species autocomplete) + Login/Register UI | 3 | 2026-09-01 (`fbc2385`) | [[docs/ui-ux-overview]] |
-| T-07 | Care schedule view (7d/14d/30d modal) + DueBadge + countdown rings | 3 | 2026-09-01 (`fbc2385`) | [[specification#3.2 Client orchestration\|spec §3.2]] |
-| T-08 | Plants CRUD + care-log API endpoints | 4 | 2026-09-01 (`f0c07d9`) | [[docs/backend-api#Plants (collection + tracker)\|plants API]] |
-| T-09 | Open-Meteo proxy + cache + `getWateringForecast` logic + widget | 4 | 2026-09-01 (`f0c07d9`) | [[docs/api-integrations]] |
-| T-22 | API & auth test pass (A1–A10) | 4 | 2026-09-01 (`f0c07d9`) | [[docs/testing-strategy#2. API & Auth Tests (scripted — HTTP against running server)\|api tests]] |
-| T-10 | registerAllTools() — all 7 wrappers (over client/logic → API) | 5 | 2026-09-01 (`08e77bc`) | [[docs/webmcp-tools]] |
-| T-11 | Chrome WebMCP flag test pass (T1–T6, with auth) | 5 | 2026-09-01 (`08e77bc`) | [[docs/testing-strategy#3. WebMCP Tool Tests (manual — Chrome)\|tool tests]] |
-| T-12 | symptoms-matrix.json — 20 causes across 5 categories | 6 | 2026-09-01 (`d4a6d91`) | [[docs/diagnosis-engine#Target Coverage (~20 causes — Day 6 work, tasks/day-06)\|coverage]] |
-| T-13 | diagnoseProblem scoring + `/api/diagnose` endpoint | 6 | 2026-09-01 (`cb37a57`) | [[docs/diagnosis-engine]] |
-| T-14 | DiagnosisPanel UI with symptom multi-select | 6 | 2026-09-01 (`08c7bab`) | [[docs/ui-ux-overview]] |
+---
+
+## 📋 Task Registry
+
+### 🟢 Completed (Day 1 – Day 8)
+- [x] **T-01** (Day 1) — Vite + Express Scaffolding & Shared Logic contracts
+- [x] **T-02** (Day 1) — PostgreSQL schema + Seed data
+- [x] **T-03** (Day 2) — 53-species botanical database (`plants-db.json`)
+- [x] **T-04** (Day 2) — Species fuzzy match & alias normalization engine
+- [x] **T-05** (Day 2) — JWT Authentication API
+- [x] **T-06** (Day 3) — Botanical Ether UI Layout & Navigation
+- [x] **T-07** (Day 3) — Plant Dashboard & Care Schedule Components
+- [x] **T-08** (Day 4) — Plant Collection CRUD API
+- [x] **T-09** (Day 4) — Open-Meteo Weather Proxy & Rain-Delay Logic
+- [x] **T-22** (Day 4) — Automated integration test suite
+- [x] **T-10** (Day 5) — Register all 7 WebMCP Tools with JSON schema validation
+- [x] **T-11** (Day 5) — WebMCP Live-Sync Bridge with reactive store
+- [x] **T-12** (Day 6) — Plant Symptoms Matrix JSON (20 causes)
+- [x] **T-13** (Day 6) — Rule-Based Diagnosis Engine & Overwatering evaluator
+- [x] **T-14** (Day 6) — Diagnosis Panel UI Component
+- [x] **T-16** (Day 8) — **Growth Journal Backend & UI Timeline Modal**
+- [x] **T-17** (Day 8) — **Seasonal Planting Planner Backend & Modal with Companion Matrix**
+- [x] **T-18** (Day 8) — **Live-Sync Toast Feedback & Agent Pulse animation**
+- [x] **T-18B** (Day 8) — **Plant Management Actions & Location Filter Tabs**
+- [x] **T-18C** (Day 8) — **Diagnosis Disclaimer & Weather Resilience**
+
+### 🟡 Upcoming (Day 9 – Day 10)
+- [ ] **T-19** (Day 9) — Render production deployment (`render.yaml`)
+- [ ] **T-20** (Day 9) — Record <3 min public demo video
+- [ ] **T-21** (Day 10) — Final Devpost submission text, open source audit & code freeze

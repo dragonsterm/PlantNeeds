@@ -2,16 +2,18 @@
  * client/src/main.js — app bootstrap
  * -----------------------------------
  * Mounts UI subscriptions, registers WebMCP tools (feature-detected, C6), and
- * applies base styles. Day 1 scaffold — auth flow + data loading land Day 3+.
+ * activates live-sync toast notifications (C5).
  */
 import './style.css';
 import { mountUi } from './ui/render.js';
 import { registerAllTools } from './tools/register-tools.js';
+import { initToastSubscriptions } from './ui/components/toast-notification.js';
 
 function boot() {
   mountUi();
   registerAllTools();
-  console.info('[app] PlantNeeds client booted (Day 1 scaffold)');
+  initToastSubscriptions();
+  console.info('[app] PlantNeeds client booted with WebMCP & Live-Sync');
 }
 
 boot();

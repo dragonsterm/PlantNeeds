@@ -15,8 +15,14 @@ import { renderDarkSchedule } from './components/render-dark-schedule.js';
 import { renderAddPlantModal } from './components/add-plant-form.js';
 import { renderScheduleModal } from './components/schedule-modal.js';
 import { renderDiagnosisModal } from './components/diagnosis-panel.js';
+import { renderGrowthJournalModal } from './components/growth-journal-modal.js';
+import { renderSeasonalPlannerModal } from './components/seasonal-planner-modal.js';
+import { showToast } from './components/toast-notification.js';
 import { listPlants, logCareActivity } from '../logic/plants.js';
+import { api } from '../api/client.js';
 import { setCache } from '../state/store.js';
+
+import { getNavbarHtml, getWeatherBannerHtml } from './components/navbar.js';
 
 export function getAppTheme() {
   return localStorage.getItem('plantneeds_theme') || 'light';
@@ -74,7 +80,47 @@ export function mountUi() {
     }
   ];
 
-  async function render() {
+  let isFetchingLive = false;
+
+  async function syncLivePlants() {
+    if (isFetchingLive) return;
+    isFetchingLive = true;
+    try {
+      const livePlants = await listPlants();
+      if (livePlants && livePlants.length > 0) {
+        userPlants = livePlants.map((p, idx) => ({
+          id: p.id,
+          name: p.name,
+          species: p.species || 'Houseplant',
+          location: p.location || 'indoor',
+          water_frequency_days: p.water_frequency_days || 7,
+          last_watered: p.last_watered || null,
+          subtitle: `${p.species || 'Houseplant'} • ${p.location === 'outdoor' ? 'Outdoor Bed' : 'Indoor'}`,
+          days_remaining: p.days_remaining ?? idx * 3,
+          status_label: (p.days_remaining ?? idx * 3) <= 0 ? 'Due Today' : 'Healthy',
+          is_overdue: (p.days_remaining ?? idx * 3) <= 0,
+          badge_bg: (p.days_remaining ?? idx * 3) <= 0 ? 'bg-status-warning' : 'bg-primary-fixed',
+          ring_color: (p.days_remaining ?? idx * 3) <= 0 ? 'text-status-warning' : 'text-primary-fixed',
+          ring_dashoffset: (p.days_remaining ?? idx * 3) <= 0 ? '10' : '60',
+          btn_class: (p.days_remaining ?? idx * 3) <= 0 ? 'bg-primary text-white hover:bg-primary-container' : 'bg-white/10 text-white hover:bg-white/20',
+          image_url: p.image_url || (idx % 2 === 0 
+            ? 'https://lh3.googleusercontent.com/aida-public/AB6AXuAhEkaeKyuoBmmFgEVi4XkgE5zr14wDdg-UMmpjk-ne84t6WCC6gvm6rfVlReiJSqhNRfJdfEAsxG2ghiWQLKN7zfvRGZ-XpKcO4ey8BdjqxooUrkZcD_FF2_CVerxj42LG9oElK1zM_Lzgpn937KCuEi5sJIn_p8jaxgE-B-5QpywJ25ocmygtN0A3AQgknTrweb_F6gCgJp0zj88WQ2pFawAiIKDMEegkTmjs-U2EDgAMfDSzQuXuQw'
+            : 'https://lh3.googleusercontent.com/aida-public/AB6AXuAxW8RBbT4YPXuDPqRLeQZQr-aXgWG48D8hE_oQLERilCYbEBCHF2gjHmR1fXjqucqbGnduvacZ3V3g9I5boK1H0Wtb9UrOfNj05whoLSdKDEHpmh_LZtbGOeTl7TTIe_pI_C1U_1uqhs1yM7MsHa4T4pH6JQHnNX1VaNeigoC04P3z_su3uuKq5TS9-ANEBa3ebnz18U0PhkUAnYdUN1Rmu1yFC4VeIGeD2DNb5FKvVNQnwEcchk8Yig')
+        }));
+        setCache('plants', userPlants);
+      }
+    } catch {
+      // Offline-first graceful fallback
+    } finally {
+      isFetchingLive = false;
+    }
+  }
+
+  // Preload background assets into memory
+  const preloadBg = new Image();
+  preloadBg.src = '/assets/summer-vibes-bg.jpg';
+
+  function render() {
     const rawHash = (window.location.hash || '').toLowerCase();
     
     // Check if user explicitly navigated to a legacy themed hash
@@ -98,35 +144,11 @@ export function mountUi() {
       setToken('demo-token');
     }
 
-    try {
-      const livePlants = await listPlants();
-      if (livePlants && livePlants.length > 0) {
-        userPlants = livePlants.map((p, idx) => ({
-          id: p.id,
-          name: p.name,
-          species: p.species || 'Houseplant',
-          location: p.location || 'indoor',
-          water_frequency_days: p.water_frequency_days || 7,
-          last_watered: p.last_watered || null,
-          subtitle: `${p.species || 'Houseplant'} • ${p.location === 'outdoor' ? 'Outdoor Bed' : 'Indoor'}`,
-          days_remaining: p.days_remaining ?? idx * 3,
-          status_label: (p.days_remaining ?? idx * 3) <= 0 ? 'Due Today' : 'Healthy',
-          is_overdue: (p.days_remaining ?? idx * 3) <= 0,
-          badge_bg: (p.days_remaining ?? idx * 3) <= 0 ? 'bg-status-warning' : 'bg-primary-fixed',
-          ring_color: (p.days_remaining ?? idx * 3) <= 0 ? 'text-status-warning' : 'text-primary-fixed',
-          ring_dashoffset: (p.days_remaining ?? idx * 3) <= 0 ? '10' : '60',
-          btn_class: (p.days_remaining ?? idx * 3) <= 0 ? 'bg-primary text-white hover:bg-primary-container' : 'bg-white/10 text-white hover:bg-white/20',
-          image_url: p.image_url || (idx % 2 === 0 
-            ? 'https://lh3.googleusercontent.com/aida-public/AB6AXuAhEkaeKyuoBmmFgEVi4XkgE5zr14wDdg-UMmpjk-ne84t6WCC6gvm6rfVlReiJSqhNRfJdfEAsxG2ghiWQLKN7zfvRGZ-XpKcO4ey8BdjqxooUrkZcD_FF2_CVerxj42LG9oElK1zM_Lzgpn937KCuEi5sJIn_p8jaxgE-B-5QpywJ25ocmygtN0A3AQgknTrweb_F6gCgJp0zj88WQ2pFawAiIKDMEegkTmjs-U2EDgAMfDSzQuXuQw'
-            : 'https://lh3.googleusercontent.com/aida-public/AB6AXuAxW8RBbT4YPXuDPqRLeQZQr-aXgWG48D8hE_oQLERilCYbEBCHF2gjHmR1fXjqucqbGnduvacZ3V3g9I5boK1H0Wtb9UrOfNj05whoLSdKDEHpmh_LZtbGOeTl7TTIe_pI_C1U_1uqhs1yM7MsHa4T4pH6JQHnNX1VaNeigoC04P3z_su3uuKq5TS9-ANEBa3ebnz18U0PhkUAnYdUN1Rmu1yFC4VeIGeD2DNb5FKvVNQnwEcchk8Yig')
-        }));
-      }
-    } catch {
-      // Fallback
-    }
-
     // Keep store cache synchronized for WebMCP tools (Single Source of Truth)
     setCache('plants', userPlants);
+
+    // Non-blocking background revalidation
+    syncLivePlants();
 
     // 1. Single Route for Care Schedule (#schedule)
     if (isScheduleView) {
@@ -144,71 +166,35 @@ export function mountUi() {
       return;
     }
 
-    // Render Dark Dashboard (When currentTheme === 'dark') — 100% exact from Stitch code.html
+    // Render Dark Dashboard (When currentTheme === 'dark') — 100% exact shared layout
     root.innerHTML = `
       <!-- Dashboard Background (Dark Moody Foliage with Raindrops) -->
       <div class="bg-layer"></div>
 
-      <!-- TopNavBar Dark (Exact 1:1 from Stitch code.html) -->
-      <div class="fixed top-4 left-4 right-4 z-50 max-w-7xl mx-auto">
-        <nav class="glass-panel rounded-full px-6 py-3 shadow-sm transition-all duration-300">
-          <div class="flex justify-between items-center w-full">
-            <!-- Logo Area -->
-            <div class="flex items-center gap-3 cursor-pointer">
-              <img src="/assets/plantneeds-leaf-drop-logo.png" alt="PlantNeeds Logo" style="height: 34px; width: auto; object-fit: contain;" />
-              <span class="font-headline-lg text-headline-lg font-bold text-white">PlantNeeds</span>
-            </div>
-            <!-- Navigation Links (Web) -->
-            <div class="hidden md:flex items-center gap-8">
-              <a class="text-white font-semibold border-b-2 border-white pb-1 transition-all duration-150 ease-in-out scale-95" href="#dashboard">My Garden</a>
-              <a class="text-white/70 hover:text-white transition-colors hover:bg-white/10 px-3 py-1 rounded-md duration-300" href="#schedule">Care Schedule</a>
-              <a class="text-white/70 hover:text-white transition-colors hover:bg-white/10 px-3 py-1 rounded-md duration-300" href="#diagnose">Diagnosis</a>
-              <button id="theme-toggle-btn" class="text-primary-fixed hover:underline text-xs" style="background: none; border: none; cursor: pointer; font-weight: 600;">[Switch to Light Theme]</button>
-            </div>
-            <!-- Trailing Actions -->
-            <div class="flex items-center gap-4">
-              <button id="nav-add-plant-btn" class="bg-primary text-white px-5 py-2 rounded-full font-body-sm font-semibold hover:bg-primary-container transition-colors flex items-center gap-2 shadow-sm border border-white/10 cursor-pointer">
-                <span class="material-symbols-outlined text-sm">add</span> Add Plant
-              </button>
-              <div class="flex items-center gap-2 text-white">
-                <button class="p-2 rounded-full hover:bg-white/20 transition-colors bg-white/10" style="border: none; cursor: pointer;"><span class="material-symbols-outlined">notifications</span></button>
-                <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-white/50 shadow-sm ml-2 cursor-pointer hover:border-white transition-colors">
-                  <img class="w-full h-full object-cover" alt="User Avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmX1gzteICusJWAL6o8TBIgj2aEee9UDdvGv6jrJbIKNbZAazY-YqO-IzcOOAN3rTeV7Y-YQ7bLoaXpDW90AIvceHzpVtw_OMpR58pkcZTULK5kL9f5uSdUShAUdorMz1oqpQMUPVUaakMa80pIX8-4nXAjqdeOfMMgRmDTVq2VvPSR-Chyq383zmwaJpVEaEOzhXDp8H7OeeF2QHULS_0Zk6zCCEmoBVeWXE-pzMI2x5Dpphl2Bp_sw"/>
-                </div>
-                <button id="logout-btn" title="Sign Out" class="text-white/60 text-xs hover:text-white underline ml-2" style="background: none; border: none; cursor: pointer;">
-                  Sign Out
-                </button>
-              </div>
-            </div>
-          </div>
-        </nav>
-      </div>
+      <!-- TopNavBar Dark -->
+      ${getNavbarHtml({ activeRoute: 'dashboard', theme: 'dark' })}
 
-      <!-- Main Content (Exact 1:1 from Stitch code.html) -->
+      <!-- Main Content -->
       <main class="pt-[120px] pb-12 px-container-margin max-w-7xl mx-auto">
         <!-- Top Banner -->
-        <div class="glass-panel rounded-2xl p-4 mb-8 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm relative overflow-hidden">
-          <div class="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent pointer-events-none"></div>
-          <div class="flex items-center gap-3 relative z-10">
-            <div class="w-10 h-10 rounded-full bg-status-water/20 flex items-center justify-center text-status-water border border-status-water/30">
-              <span class="material-symbols-outlined">rainy</span>
-            </div>
-            <p class="font-body-sm text-white" style="margin: 0;">Rain covered <strong class="font-semibold">3 outdoor garden crops</strong> (53.4 mm rain this week). <strong class="font-semibold text-primary-fixed">2 indoor houseplants</strong> due today.</p>
-          </div>
-          <div class="flex items-center gap-2 bg-primary/30 px-3 py-1.5 rounded-full relative z-10 border border-primary/40">
-            <span class="w-2 h-2 rounded-full bg-primary-fixed"></span>
-            <span class="font-label-caps text-label-caps text-white">Live Weather</span>
-          </div>
-        </div>
+        ${getWeatherBannerHtml({ theme: 'dark' })}
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
           <!-- Left 2/3: Plant Grid -->
           <div class="lg:col-span-8">
-            <div class="flex justify-between items-end mb-6">
-              <h2 class="font-headline-xl text-headline-xl text-white drop-shadow-sm">My Plants</h2>
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-6">
+              <div>
+                <h2 class="font-headline-xl text-headline-xl text-white drop-shadow-sm">My Plants</h2>
+                <div class="flex items-center gap-2 mt-2">
+                  <button class="loc-filter-btn px-3 py-1 rounded-full text-xs font-semibold bg-white/20 text-white border border-white/30 cursor-pointer" data-filter="all">All Plants (${userPlants.length})</button>
+                  <button class="loc-filter-btn px-3 py-1 rounded-full text-xs font-semibold bg-white/5 text-white/70 border border-white/10 hover:bg-white/10 cursor-pointer" data-filter="indoor">Indoor (${userPlants.filter(p => p.location !== 'outdoor').length})</button>
+                  <button class="loc-filter-btn px-3 py-1 rounded-full text-xs font-semibold bg-white/5 text-white/70 border border-white/10 hover:bg-white/10 cursor-pointer" data-filter="outdoor">Outdoor (${userPlants.filter(p => p.location === 'outdoor').length})</button>
+                </div>
+              </div>
               <div class="flex gap-2">
-                <button class="p-2 rounded-full bg-white/20 hover:bg-white/30 transition text-white border border-white/20 cursor-pointer"><span class="material-symbols-outlined">grid_view</span></button>
-                <button class="p-2 rounded-full bg-white/10 hover:bg-white/20 transition text-white border border-white/10 cursor-pointer"><span class="material-symbols-outlined">format_list_bulleted</span></button>
+                <button id="open-seasonal-planner-btn" class="px-3.5 py-1.5 rounded-full bg-emerald-950/80 text-primary-fixed border border-primary-fixed/30 hover:bg-emerald-900 transition flex items-center gap-1.5 text-xs font-semibold cursor-pointer">
+                  <span class="material-symbols-outlined text-sm">calendar_month</span> Seasonal Planner
+                </button>
               </div>
             </div>
 
@@ -241,9 +227,14 @@ export function mountUi() {
                       </div>
                       <span class="font-body-sm text-white font-semibold">${plant.is_overdue ? 'Due Today' : `${plant.days_remaining} Days Left`}</span>
                     </div>
-                    <button class="water-btn ${plant.is_overdue ? 'bg-primary text-white hover:bg-primary-container shadow-md border border-white/10' : 'bg-white/10 text-white hover:bg-white/20 border border-white/20 shadow-sm'} px-6 py-2.5 rounded-full font-body-sm font-semibold transition-colors flex items-center gap-2 cursor-pointer" data-id="${plant.id}">
-                      <span class="material-symbols-outlined text-sm">water_drop</span> Water
-                    </button>
+                    <div class="flex items-center gap-2">
+                      <button class="open-journal-btn p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition border border-white/10 cursor-pointer" data-id="${plant.id}" title="View Growth Journal">
+                        <span class="material-symbols-outlined text-sm">psychiatry</span>
+                      </button>
+                      <button class="water-btn ${plant.is_overdue ? 'bg-primary text-white hover:bg-primary-container shadow-md border border-white/10' : 'bg-white/10 text-white hover:bg-white/20 border border-white/20 shadow-sm'} px-5 py-2.5 rounded-full font-body-sm font-semibold transition-colors flex items-center gap-2 cursor-pointer" data-id="${plant.id}">
+                        <span class="material-symbols-outlined text-sm">water_drop</span> Water
+                      </button>
+                    </div>
                   </div>
                 </div>
               `).join('')}
@@ -304,20 +295,39 @@ export function mountUi() {
 
     // Modal Helpers
     const openAddPlantModal = () => renderAddPlantModal(root, { onClose: () => render() });
-    const openScheduleModal = () => renderScheduleModal(root, { plants: userPlants, onClose: () => render() });
     const openDiagnosisModal = () => renderDiagnosisModal(() => render());
 
-    // Bindings
-    root.querySelector('#theme-toggle-btn')?.addEventListener('click', () => {
+    // Universal Global Bindings
+    root.querySelector('#global-theme-toggle-btn')?.addEventListener('click', () => {
       toggleAppTheme();
-      render();
     });
 
-    root.querySelector('#nav-add-plant-btn')?.addEventListener('click', openAddPlantModal);
-    root.querySelector('#logout-btn')?.addEventListener('click', () => {
+    root.querySelector('#global-add-plant-btn')?.addEventListener('click', openAddPlantModal);
+    root.querySelector('#open-seasonal-planner-btn')?.addEventListener('click', () => {
+      renderSeasonalPlannerModal(root, { onClose: () => render() });
+    });
+
+    root.querySelector('#global-logout-btn')?.addEventListener('click', () => {
       clearToken();
       window.location.hash = '';
       render();
+    });
+
+    root.querySelectorAll('.open-journal-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-id');
+        const plant = userPlants.find(p => p.id === id);
+        if (plant) {
+          renderGrowthJournalModal(root, { plant, onClose: () => render() });
+        }
+      });
+    });
+
+    root.querySelectorAll('a[href="#diagnose"]').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        openDiagnosisModal();
+      });
     });
 
     root.querySelectorAll('.water-btn').forEach(btn => {

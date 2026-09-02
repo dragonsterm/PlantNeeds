@@ -1,41 +1,117 @@
 /**
  * client/src/ui/components/navbar.js
- * Top Navigation bar modeled after Google Stitch Dark Emerald theme.
+ * Unified, 100% Shared Reusable Top Navigation Bar for all pages & themes.
+ * Zero layout-shift: fixed box-model with absolute active underline indicator.
  */
-import { clearToken } from '../../api/client.js';
-import { emit } from '../../state/store.js';
+export function getNavbarHtml({ activeRoute = 'dashboard', theme = 'light' } = {}) {
+  const isDark = theme === 'dark';
+  const isGardenActive = activeRoute === 'dashboard' || activeRoute === 'garden';
+  const isScheduleActive = activeRoute === 'schedule';
+  const isDiagnoseActive = activeRoute === 'diagnose';
 
-export function renderNavbar(user = null, onAddPlantClick = null) {
+  const navGlassStyle = isDark
+    ? `background: rgba(0, 0, 0, 0.25); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.15); box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);`
+    : `background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.85); box-shadow: 0 4px 24px rgba(27, 48, 34, 0.08);`;
+
+  const logoTextColor = isDark ? '#FFFFFF' : '#1B3022';
+  const activeColor = isDark ? '#FFFFFF' : '#1B3022';
+  const inactiveColor = isDark ? 'rgba(255, 255, 255, 0.65)' : '#556353';
+  const themeToggleText = isDark ? '[Switch to Light Theme]' : '[Switch to Dark Theme]';
+  const themeToggleColor = isDark ? '#bcf0ae' : '#154212';
+  const addBtnBg = isDark ? '#154212' : '#1B3022';
+  const notifBtnBg = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)';
+  const notifIconColor = isDark ? '#FFFFFF' : '#1B3022';
+  const avatarBorder = isDark ? 'border-white/50' : 'border-[#1B3022]/20';
+  const signOutColor = isDark ? 'rgba(255, 255, 255, 0.6)' : '#556353';
+
   return `
-    <nav class="glass-panel nav-bar" style="margin: 16px 24px 20px; padding: 12px 24px; display: flex; justify-content: space-between; align-items: center;">
-      <div style="display: flex; align-items: center; gap: 32px;">
-        <div style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
-          <span class="material-symbols-outlined brand-icon" style="color: var(--primary-fixed, #a1d494); font-size: 32px;">potted_plant</span>
-          <span style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 22px; font-weight: 700; color: #FFFFFF; letter-spacing: -0.02em;">PlantNeeds</span>
-        </div>
-        <div class="nav-links" style="display: flex; gap: 24px;">
-          <a href="#garden" class="nav-link active" style="color: #FFFFFF; font-weight: 600; font-size: 14px; text-decoration: none; padding-bottom: 4px; border-bottom: 2px solid #a1d494;">My Garden</a>
-          <a href="#schedule" class="nav-link" style="color: var(--sage-soft, #E1E8E0); font-weight: 500; font-size: 14px; text-decoration: none;">Care Schedule</a>
-          <a href="#diagnose" class="nav-link" style="color: var(--sage-soft, #E1E8E0); font-weight: 500; font-size: 14px; text-decoration: none;">Diagnosis</a>
-        </div>
-      </div>
-      <div style="display: flex; align-items: center; gap: 16px;">
-        <button id="nav-add-plant-btn" class="btn-primary-stitch" style="width: auto; margin-top: 0; padding: 10px 20px; display: flex; align-items: center; gap: 6px;">
-          <span class="material-symbols-outlined" style="font-size: 18px;">add</span>
-          <span>Add Plant</span>
-        </button>
-        <button class="icon-btn" title="Notifications" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; width: 40px; height: 40px; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center;">
-          <span class="material-symbols-outlined" style="font-size: 20px;">notifications</span>
-        </button>
-        <div style="display: flex; align-items: center; gap: 10px;">
-          <div style="width: 38px; height: 38px; border-radius: 50%; background: var(--primary-container, #2D5A27); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; border: 1px solid rgba(255,255,255,0.3);">
-            ${user?.username ? user.username.substring(0, 2).toUpperCase() : 'PN'}
+    <div class="fixed top-4 left-4 right-4 z-50 max-w-7xl mx-auto">
+      <nav class="glass-panel rounded-full px-6 py-2.5 shadow-sm transition-all duration-300" style="${navGlassStyle}">
+        <div class="flex justify-between items-center w-full">
+          <!-- Logo Area -->
+          <a href="#dashboard" class="flex items-center gap-3 cursor-pointer" style="text-decoration: none;">
+            <img src="/assets/plantneeds-leaf-drop-logo.png" alt="PlantNeeds Logo" style="height: 34px; width: auto; object-fit: contain;" />
+            <span class="font-headline-lg text-headline-lg font-bold" style="color: ${logoTextColor};">PlantNeeds</span>
+          </a>
+
+          <!-- Navigation Links (Zero-Shift Fixed Box Model) -->
+          <div class="hidden md:flex items-center gap-6">
+            <!-- My Garden -->
+            <a href="#dashboard" class="relative px-3 py-1.5 font-medium text-sm transition-colors cursor-pointer" style="color: ${isGardenActive ? activeColor : inactiveColor}; text-decoration: none;">
+              <span class="${isGardenActive ? 'font-bold' : 'font-medium'}">My Garden</span>
+              ${isGardenActive ? `<span class="absolute bottom-0 left-3 right-3 h-[2px] rounded-full" style="background-color: ${activeColor};"></span>` : ''}
+            </a>
+
+            <!-- Care Schedule -->
+            <a href="#schedule" class="relative px-3 py-1.5 font-medium text-sm transition-colors cursor-pointer" style="color: ${isScheduleActive ? activeColor : inactiveColor}; text-decoration: none;">
+              <span class="${isScheduleActive ? 'font-bold' : 'font-medium'}">Care Schedule</span>
+              ${isScheduleActive ? `<span class="absolute bottom-0 left-3 right-3 h-[2px] rounded-full" style="background-color: ${activeColor};"></span>` : ''}
+            </a>
+
+            <!-- Diagnosis -->
+            <a href="#diagnose" class="relative px-3 py-1.5 font-medium text-sm transition-colors cursor-pointer" style="color: ${isDiagnoseActive ? activeColor : inactiveColor}; text-decoration: none;">
+              <span class="${isDiagnoseActive ? 'font-bold' : 'font-medium'}">Diagnosis</span>
+              ${isDiagnoseActive ? `<span class="absolute bottom-0 left-3 right-3 h-[2px] rounded-full" style="background-color: ${activeColor};"></span>` : ''}
+            </a>
+
+            <!-- Theme Switcher -->
+            <button id="global-theme-toggle-btn" class="text-xs hover:underline ml-2" style="color: ${themeToggleColor}; font-weight: 600; background: none; border: none; cursor: pointer;">
+              ${themeToggleText}
+            </button>
           </div>
-          <button id="nav-logout-btn" title="Sign Out" style="background: none; border: none; color: var(--sage-soft, #E1E8E0); font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: underline;">
-            Sign Out
-          </button>
+
+          <!-- Trailing Actions -->
+          <div class="flex items-center gap-4">
+            <button id="global-add-plant-btn" class="text-white px-5 py-2 rounded-full font-body-sm font-semibold hover:opacity-90 transition-opacity flex items-center gap-2 shadow-sm border border-transparent cursor-pointer" style="background: ${addBtnBg};">
+              <span class="material-symbols-outlined text-sm">add</span> Add Plant
+            </button>
+            <div class="flex items-center gap-2">
+              <button class="p-2 rounded-full hover:opacity-80 transition-opacity" style="background: ${notifBtnBg}; border: none; cursor: pointer; color: ${notifIconColor};">
+                <span class="material-symbols-outlined">notifications</span>
+              </button>
+              <div class="w-10 h-10 rounded-full overflow-hidden border-2 shadow-sm ml-2 cursor-pointer transition-colors ${avatarBorder}">
+                <img class="w-full h-full object-cover" alt="User Avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmX1gzteICusJWAL6o8TBIgj2aEee9UDdvGv6jrJbIKNbZAazY-YqO-IzcOOAN3rTeV7Y-YQ7bLoaXpDW90AIvceHzpVtw_OMpR58pkcZTULK5kL9f5uSdUShAUdorMz1oqpQMUPVUaakMa80pIX8-4nXAjqdeOfMMgRmDTVq2VvPSR-Chyq383zmwaJpVEaEOzhXDp8H7OeeF2QHULS_0Zk6zCCEmoBVeWXE-pzMI2x5Dpphl2Bp_sw"/>
+              </div>
+              <button id="global-logout-btn" title="Sign Out" class="text-xs underline hover:opacity-100 ml-2" style="color: ${signOutColor}; background: none; border: none; cursor: pointer;">
+                Sign Out
+              </button>
+            </div>
+          </div>
         </div>
+      </nav>
+    </div>
+  `;
+}
+
+/**
+ * Reusable Weather Alert Banner component matching exact dimensions across all pages.
+ */
+export function getWeatherBannerHtml({ theme = 'light' } = {}) {
+  const isDark = theme === 'dark';
+  const bannerGlass = isDark
+    ? `background: rgba(0, 0, 0, 0.25); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.15); box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);`
+    : `background: rgba(255, 255, 255, 0.55); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.75); box-shadow: 0 10px 30px rgba(27, 48, 34, 0.08);`;
+
+  const textColor = isDark ? '#FFFFFF' : '#1B3022';
+  const badgeBg = isDark ? 'rgba(188, 240, 174, 0.2)' : 'rgba(188, 240, 174, 0.45)';
+  const badgeBorder = isDark ? 'rgba(188, 240, 174, 0.35)' : 'rgba(45, 90, 39, 0.3)';
+  const badgeText = isDark ? '#bcf0ae' : '#1B3022';
+  const dotColor = isDark ? '#bcf0ae' : '#154212';
+
+  return `
+    <div class="glass-panel rounded-2xl p-4 mb-8 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm relative overflow-hidden" style="${bannerGlass}">
+      <div class="flex items-center gap-3 relative z-10">
+        <div class="w-10 h-10 rounded-full bg-status-water/20 flex items-center justify-center text-status-water border border-status-water/30 shrink-0">
+          <span class="material-symbols-outlined">rainy</span>
+        </div>
+        <p class="font-body-sm" style="color: ${textColor}; margin: 0;">
+          Rain covered <strong class="font-semibold">3 outdoor garden crops</strong> (53.4 mm rain this week). <strong class="font-semibold">2 indoor houseplants</strong> due today.
+        </p>
       </div>
-    </nav>
+      <div class="flex items-center gap-2 px-3 py-1.5 rounded-full relative z-10 border shrink-0" style="background: ${badgeBg}; border-color: ${badgeBorder};">
+        <span class="w-2 h-2 rounded-full" style="background: ${dotColor};"></span>
+        <span class="font-label-caps text-xs font-bold uppercase tracking-wider" style="color: ${badgeText};">Live Weather</span>
+      </div>
+    </div>
   `;
 }
