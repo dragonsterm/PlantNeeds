@@ -148,10 +148,9 @@ export function renderAuthForm(container, { initialMode = 'login' } = {}) {
       googleBtn.disabled = true;
       googleBtn.style.opacity = '0.7';
 
-      const currentOrigin = window.location.origin;
-      const redirectUri = `${currentOrigin}/#auth_callback`;
+      // RFC 6749 Compliant redirect URI (matches exactly the URL in Authorized redirect URIs: http://localhost:5173)
+      const redirectUri = window.location.origin;
       
-      // Standard OAuth 2.0 endpoint (works across all origins and avoids GIS origin block)
       const oauthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(GOOGLE_CLIENT_ID)}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token%20id_token&scope=openid%20email%20profile&nonce=plantneeds_${Date.now()}`;
 
       // Open OAuth popup window
@@ -166,33 +165,35 @@ export function renderAuthForm(container, { initialMode = 'login' } = {}) {
         `width=${width},height=${height},left=${left},top=${top},status=no,resizable=yes`
       );
 
-      // Check popup or fallback to direct login if popup was blocked/closed
+      // Poll popup completion
       let handled = false;
       const interval = setInterval(async () => {
         try {
           if (!popup || popup.closed) {
             clearInterval(interval);
             if (!handled) {
-              // Fallback to seamless login
               await completeGoogleLogin();
             }
             return;
           }
 
-          const popupHash = popup.location?.hash || '';
-          if (popupHash && (popupHash.includes('id_token=') || popupHash.includes('access_token='))) {
-            handled = true;
-            clearInterval(interval);
-            popup.close();
+          const popupHref = popup.location?.href || '';
+          if (popupHref && popupHref.includes(redirectUri)) {
+            const popupHash = popup.location?.hash || '';
+            if (popupHash && (popupHash.includes('id_token=') || popupHash.includes('access_token='))) {
+              handled = true;
+              clearInterval(interval);
+              popup.close();
 
-            const params = new URLSearchParams(popupHash.replace(/^#/, ''));
-            const idToken = params.get('id_token');
-            const accessToken = params.get('access_token');
+              const params = new URLSearchParams(popupHash.replace(/^#/, ''));
+              const idToken = params.get('id_token');
+              const accessToken = params.get('access_token');
 
-            await completeGoogleLogin({ credential: idToken, accessToken });
+              await completeGoogleLogin({ credential: idToken, accessToken });
+            }
           }
         } catch (crossOriginErr) {
-          // Cross-origin access error while on accounts.google.com domain — normal until redirect
+          // Normal cross-origin access restriction while on accounts.google.com
         }
       }, 500);
     });
