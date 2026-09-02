@@ -57,7 +57,7 @@ export function computePlantSchedule(plants = [], { plant_id = null, days_ahead 
     .sort((a, b) => a.days_remaining - b.days_remaining);
 }
 
-/** listPlants() → GET /api/plants */
+/** listPlants() → GET /api/plants (Strictly User Scoped) */
 export async function listPlants(filter = {}) {
   try {
     const query = new URLSearchParams(filter).toString();
@@ -66,9 +66,10 @@ export async function listPlants(filter = {}) {
     if (res && Array.isArray(res.plants)) {
       return res.plants;
     }
-    return getCache('plants') || [];
+    return [];
   } catch (err) {
-    return getCache('plants') || [];
+    const cached = getCache('plants');
+    return Array.isArray(cached) ? cached : [];
   }
 }
 
@@ -81,16 +82,16 @@ function addPlantLocally(body) {
   } catch {}
 
   const newPlant = {
-    id: 'p-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 6),
+    id: body.id || ('p-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 6)),
     name: body.name,
     species: body.species || 'Houseplant',
     location: body.location || 'indoor',
     light_exposure: body.light_exposure || 'bright_indirect',
     pot_has_drainage: body.pot_has_drainage !== false,
-    water_frequency_days: 7,
-    last_watered: new Date().toISOString().split('T')[0],
+    water_frequency_days: Number(body.water_frequency_days) || 7,
+    last_watered: body.last_watered || new Date().toISOString().split('T')[0],
     subtitle: `${body.species || 'Houseplant'} • ${body.location === 'outdoor' ? 'Outdoor Bed' : 'Indoor'}`,
-    image_url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAhEkaeKyuoBmmFgEVi4XkgE5zr14wDdg-UMmpjk-ne84t6WCC6gvm6rfVlReiJSqhNRfJdfEAsxG2ghiWQLKN7zfvRGZ-XpKcO4ey8BdjqxooUrkZcD_FF2_CVerxj42LG9oElK1zM_Lzgpn937KCuEi5sJIn_p8jaxgE-B-5QpywJ25ocmygtN0A3AQgknTrweb_F6gCgJp0zj88WQ2pFawAiIKDMEegkTmjs-U2EDgAMfDSzQuXuQw'
+    image_url: body.image_url || 'https://lh3.googleusercontent.com/aida-public/AB6AXuAhEkaeKyuoBmmFgEVi4XkgE5zr14wDdg-UMmpjk-ne84t6WCC6gvm6rfVlReiJSqhNRfJdfEAsxG2ghiWQLKN7zfvRGZ-XpKcO4ey8BdjqxooUrkZcD_FF2_CVerxj42LG9oElK1zM_Lzgpn937KCuEi5sJIn_p8jaxgE-B-5QpywJ25ocmygtN0A3AQgknTrweb_F6gCgJp0zj88WQ2pFawAiIKDMEegkTmjs-U2EDgAMfDSzQuXuQw'
   };
 
   plants.push(newPlant);
@@ -109,10 +110,9 @@ export async function addPlant(body) {
       return result;
     }
   } catch (err) {
-    console.warn('[plants] Backend add failed or offline, saving to persistent local storage:', err.message);
+    console.warn('[plants] Backend add failed, saving to local storage:', err.message);
   }
 
-  // Graceful fallback: save locally and notify store
   const localPlant = addPlantLocally(body);
   emit('plant-added', localPlant);
   emit('plants-changed');
@@ -127,7 +127,6 @@ export async function logCareActivity({ plant_id, ...body }) {
     emit('plants-changed');
     return result;
   } catch (err) {
-    // Local state fallback
     const saved = localStorage.getItem('plantneeds_local_plants');
     if (saved) {
       try {
@@ -147,14 +146,12 @@ export async function logCareActivity({ plant_id, ...body }) {
 
 /** getCareSchedule(opts?) → Single Source of Truth for Schedule UI & WebMCP tool */
 export async function getCareSchedule({ plant_id, days_ahead = 7 } = {}) {
-  // 1. Try fetching from live store cache first
   const livePlants = getCache('plants') || [];
 
   if (livePlants.length > 0) {
     return computePlantSchedule(livePlants, { plant_id, days_ahead });
   }
 
-  // 2. Fallback to API endpoint
   try {
     const params = new URLSearchParams();
     if (plant_id) params.set('plant_id', plant_id);

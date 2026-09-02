@@ -1,9 +1,9 @@
 /**
  * client/src/ui/render.js
- * Central UI render controller & unified routing with persistent Theme & Plant State.
+ * Central UI render controller & unified routing with per-user persistent state.
  */
 import { on, clearCache, setCache } from '../state/store.js';
-import { hasToken, clearToken, setToken } from '../api/client.js';
+import { hasToken, clearToken } from '../api/client.js';
 import { renderAuthForm } from './components/auth-form.js';
 import { renderLightDashboard } from './components/render-light-dashboard.js';
 import { renderLightSchedule } from './components/render-light-schedule.js';
@@ -64,44 +64,15 @@ export function computePlantStatus(p) {
   };
 }
 
-// Persistent Local Plant State
 export function getSavedPlants() {
   const saved = localStorage.getItem('plantneeds_local_plants');
   let rawList = [];
   if (saved) {
     try {
       rawList = JSON.parse(saved);
-    } catch {
-      /* ignore */
-    }
+    } catch {}
   }
-
-  if (!rawList || rawList.length === 0) {
-    rawList = [
-      {
-        id: '1',
-        name: 'Monstera Deliciosa',
-        species: 'Monstera deliciosa',
-        location: 'indoor',
-        water_frequency_days: 7,
-        last_watered: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-        subtitle: 'Houseplant • Indoor',
-        image_url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAhEkaeKyuoBmmFgEVi4XkgE5zr14wDdg-UMmpjk-ne84t6WCC6gvm6rfVlReiJSqhNRfJdfEAsxG2ghiWQLKN7zfvRGZ-XpKcO4ey8BdjqxooUrkZcD_FF2_CVerxj42LG9oElK1zM_Lzgpn937KCuEi5sJIn_p8jaxgE-B-5QpywJ25ocmygtN0A3AQgknTrweb_F6gCgJp0zj88WQ2pFawAiIKDMEegkTmjs-U2EDgAMfDSzQuXuQw'
-      },
-      {
-        id: '2',
-        name: 'Golden Pothos',
-        species: 'Epipremnum aureum',
-        location: 'indoor',
-        water_frequency_days: 7,
-        last_watered: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-        subtitle: 'Houseplant • Indoor',
-        image_url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAxW8RBbT4YPXuDPqRLeQZQr-aXgWG48D8hE_oQLERilCYbEBCHF2gjHmR1fXjqucqbGnduvacZ3V3g9I5boK1H0Wtb9UrOfNj05whoLSdKDEHpmh_LZtbGOeTl7TTIe_pI_C1U_1uqhs1yM7MsHa4T4pH6JQHnNX1VaNeigoC04P3z_su3uuKq5TS9-ANEBa3ebnz18U0PhkUAnYdUN1Rmu1yFC4VeIGeD2DNb5FKvVNQnwEcchk8Yig'
-      }
-    ];
-  }
-
-  return rawList.map(computePlantStatus);
+  return Array.isArray(rawList) ? rawList.map(computePlantStatus) : [];
 }
 
 export function savePlantsLocally(plants) {
@@ -117,11 +88,11 @@ export function mountUi() {
   let isFetchingLive = false;
 
   async function syncLivePlants() {
-    if (isFetchingLive) return;
+    if (isFetchingLive || !hasToken()) return;
     isFetchingLive = true;
     try {
       const livePlants = await listPlants();
-      if (livePlants && Array.isArray(livePlants) && livePlants.length > 0) {
+      if (Array.isArray(livePlants)) {
         userPlants = livePlants.map((p, idx) => ({
           id: p.id,
           name: p.name,
@@ -138,7 +109,7 @@ export function mountUi() {
         render();
       }
     } catch {
-      // Backend offline — keep local persistent storage
+      // Offline fallback
     } finally {
       isFetchingLive = false;
     }
@@ -147,14 +118,15 @@ export function mountUi() {
   function handleSignOut() {
     clearToken();
     clearCache();
+    localStorage.removeItem('plantneeds_local_plants');
     window.location.hash = '';
     render();
   }
 
   function render() {
-    // Check authentication gating first
     if (!hasToken()) {
       clearCache();
+      localStorage.removeItem('plantneeds_local_plants');
       renderAuthForm(root);
       return;
     }
@@ -207,7 +179,7 @@ export function mountUi() {
           <div class="lg:col-span-8">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-6">
               <div>
-                <h2 class="font-headline-xl text-headline-xl text-white drop-shadow-sm">My Plants</h2>
+                <h2 class="font-headline-xl text-headline-xl text-white drop-shadow-sm font-bold">My Plants</h2>
                 <div class="flex items-center gap-2 mt-2">
                   <button class="loc-filter-btn px-3 py-1 rounded-full text-xs font-semibold bg-white/20 text-white border border-white/30 cursor-pointer" data-filter="all">All Plants (${userPlants.length})</button>
                   <button class="loc-filter-btn px-3 py-1 rounded-full text-xs font-semibold bg-white/5 text-white/70 border border-white/10 hover:bg-white/10 cursor-pointer" data-filter="indoor">Indoor (${userPlants.filter(p => p.location !== 'outdoor').length})</button>
@@ -221,50 +193,61 @@ export function mountUi() {
               </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              ${userPlants.map(plant => `
-                <div class="glass-card rounded-3xl p-5 flex flex-col group hover:-translate-y-1 transition-transform duration-300">
-                  <div class="relative h-48 rounded-2xl overflow-hidden mb-4 shadow-inner">
-                    <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="${plant.name}" src="${plant.image_url}" />
-                    <div class="absolute top-3 right-3 bg-black/40 backdrop-blur-md px-3 py-1 rounded-full flex items-center gap-1 shadow-sm border border-white/20">
-                      <div class="w-2 h-2 rounded-full ${plant.badge_bg}"></div>
-                      <span class="font-label-caps text-label-caps text-white font-semibold">${plant.status_label}</span>
-                    </div>
-                    <div class="absolute bottom-3 left-3 text-white">
-                      <p class="font-label-caps text-xs text-white/90 uppercase tracking-widest drop-shadow-sm">${plant.subtitle}</p>
-                    </div>
-                  </div>
-                  <div class="flex justify-between items-start mb-4">
-                    <div>
-                      <h3 class="font-headline-lg-mobile text-headline-lg-mobile text-white mb-1 font-bold">${plant.name}</h3>
-                      <p class="font-body-sm text-sage-soft">${plant.species || 'Houseplant'} • ${plant.location === 'outdoor' ? 'Outdoor' : 'Indoor'}</p>
-                    </div>
-                  </div>
-                  <div class="flex items-center justify-between mt-auto pt-4 border-t border-white/10">
-                    <div class="flex items-center gap-3">
-                      <div class="relative w-12 h-12 flex items-center justify-center">
-                        <svg class="w-full h-full transform -rotate-90" viewbox="0 0 36 36">
-                          <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="4"></path>
-                          <path class="${plant.ring_color} progress-ring" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="100, 100" stroke-dashoffset="${plant.ring_dashoffset}" stroke-linecap="round" stroke-width="4"></path>
-                        </svg>
-                        <div class="absolute flex flex-col items-center">
-                          <span class="font-body-sm font-bold text-white leading-none font-mono">${plant.days_remaining}d</span>
-                        </div>
+            ${userPlants.length === 0 ? `
+              <div class="glass-card rounded-3xl p-12 text-center flex flex-col items-center justify-center border border-white/10">
+                <span class="material-symbols-outlined text-5xl mb-3 text-emerald-400">potted_plant</span>
+                <h3 class="font-headline-lg text-white font-bold mb-1">Your Garden is Empty</h3>
+                <p class="font-body-sm text-sage-soft max-w-sm mb-6">Start by adding your first plant to track watering schedules and receive live weather recommendations.</p>
+                <button id="empty-add-plant-btn" class="bg-primary text-white px-6 py-3 rounded-full font-body-sm font-semibold hover:bg-primary-container transition flex items-center gap-2 cursor-pointer shadow-md">
+                  <span class="material-symbols-outlined text-sm">add</span> Add Your First Plant
+                </button>
+              </div>
+            ` : `
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                ${userPlants.map(plant => `
+                  <div class="glass-card rounded-3xl p-5 flex flex-col group hover:-translate-y-1 transition-transform duration-300">
+                    <div class="relative h-48 rounded-2xl overflow-hidden mb-4 shadow-inner">
+                      <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="${plant.name}" src="${plant.image_url}" />
+                      <div class="absolute top-3 right-3 bg-black/40 backdrop-blur-md px-3 py-1 rounded-full flex items-center gap-1 shadow-sm border border-white/20">
+                        <div class="w-2 h-2 rounded-full ${plant.badge_bg}"></div>
+                        <span class="font-label-caps text-label-caps text-white font-semibold">${plant.status_label}</span>
                       </div>
-                      <span class="font-body-sm text-white font-semibold">${plant.status_label}</span>
+                      <div class="absolute bottom-3 left-3 text-white">
+                        <p class="font-label-caps text-xs text-white/90 uppercase tracking-widest drop-shadow-sm">${plant.subtitle}</p>
+                      </div>
                     </div>
-                    <div class="flex items-center gap-2">
-                      <button class="open-journal-btn p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition border border-white/10 cursor-pointer" data-id="${plant.id}" title="View Growth Journal">
-                        <span class="material-symbols-outlined text-sm">psychiatry</span>
-                      </button>
-                      <button class="app-water-btn ${plant.btn_class} px-5 py-2.5 rounded-full font-body-sm font-semibold transition-colors flex items-center gap-2 cursor-pointer" data-id="${plant.id}">
-                        <span class="material-symbols-outlined text-sm">water_drop</span> Water
-                      </button>
+                    <div class="flex justify-between items-start mb-4">
+                      <div>
+                        <h3 class="font-headline-lg-mobile text-headline-lg-mobile text-white mb-1 font-bold">${plant.name}</h3>
+                        <p class="font-body-sm text-sage-soft">${plant.species || 'Houseplant'} • ${plant.location === 'outdoor' ? 'Outdoor' : 'Indoor'}</p>
+                      </div>
+                    </div>
+                    <div class="flex items-center justify-between mt-auto pt-4 border-t border-white/10">
+                      <div class="flex items-center gap-3">
+                        <div class="relative w-12 h-12 flex items-center justify-center">
+                          <svg class="w-full h-full transform -rotate-90" viewbox="0 0 36 36">
+                            <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="4"></path>
+                            <path class="${plant.ring_color} progress-ring" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="100, 100" stroke-dashoffset="${plant.ring_dashoffset}" stroke-linecap="round" stroke-width="4"></path>
+                          </svg>
+                          <div class="absolute flex flex-col items-center">
+                            <span class="font-body-sm font-bold text-white leading-none font-mono">${plant.days_remaining}d</span>
+                          </div>
+                        </div>
+                        <span class="font-body-sm text-white font-semibold">${plant.status_label}</span>
+                      </div>
+                      <div class="flex items-center gap-2">
+                        <button class="open-journal-btn p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition border border-white/10 cursor-pointer" data-id="${plant.id}" title="View Growth Journal">
+                          <span class="material-symbols-outlined text-sm">psychiatry</span>
+                        </button>
+                        <button class="app-water-btn ${plant.btn_class} px-5 py-2.5 rounded-full font-body-sm font-semibold transition-colors flex items-center gap-2 cursor-pointer" data-id="${plant.id}">
+                          <span class="material-symbols-outlined text-sm">water_drop</span> Water
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              `).join('')}
-            </div>
+                `).join('')}
+              </div>
+            `}
           </div>
 
           <!-- Right 1/3: Sidebar -->
@@ -333,6 +316,7 @@ export function mountUi() {
     });
 
     root.querySelector('#global-add-plant-btn')?.addEventListener('click', openAddPlantModal);
+    root.querySelector('#empty-add-plant-btn')?.addEventListener('click', openAddPlantModal);
     root.querySelector('#open-seasonal-planner-btn')?.addEventListener('click', () => {
       renderSeasonalPlannerModal(root, { onClose: () => render() });
     });

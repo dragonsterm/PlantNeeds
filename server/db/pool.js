@@ -124,6 +124,13 @@ export async function query(text, params = []) {
   const db = initSqlite();
   let sql = text;
 
+  // Sanitize parameter types for SQLite (convert booleans to 1/0, undefined to null)
+  const sanitizedParams = params.map(p => {
+    if (typeof p === 'boolean') return p ? 1 : 0;
+    if (p === undefined) return null;
+    return p;
+  });
+
   // Convert $1, $2 -> ?, ?
   sql = sql.replace(/\$(\d+)/g, '?');
   sql = sql.replace(/gen_random_uuid\(\)/gi, "lower(hex(randomblob(16)))");
@@ -132,24 +139,46 @@ export async function query(text, params = []) {
   const returningMatch = sql.match(/RETURNING\s+([a-zA-Z0-9_,\s*]+)$/i);
 
   if (returningMatch) {
-    const baseSql = sql.replace(/RETURNING\s+[a-zA-Z0-9_,\s*]+$/i, '').trim();
+    const returningFields = returningMatch[1].trim().split(',').map(f => f.trim());
+    let baseSql = sql.replace(/RETURNING\s+[a-zA-Z0-9_,\s*]+$/i, '').trim();
+    
+    // Automatically inject `id` into INSERT if not provided
     let generatedId = 'id-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
+    
+    const insertMatch = baseSql.match(/INSERT\s+INTO\s+([a-zA-Z0-9_]+)\s*\(([^)]+)\)\s*VALUES\s*\(([^)]+)\)/i);
+    if (insertMatch) {
+      const tableName = insertMatch[1];
+      const cols = insertMatch[2].split(',').map(c => c.trim());
+      const vals = insertMatch[3].split(',').map(v => v.trim());
+
+      if (!cols.includes('id')) {
+        cols.unshift('id');
+        vals.unshift('?');
+        sanitizedParams.unshift(generatedId);
+        baseSql = `INSERT INTO ${tableName} (${cols.join(', ')}) VALUES (${vals.join(', ')})`;
+      }
+    }
 
     try {
       const stmt = db.prepare(baseSql);
-      const res = stmt.run(...params);
+      const res = stmt.run(...sanitizedParams);
+      
+      // If full record or specific columns requested, fetch the row from the table
+      if (insertMatch) {
+        const tableName = insertMatch[1];
+        const insertedRow = db.prepare(`SELECT * FROM ${tableName} WHERE id = ?`).get(generatedId);
+        return {
+          rows: insertedRow ? [insertedRow] : [{ id: generatedId }],
+          rowCount: res.changes
+        };
+      }
+
       return {
-        rows: [{
-          id: generatedId,
-          username: params[0] || 'gardener',
-          email: params[1] || null,
-          google_id: params[2] || null,
-          provider: 'google'
-        }],
+        rows: [{ id: generatedId }],
         rowCount: res.changes
       };
     } catch (sqliteErr) {
-      console.error('[sqlite] query error:', sqliteErr.message);
+      console.error('[sqlite] query error:', sqliteErr.message, 'SQL:', baseSql);
       throw sqliteErr;
     }
   }
@@ -157,7 +186,7 @@ export async function query(text, params = []) {
   if (isSelect) {
     try {
       const stmt = db.prepare(sql);
-      const rows = stmt.all(...params);
+      const rows = stmt.all(...sanitizedParams);
       return { rows: Array.isArray(rows) ? rows : [], rowCount: rows?.length || 0 };
     } catch (err) {
       console.warn('[sqlite] select warning:', err.message);
@@ -165,12 +194,13 @@ export async function query(text, params = []) {
     }
   }
 
+  // Update / Delete / Other DML
   try {
     const stmt = db.prepare(sql);
-    const res = stmt.run(...params);
+    const res = stmt.run(...sanitizedParams);
     return { rows: [], rowCount: res.changes };
   } catch (err) {
-    console.error('[sqlite] exec error:', err.message);
+    console.error('[sqlite] exec error:', err.message, 'SQL:', sql);
     throw err;
   }
 }

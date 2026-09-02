@@ -44,31 +44,41 @@ export function renderLightDashboard(container, { userPlants = [], onUpdate = ()
           </div>
 
           <!-- Cards Grid -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            ${userPlants.map(plant => `
-              <div class="glass-card rounded-3xl p-5 flex flex-col group hover:-translate-y-1 transition-transform duration-300" style="background: rgba(255, 255, 255, 0.55); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.75); box-shadow: 0 10px 30px rgba(27, 48, 34, 0.08);">
-                <div class="relative h-48 rounded-2xl overflow-hidden mb-4 shadow-inner">
-                  <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="${plant.name}" src="${plant.image_url}" />
-                  <div class="absolute top-3 right-3 bg-black/40 backdrop-blur-md px-3 py-1 rounded-full flex items-center gap-1 shadow-sm border border-white/20">
-                    <div class="w-2 h-2 rounded-full ${plant.badge_bg}"></div>
-                    <span class="font-label-caps text-label-caps text-white font-semibold">${plant.status_label}</span>
+          ${userPlants.length === 0 ? `
+            <div class="glass-card rounded-3xl p-12 text-center flex flex-col items-center justify-center border border-[#1B3022]/10" style="background: rgba(255, 255, 255, 0.55); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.75); box-shadow: 0 10px 30px rgba(27, 48, 34, 0.08);">
+              <span class="material-symbols-outlined text-5xl mb-3 text-[#154212]">potted_plant</span>
+              <h3 class="font-headline-lg text-[#1B3022] font-bold mb-1">Your Garden is Empty</h3>
+              <p class="font-body-sm text-[#556353] max-w-sm mb-6">Start by adding your first plant to track watering schedules and receive live weather recommendations.</p>
+              <button id="light-empty-add-plant-btn" class="bg-[#154212] text-white px-6 py-3 rounded-full font-body-sm font-semibold hover:bg-[#1B3022] transition flex items-center gap-2 cursor-pointer shadow-md">
+                <span class="material-symbols-outlined text-sm">add</span> Add Your First Plant
+              </button>
+            </div>
+          ` : `
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              ${userPlants.map(plant => `
+                <div class="glass-card rounded-3xl p-5 flex flex-col group hover:-translate-y-1 transition-transform duration-300" style="background: rgba(255, 255, 255, 0.55); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.75); box-shadow: 0 10px 30px rgba(27, 48, 34, 0.08);">
+                  <div class="relative h-48 rounded-2xl overflow-hidden mb-4 shadow-inner">
+                    <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="${plant.name}" src="${plant.image_url}" />
+                    <div class="absolute top-3 right-3 bg-black/40 backdrop-blur-md px-3 py-1 rounded-full flex items-center gap-1 shadow-sm border border-white/20">
+                      <div class="w-2 h-2 rounded-full ${plant.badge_bg}"></div>
+                      <span class="font-label-caps text-label-caps text-white font-semibold">${plant.status_label}</span>
+                    </div>
+                    <div class="absolute bottom-3 left-3 text-white">
+                      <p class="font-label-caps text-xs text-white/90 uppercase tracking-widest drop-shadow-sm">${plant.subtitle}</p>
+                    </div>
                   </div>
-                  <div class="absolute bottom-3 left-3 text-white">
-                    <p class="font-label-caps text-xs text-white/90 uppercase tracking-widest drop-shadow-sm">${plant.subtitle}</p>
+                  <div class="flex justify-between items-start mb-4">
+                    <div>
+                      <h3 class="font-headline-lg-mobile text-headline-lg-mobile text-[#1B3022] mb-1 font-bold">${plant.name}</h3>
+                      <p class="font-body-sm text-[#556353] font-medium">${plant.species || 'Houseplant'} • ${plant.location === 'outdoor' ? 'Outdoor' : 'Indoor'}</p>
+                    </div>
                   </div>
-                </div>
-                <div class="flex justify-between items-start mb-4">
-                  <div>
-                    <h3 class="font-headline-lg-mobile text-headline-lg-mobile text-[#1B3022] mb-1 font-bold">${plant.name}</h3>
-                    <p class="font-body-sm text-[#556353] font-medium">${plant.species || 'Houseplant'} • ${plant.location === 'outdoor' ? 'Outdoor' : 'Indoor'}</p>
-                  </div>
-                </div>
-                <div class="flex items-center justify-between mt-auto pt-4 border-t border-[#1B3022]/10">
-                  <div class="flex items-center gap-3">
-                    <div class="relative w-12 h-12 flex items-center justify-center">
-                      <svg class="w-full h-full transform -rotate-90" viewbox="0 0 36 36">
-                        <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#E1E8E0" stroke-width="4"></path>
-                        <path class="${plant.ring_color} progress-ring" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="100, 100" stroke-dashoffset="${plant.ring_dashoffset}" stroke-linecap="round" stroke-width="4"></path>
+                  <div class="flex items-center justify-between mt-auto pt-4 border-t border-[#1B3022]/10">
+                    <div class="flex items-center gap-3">
+                      <div class="relative w-12 h-12 flex items-center justify-center">
+                        <svg class="w-full h-full transform -rotate-90" viewbox="0 0 36 36">
+                          <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#E1E8E0" stroke-width="4"></path>
+                          <path class="${plant.ring_color} progress-ring" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="100, 100" stroke-dashoffset="${plant.ring_dashoffset}" stroke-linecap="round" stroke-width="4"></path>
                       </svg>
                       <div class="absolute flex flex-col items-center">
                         <span class="font-body-sm font-bold text-[#1B3022] leading-none font-mono">${plant.days_remaining}d</span>
@@ -88,6 +98,7 @@ export function renderLightDashboard(container, { userPlants = [], onUpdate = ()
               </div>
             `).join('')}
           </div>
+          `}
         </div>
 
         <!-- Right 1/3: Sidebar -->
@@ -154,11 +165,16 @@ export function renderLightDashboard(container, { userPlants = [], onUpdate = ()
   container.querySelector('#global-logout-btn')?.addEventListener('click', () => {
     clearToken();
     clearCache();
+    localStorage.removeItem('plantneeds_local_plants');
     window.location.hash = '';
     emit('auth-changed');
   });
 
   container.querySelector('#global-add-plant-btn')?.addEventListener('click', () => {
+    renderAddPlantModal(container, { onClose: () => onUpdate() });
+  });
+
+  container.querySelector('#light-empty-add-plant-btn')?.addEventListener('click', () => {
     renderAddPlantModal(container, { onClose: () => onUpdate() });
   });
 
