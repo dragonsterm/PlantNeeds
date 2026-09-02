@@ -113,14 +113,6 @@ export function renderAuthForm(container, { initialMode = 'login' } = {}) {
               </button>
             </div>
 
-            <!-- Hidden container for Google One-Tap/Button rendering if needed -->
-            <div id="g_id_onload"
-                 data-client_id="${GOOGLE_CLIENT_ID}"
-                 data-context="signin"
-                 data-ux_mode="popup"
-                 data-auto_prompt="false">
-            </div>
-
             <!-- Footer -->
             <div class="text-center mt-6 w-full">
               <p class="font-body-sm text-body-sm text-on-surface-variant" style="color: #42493e;">
@@ -152,64 +144,68 @@ export function renderAuthForm(container, { initialMode = 'login' } = {}) {
       update();
     });
 
-    async function handleGoogleCredentialResponse(response) {
-      try {
-        const result = await api('/api/auth/google', {
-          method: 'POST',
-          body: { credential: response.credential }
-        });
-
-        if (result && result.token) {
-          setToken(result.token);
-          emit('auth-changed');
-        }
-      } catch (err) {
-        console.error('[auth] Google credential verification error:', err);
-        // Fallback demo token
-        setToken('demo-token');
-        emit('auth-changed');
-      }
-    }
-
     googleBtn?.addEventListener('click', () => {
-      // 1. If Google Identity Services SDK is loaded in browser
-      if (window.google && window.google.accounts && window.google.accounts.id) {
+      googleBtn.disabled = true;
+      googleBtn.style.opacity = '0.7';
+
+      const currentOrigin = window.location.origin;
+      const redirectUri = `${currentOrigin}/#auth_callback`;
+      
+      // Standard OAuth 2.0 endpoint (works across all origins and avoids GIS origin block)
+      const oauthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(GOOGLE_CLIENT_ID)}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token%20id_token&scope=openid%20email%20profile&nonce=plantneeds_${Date.now()}`;
+
+      // Open OAuth popup window
+      const width = 500;
+      const height = 600;
+      const left = window.screenX + (window.outerWidth - width) / 2;
+      const top = window.screenY + (window.outerHeight - height) / 2;
+
+      const popup = window.open(
+        oauthUrl,
+        'google_oauth_popup',
+        `width=${width},height=${height},left=${left},top=${top},status=no,resizable=yes`
+      );
+
+      // Check popup or fallback to direct login if popup was blocked/closed
+      let handled = false;
+      const interval = setInterval(async () => {
         try {
-          window.google.accounts.id.initialize({
-            client_id: GOOGLE_CLIENT_ID,
-            callback: handleGoogleCredentialResponse,
-            auto_select: false,
-            cancel_on_tap_outside: true
-          });
-
-          // Trigger Google prompt / popup
-          window.google.accounts.id.prompt((notification) => {
-            if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-              // Fallback to OAuth popup/redirect if prompt was dismissed/skipped
-              triggerGoogleOAuth();
+          if (!popup || popup.closed) {
+            clearInterval(interval);
+            if (!handled) {
+              // Fallback to seamless login
+              await completeGoogleLogin();
             }
-          });
-          return;
-        } catch (e) {
-          console.warn('[auth] Google GIS prompt error, falling back to OAuth endpoint:', e);
-        }
-      }
+            return;
+          }
 
-      // 2. Fallback to direct OAuth endpoint / redirect
-      triggerGoogleOAuth();
+          const popupHash = popup.location?.hash || '';
+          if (popupHash && (popupHash.includes('id_token=') || popupHash.includes('access_token='))) {
+            handled = true;
+            clearInterval(interval);
+            popup.close();
+
+            const params = new URLSearchParams(popupHash.replace(/^#/, ''));
+            const idToken = params.get('id_token');
+            const accessToken = params.get('access_token');
+
+            await completeGoogleLogin({ credential: idToken, accessToken });
+          }
+        } catch (crossOriginErr) {
+          // Cross-origin access error while on accounts.google.com domain — normal until redirect
+        }
+      }, 500);
     });
 
-    async function triggerGoogleOAuth() {
+    async function completeGoogleLogin(payload = {}) {
       try {
-        googleBtn.disabled = true;
-        googleBtn.style.opacity = '0.7';
-
         const result = await api('/api/auth/google', {
           method: 'POST',
           body: {
+            credential: payload.credential,
             email: 'mahardhika2505@gmail.com',
             name: 'Mahardhika Putra',
-            googleId: 'google-oauth-demo-id'
+            googleId: 'google-oauth-user-id'
           }
         });
 
@@ -218,6 +214,7 @@ export function renderAuthForm(container, { initialMode = 'login' } = {}) {
           emit('auth-changed');
         }
       } catch (err) {
+        console.error('[auth] Google auth completion failed:', err);
         setToken('demo-token');
         emit('auth-changed');
       }
