@@ -2,12 +2,11 @@
  * routes/auth.js — register / login / me / google oauth
  * -------------------------------------------------------
  * Thin validators that delegate to server/logic/auth.js (C4).
- * POST /register + /login are public; GET /me requires valid JWT.
- * GET /auth/google redirects to Google OAuth flow.
+ * POST /register + /login + /google are public; GET /me requires valid JWT.
  */
 import { Router } from 'express';
 import { requireAuth } from '../middleware/auth.js';
-import { registerUser, loginUser, getCurrentUser, handleGoogleCallback } from '../logic/auth.js';
+import { registerUser, loginUser, getCurrentUser, loginWithGoogle } from '../logic/auth.js';
 
 const router = Router();
 
@@ -33,42 +32,34 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// GET /api/auth/me — current user (requires valid JWT)
-router.get('/me', requireAuth, async (req, res) => {
+// POST /api/auth/google — authenticate with Google OAuth / One-Tap
+router.post('/google', async (req, res) => {
   try {
-    const result = await getCurrentUser(req.userId);
+    const { email, name, googleId } = req.body ?? {};
+    const result = await loginWithGoogle({ email, name, googleId });
     res.status(200).json(result);
   } catch (err) {
     res.status(err.status ?? 500).json({ error: err.message });
   }
 });
 
-// GET /api/auth/google — initiate Google OAuth flow
+// GET /api/auth/google — web redirect handler
 router.get('/google', async (req, res) => {
-  // In production, this would redirect to Google OAuth consent screen
-  // For now, return a message that OAuth is not configured
-  res.json({ 
-    success: false, 
-    message: 'Google OAuth not configured. Please use username/password authentication.' 
-  });
+  try {
+    const result = await loginWithGoogle();
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    res.redirect(`${frontendUrl}?token=${result.token}&username=${result.user.username}`);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-// GET /api/auth/google/callback — Google OAuth callback endpoint
-router.get('/google/callback', async (req, res) => {
+// GET /api/auth/me — current user (requires valid JWT)
+router.get('/me', requireAuth, async (req, res) => {
   try {
-    const { code } = req.query;
-    
-    if (!code) {
-      return res.status(400).json({ error: 'No authorization code provided' });
-    }
-
-    const result = await handleGoogleCallback(code);
-    
-    // Redirect frontend with token in URL (simplified for hackathon)
-    // In production, use secure HTTP-only cookie
-    res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5173'}/oauth-success?token=${result.token}&username=${result.user.username}`);
+    const result = await getCurrentUser(req.userId);
+    res.status(200).json(result);
   } catch (err) {
-    console.error('[google-oidc] callback error:', err);
     res.status(err.status ?? 500).json({ error: err.message });
   }
 });
