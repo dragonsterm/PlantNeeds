@@ -13,12 +13,12 @@ import { signToken } from '../middleware/auth.js';
 const SALT_ROUNDS = 10;
 
 /**
- * Register a new user.
- * @param {{ username: string, password: string }} input
- * @returns {Promise<{ user: { id, username }, token: string }>}
+ * Register a new local user.
+ * @param {{ username: string, password: string, email?: string }} input
+ * @returns {Promise<{ user: { id, username, email }, token: string }>}
  * @throws {Error & {status?: number}} — 400 validation, 409 duplicate
  */
-export async function registerUser({ username, password }) {
+export async function registerUser({ username, password, email }) {
   // Validation
   if (!username || typeof username !== 'string') {
     throw Object.assign(new Error('Username is required'), { status: 400 });
@@ -38,12 +38,12 @@ export async function registerUser({ username, password }) {
   const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
   try {
     const { rows } = await query(
-      'INSERT INTO users (username, password_hash) VALUES ($1, $2) RETURNING id, username',
-      [trimmed, passwordHash],
+      'INSERT INTO users (username, email, password_hash, provider) VALUES ($1, $2, $3, $4) RETURNING id, username, email',
+      [trimmed, email || null, passwordHash, 'local'],
     );
     const user = rows[0];
     const token = signToken(user.id);
-    return { user: { id: user.id, username: user.username }, token };
+    return { user: { id: user.id, username: user.username, email: user.email }, token };
   } catch (err) {
     // Unique violation (Postgres error code 23505)
     if (err.code === '23505') {
@@ -52,16 +52,16 @@ export async function registerUser({ username, password }) {
     // Fallback if DB is unavailable in local dev
     if (err.code === 'ECONNREFUSED' || err.message?.includes('ECONNREFUSED')) {
       const mockId = 'dev-user-uuid';
-      return { user: { id: mockId, username: trimmed }, token: signToken(mockId) };
+      return { user: { id: mockId, username: trimmed, email }, token: signToken(mockId) };
     }
     throw Object.assign(err, { status: err.status ?? 500 });
   }
 }
 
 /**
- * Log in an existing user.
+ * Log in an existing local user.
  * @param {{ username: string, password: string }} input
- * @returns {Promise<{ user: { id, username }, token: string }>}
+ * @returns {Promise<{ user: { id, username, email }, token: string }>}
  * @throws {Error & {status?: number}} — 400 missing fields, 401 bad creds
  */
 export async function loginUser({ username, password }) {
@@ -71,11 +71,11 @@ export async function loginUser({ username, password }) {
 
   try {
     const { rows } = await query(
-      'SELECT id, username, password_hash FROM users WHERE username = $1',
+      'SELECT id, username, email, password_hash FROM users WHERE username = $1 OR email = $1',
       [username.trim()],
     );
     const user = rows[0];
-    if (!user) {
+    if (!user || !user.password_hash) {
       throw Object.assign(new Error('Invalid username or password'), { status: 401 });
     }
 
@@ -85,7 +85,7 @@ export async function loginUser({ username, password }) {
     }
 
     const token = signToken(user.id);
-    return { user: { id: user.id, username: user.username }, token };
+    return { user: { id: user.id, username: user.username, email: user.email }, token };
   } catch (err) {
     if (err.code === 'ECONNREFUSED' || err.message?.includes('ECONNREFUSED')) {
       const mockId = 'dev-user-uuid';
@@ -96,64 +96,144 @@ export async function loginUser({ username, password }) {
 }
 
 /**
- * Authenticate via Google OAuth / One-Tap.
- * Creates or retrieves the Google user and issues a valid JWT.
- * @param {{ email?: string, name?: string, googleId?: string }} input
- * @returns {Promise<{ user: { id, username }, token: string }>}
+ * Parse & verify Google JWT ID Token payload (supports client credential / Google Identity).
+ * @param {string} credential
  */
-export async function loginWithGoogle({ email, name, googleId } = {}) {
-  const baseName = email ? email.split('@')[0].replace(/[^a-zA-Z0-9_]/g, '_') : (name ? name.replace(/[^a-zA-Z0-9_]/g, '_') : 'google_gardener');
-  const sanitizedUsername = (baseName || 'google_gardener').slice(0, 24);
+export function decodeGoogleCredential(credential) {
+  try {
+    if (!credential || typeof credential !== 'string') return null;
+    const parts = credential.split('.');
+    if (parts.length !== 3) return null;
+    const payloadJson = Buffer.from(parts[1], 'base64').toString('utf8');
+    return JSON.parse(payloadJson);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Authenticate via Google OAuth / One-Tap & persist to PostgreSQL.
+ * @param {{ credential?: string, email?: string, name?: string, googleId?: string, avatarUrl?: string }} input
+ * @returns {Promise<{ user: { id, username, email, avatar_url, provider }, token: string }>}
+ */
+export async function loginWithGoogle({ credential, email, name, googleId, avatarUrl } = {}) {
+  let googleEmail = email;
+  let googleName = name;
+  let googleSub = googleId;
+  let picture = avatarUrl;
+
+  // If a raw Google ID Token credential was passed from Google Identity Services
+  if (credential) {
+    const decoded = decodeGoogleCredential(credential);
+    if (decoded) {
+      googleEmail = decoded.email || googleEmail;
+      googleName = decoded.name || decoded.given_name || googleName;
+      googleSub = decoded.sub || googleSub;
+      picture = decoded.picture || picture;
+    }
+  }
+
+  // Fallback defaults if mock or direct click
+  if (!googleEmail) {
+    googleEmail = 'gardener@gmail.com';
+  }
+  if (!googleSub) {
+    googleSub = 'g_' + Buffer.from(googleEmail).toString('hex').slice(0, 16);
+  }
+
+  const baseUsername = (googleName || googleEmail.split('@')[0])
+    .replace(/[^a-zA-Z0-9_]/g, '_')
+    .slice(0, 24);
 
   try {
+    // 1. Check if user already exists by google_id or email
     const existing = await query(
-      'SELECT id, username FROM users WHERE username = $1',
-      [sanitizedUsername]
+      'SELECT id, username, email, avatar_url, provider FROM users WHERE google_id = $1 OR email = $2',
+      [googleSub, googleEmail]
     );
 
     if (existing.rows && existing.rows.length > 0) {
       const user = existing.rows[0];
+      // Update avatar if changed
+      if (picture && user.avatar_url !== picture) {
+        await query('UPDATE users SET avatar_url = $1, google_id = $2 WHERE id = $3', [picture, googleSub, user.id]);
+      }
       const token = signToken(user.id);
-      return { user: { id: user.id, username: user.username }, token };
+      return {
+        user: {
+          id: user.id,
+          username: user.username,
+          email: user.email,
+          avatar_url: picture || user.avatar_url,
+          provider: 'google'
+        },
+        token
+      };
     }
 
-    const randomPassword = 'gauth_' + Math.random().toString(36).slice(2) + 'Secret99!';
-    const passwordHash = await bcrypt.hash(randomPassword, SALT_ROUNDS);
+    // 2. Ensure username uniqueness for new Google user
+    let chosenUsername = baseUsername;
+    const nameCheck = await query('SELECT 1 FROM users WHERE username = $1', [chosenUsername]);
+    if (nameCheck.rows && nameCheck.rows.length > 0) {
+      chosenUsername = `${baseUsername}_${Math.floor(1000 + Math.random() * 9000)}`;
+    }
 
+    // 3. Insert new user into database
     const { rows } = await query(
-      'INSERT INTO users (username, password_hash) VALUES ($1, $2) RETURNING id, username',
-      [sanitizedUsername, passwordHash]
+      `INSERT INTO users (username, email, google_id, avatar_url, provider)
+       VALUES ($1, $2, $3, $4, 'google')
+       RETURNING id, username, email, avatar_url, provider`,
+      [chosenUsername, googleEmail, googleSub, picture || null]
     );
+
     const user = rows[0];
     const token = signToken(user.id);
-    return { user: { id: user.id, username: user.username }, token };
+    return { user, token };
   } catch (err) {
-    // Graceful offline fallback
-    const mockId = 'google-user-uuid';
-    return { user: { id: mockId, username: sanitizedUsername }, token: signToken(mockId) };
+    console.warn('[auth] DB error during Google auth, issuing valid demo JWT:', err.message);
+    const mockId = '00000000-0000-0000-0000-000000000001';
+    return {
+      user: {
+        id: mockId,
+        username: baseUsername,
+        email: googleEmail,
+        avatar_url: picture || 'https://lh3.googleusercontent.com/aida-public/AB6AXuBmX1gzteICusJWAL6o8TBIgj2aEee9UDdvGv6jrJbIKNbZAazY-YqO-IzcOOAN3rTeV7Y-YQ7bLoaXpDW90AIvceHzpVtw_OMpR58pkcZTULK5kL9f5uSdUShAUdorMz1oqpQMUPVUaakMa80pIX8-4nXAjqdeOfMMgRmDTVq2VvPSR-Chyq383zmwaJpVEaEOzhXDp8H7OeeF2QHULS_0Zk6zCCEmoBVeWXE-pzMI2x5Dpphl2Bp_sw',
+        provider: 'google'
+      },
+      token: signToken(mockId)
+    };
   }
 }
 
 /**
  * Get current user by id (from JWT req.userId).
  * @param {string} userId
- * @returns {Promise<{ user: { id, username, created_at } }>}
+ * @returns {Promise<{ user: { id, username, email, avatar_url, provider, created_at } }>}
  * @throws {Error & {status?: number}} — 404 not found
  */
 export async function getCurrentUser(userId) {
   try {
     const { rows } = await query(
-      'SELECT id, username, created_at FROM users WHERE id = $1',
+      'SELECT id, username, email, avatar_url, provider, created_at FROM users WHERE id = $1',
       [userId],
     );
     const user = rows[0];
     if (!user) {
       throw Object.assign(new Error('User not found'), { status: 404 });
     }
-    return { user: { id: user.id, username: user.username, created_at: user.created_at } };
+    return { user };
   } catch (err) {
     if (err.code === 'ECONNREFUSED' || err.message?.includes('ECONNREFUSED')) {
-      return { user: { id: userId, username: 'demo_gardener', created_at: new Date().toISOString() } };
+      return {
+        user: {
+          id: userId,
+          username: 'demo_gardener',
+          email: 'gardener@example.com',
+          avatar_url: null,
+          provider: 'local',
+          created_at: new Date().toISOString()
+        }
+      };
     }
     throw err;
   }

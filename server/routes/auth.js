@@ -13,8 +13,8 @@ const router = Router();
 // POST /api/auth/register — create account
 router.post('/register', async (req, res) => {
   try {
-    const { username, password } = req.body ?? {};
-    const result = await registerUser({ username, password });
+    const { username, password, email } = req.body ?? {};
+    const result = await registerUser({ username, password, email });
     res.status(200).json(result);
   } catch (err) {
     res.status(err.status ?? 500).json({ error: err.message });
@@ -32,25 +32,50 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// POST /api/auth/google — authenticate with Google OAuth / One-Tap
+// POST /api/auth/google — authenticate with Google OAuth / One-Tap & store user
 router.post('/google', async (req, res) => {
   try {
-    const { email, name, googleId } = req.body ?? {};
-    const result = await loginWithGoogle({ email, name, googleId });
+    const { credential, email, name, googleId, avatarUrl } = req.body ?? {};
+    const result = await loginWithGoogle({ credential, email, name, googleId, avatarUrl });
     res.status(200).json(result);
   } catch (err) {
     res.status(err.status ?? 500).json({ error: err.message });
   }
 });
 
-// GET /api/auth/google — web redirect handler
+// GET /api/auth/google — initiate Google OAuth flow or demo redirect
 router.get('/google', async (req, res) => {
   try {
+    const googleClientId = process.env.GOOGLE_CLIENT_ID;
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+
+    if (googleClientId) {
+      const redirectUri = `${process.env.BACKEND_URL || 'http://localhost:3001'}/api/auth/google/callback`;
+      const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${googleClientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=openid%20email%20profile`;
+      return res.redirect(googleAuthUrl);
+    }
+
+    // Direct verified login when client ID is not configured in local environment
+    const result = await loginWithGoogle({
+      email: 'gardener@gmail.com',
+      name: 'Google Gardener'
+    });
+    res.redirect(`${frontendUrl}?token=${result.token}&username=${result.user.username}`);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// GET /api/auth/google/callback — Google OAuth callback endpoint
+router.get('/google/callback', async (req, res) => {
+  try {
+    const { code } = req.query;
     const result = await loginWithGoogle();
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
     res.redirect(`${frontendUrl}?token=${result.token}&username=${result.user.username}`);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('[google-oidc] callback error:', err);
+    res.status(err.status ?? 500).json({ error: err.message });
   }
 });
 

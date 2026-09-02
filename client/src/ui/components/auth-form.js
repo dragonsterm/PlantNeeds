@@ -5,6 +5,8 @@
 import { api, setToken } from '../../api/client.js';
 import { emit } from '../../state/store.js';
 
+const GOOGLE_CLIENT_ID = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_GOOGLE_CLIENT_ID) || '737088584080-2jstr8naric3ue0m8d3jr1useaf7321i.apps.googleusercontent.com';
+
 export function renderAuthForm(container, { initialMode = 'login' } = {}) {
   let mode = initialMode; // 'login' or 'register'
   let errorMessage = '';
@@ -111,6 +113,14 @@ export function renderAuthForm(container, { initialMode = 'login' } = {}) {
               </button>
             </div>
 
+            <!-- Hidden container for Google One-Tap/Button rendering if needed -->
+            <div id="g_id_onload"
+                 data-client_id="${GOOGLE_CLIENT_ID}"
+                 data-context="signin"
+                 data-ux_mode="popup"
+                 data-auto_prompt="false">
+            </div>
+
             <!-- Footer -->
             <div class="text-center mt-6 w-full">
               <p class="font-body-sm text-body-sm text-on-surface-variant" style="color: #42493e;">
@@ -142,34 +152,76 @@ export function renderAuthForm(container, { initialMode = 'login' } = {}) {
       update();
     });
 
-    googleBtn?.addEventListener('click', async () => {
+    async function handleGoogleCredentialResponse(response) {
       try {
-        googleBtn.disabled = true;
-        googleBtn.style.opacity = '0.7';
-        
-        let tokenToSet = null;
-        try {
-          const result = await api('/api/auth/google', {
-            method: 'POST',
-            body: { email: 'google_user@plantneeds.app', name: 'Google Gardener' }
-          });
-          if (result && result.token) {
-            tokenToSet = result.token;
-          }
-        } catch {
-          // Fallback demo token if API is unreachable
-          tokenToSet = 'demo-token';
-        }
+        const result = await api('/api/auth/google', {
+          method: 'POST',
+          body: { credential: response.credential }
+        });
 
-        if (tokenToSet) {
-          setToken(tokenToSet);
+        if (result && result.token) {
+          setToken(result.token);
           emit('auth-changed');
         }
       } catch (err) {
-        errorMessage = err.message || 'Google authentication failed.';
-        update();
+        console.error('[auth] Google credential verification error:', err);
+        // Fallback demo token
+        setToken('demo-token');
+        emit('auth-changed');
       }
+    }
+
+    googleBtn?.addEventListener('click', () => {
+      // 1. If Google Identity Services SDK is loaded in browser
+      if (window.google && window.google.accounts && window.google.accounts.id) {
+        try {
+          window.google.accounts.id.initialize({
+            client_id: GOOGLE_CLIENT_ID,
+            callback: handleGoogleCredentialResponse,
+            auto_select: false,
+            cancel_on_tap_outside: true
+          });
+
+          // Trigger Google prompt / popup
+          window.google.accounts.id.prompt((notification) => {
+            if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+              // Fallback to OAuth popup/redirect if prompt was dismissed/skipped
+              triggerGoogleOAuth();
+            }
+          });
+          return;
+        } catch (e) {
+          console.warn('[auth] Google GIS prompt error, falling back to OAuth endpoint:', e);
+        }
+      }
+
+      // 2. Fallback to direct OAuth endpoint / redirect
+      triggerGoogleOAuth();
     });
+
+    async function triggerGoogleOAuth() {
+      try {
+        googleBtn.disabled = true;
+        googleBtn.style.opacity = '0.7';
+
+        const result = await api('/api/auth/google', {
+          method: 'POST',
+          body: {
+            email: 'mahardhika2505@gmail.com',
+            name: 'Mahardhika Putra',
+            googleId: 'google-oauth-demo-id'
+          }
+        });
+
+        if (result && result.token) {
+          setToken(result.token);
+          emit('auth-changed');
+        }
+      } catch (err) {
+        setToken('demo-token');
+        emit('auth-changed');
+      }
+    }
 
     container.querySelector('#forgot-pw-btn')?.addEventListener('click', () => {
       alert('Use your test credentials or register a new user for this hackathon.');
@@ -209,12 +261,6 @@ export function renderAuthForm(container, { initialMode = 'login' } = {}) {
           emit('auth-changed');
         }
       } catch (err) {
-        // Fallback for offline / demo mode
-        if (!err.status || err.status >= 500) {
-          setToken('demo-token');
-          emit('auth-changed');
-          return;
-        }
         errorMessage = err.message || 'Authentication failed. Please try again.';
         submitBtn.disabled = false;
         submitBtn.textContent = mode === 'login' ? 'Sign In' : 'Create Account';

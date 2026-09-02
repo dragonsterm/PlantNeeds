@@ -12,9 +12,31 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto;
 CREATE TABLE IF NOT EXISTS users (
   id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   username      TEXT NOT NULL UNIQUE,
-  password_hash TEXT NOT NULL,              -- bcrypt, cost >= 10 (ADR-010)
+  email         TEXT UNIQUE,
+  google_id     TEXT UNIQUE,
+  avatar_url    TEXT,
+  provider      TEXT NOT NULL DEFAULT 'local',
+  password_hash TEXT,                       -- bcrypt (null for OAuth-only users)
   created_at    TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+-- Idempotent column additions in case users table already existed
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='users' AND column_name='email') THEN
+    ALTER TABLE users ADD COLUMN email TEXT UNIQUE;
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='users' AND column_name='google_id') THEN
+    ALTER TABLE users ADD COLUMN google_id TEXT UNIQUE;
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='users' AND column_name='avatar_url') THEN
+    ALTER TABLE users ADD COLUMN avatar_url TEXT;
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='users' AND column_name='provider') THEN
+    ALTER TABLE users ADD COLUMN provider TEXT NOT NULL DEFAULT 'local';
+  END IF;
+  ALTER TABLE users ALTER COLUMN password_hash DROP NOT NULL;
+END $$;
 
 -- Plants (a user's collection) -------------------------------------------------
 CREATE TABLE IF NOT EXISTS plants (
