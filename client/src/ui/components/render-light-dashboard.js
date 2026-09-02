@@ -19,7 +19,7 @@ export function renderLightDashboard(container, { userPlants = [], onUpdate = ()
     ${getNavbarHtml({ activeRoute: 'dashboard', theme: 'light' })}
 
     <!-- Main Content Container -->
-    <main class="pt-[110px] pb-12 px-container-margin max-w-7xl mx-auto">
+    <main class="pt-[120px] pb-12 px-container-margin max-w-7xl mx-auto">
       <!-- Top Weather Banner -->
       ${getWeatherBannerHtml({ theme: 'light' })}
 
@@ -29,7 +29,7 @@ export function renderLightDashboard(container, { userPlants = [], onUpdate = ()
         <div class="lg:col-span-8">
           <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-6">
             <div>
-              <h2 class="font-headline-xl text-headline-xl text-[#1B3022] drop-shadow-sm font-bold">My Plants</h2>
+              <h2 class="font-headline-xl text-headline-xl text-[#1B3022] drop-shadow-sm font-bold" style="font-family: 'Plus Jakarta Sans', sans-serif;">My Plants</h2>
               <div class="flex items-center gap-2 mt-2">
                 <button class="loc-filter-btn px-3 py-1 rounded-full text-xs font-semibold bg-[#1B3022]/15 text-[#1B3022] border border-[#1B3022]/30 cursor-pointer" data-filter="all">All Plants (${userPlants.length})</button>
                 <button class="loc-filter-btn px-3 py-1 rounded-full text-xs font-semibold bg-white/40 text-[#42493e] border border-[#1B3022]/10 hover:bg-white/60 cursor-pointer" data-filter="indoor">Indoor (${userPlants.filter(p => p.location !== 'outdoor').length})</button>
@@ -46,7 +46,7 @@ export function renderLightDashboard(container, { userPlants = [], onUpdate = ()
           <!-- Cards Grid -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             ${userPlants.map(plant => `
-              <div class="glass-panel rounded-3xl p-5 flex flex-col group hover:-translate-y-1 transition-transform duration-300 shadow-sm" style="background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.85);">
+              <div class="glass-card rounded-3xl p-5 flex flex-col group hover:-translate-y-1 transition-transform duration-300" style="background: rgba(255, 255, 255, 0.55); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.75); box-shadow: 0 10px 30px rgba(27, 48, 34, 0.08);">
                 <div class="relative h-48 rounded-2xl overflow-hidden mb-4 shadow-inner">
                   <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="${plant.name}" src="${plant.image_url}" />
                   <div class="absolute top-3 right-3 bg-black/40 backdrop-blur-md px-3 py-1 rounded-full flex items-center gap-1 shadow-sm border border-white/20">
@@ -93,7 +93,7 @@ export function renderLightDashboard(container, { userPlants = [], onUpdate = ()
         <!-- Right 1/3: Sidebar -->
         <div class="lg:col-span-4 flex flex-col gap-6 pt-2 lg:pt-14">
           <!-- Due for Care Card -->
-          <div class="glass-panel rounded-3xl p-6 relative overflow-hidden shadow-sm" style="background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.85);">
+          <div class="glass-card rounded-3xl p-6 relative overflow-hidden" style="background: rgba(255, 255, 255, 0.55); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.75); box-shadow: 0 10px 30px rgba(27, 48, 34, 0.08);">
             <div class="absolute -right-10 -top-10 text-[#1B3022]/10 transform rotate-12 pointer-events-none">
               <span class="material-symbols-outlined text-[150px]" style="font-variation-settings: 'FILL' 1; color: #1B3022; opacity: 0.05;">water_drop</span>
             </div>
@@ -101,12 +101,16 @@ export function renderLightDashboard(container, { userPlants = [], onUpdate = ()
               <h3 class="font-body-md font-semibold text-[#1B3022] mb-2">Due for Care</h3>
               <div class="flex flex-col gap-2 mb-6">
                 <div class="flex items-end gap-4">
-                  <span class="font-headline-xl text-[64px] leading-none font-mono tracking-tighter drop-shadow-sm font-bold text-[#1B3022]">${userPlants.filter(p => p.is_overdue).length}</span>
+                  <span class="font-headline-xl text-[64px] leading-none font-mono tracking-tighter drop-shadow-sm font-bold text-[#1B3022]">${userPlants.filter(p => p.is_overdue || p.days_remaining === 0).length}</span>
                   <div class="mb-2 bg-amber-500/15 border border-amber-500/30 px-3 py-1 rounded-md">
                     <span class="font-label-caps font-bold text-amber-700">${userPlants.filter(p => p.is_overdue).length} OVERDUE</span>
                   </div>
                 </div>
-                <p class="font-body-sm text-[#556353] font-medium">Monstera, Basil, and 1 more</p>
+                <p class="font-body-sm text-[#556353] font-medium">
+                  ${userPlants.filter(p => p.is_overdue || p.days_remaining === 0).length > 0 
+                    ? userPlants.filter(p => p.is_overdue || p.days_remaining === 0).map(p => p.name).join(', ')
+                    : 'All plants are hydrated & happy'}
+                </p>
               </div>
               <a href="#schedule" class="w-full bg-[#154212] text-white py-3 rounded-xl font-body-sm font-semibold hover:bg-[#1B3022] transition-colors shadow-md border border-white/10 block text-center cursor-pointer" style="text-decoration: none;">
                 View Schedule
@@ -115,7 +119,7 @@ export function renderLightDashboard(container, { userPlants = [], onUpdate = ()
           </div>
 
           <!-- Smart Care Insights Widget -->
-          <div class="glass-panel rounded-3xl p-6 shadow-sm" style="background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.85);">
+          <div class="glass-card rounded-3xl p-6" style="background: rgba(255, 255, 255, 0.55); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.75); box-shadow: 0 10px 30px rgba(27, 48, 34, 0.08);">
             <div class="flex items-center gap-3 mb-6">
               <span class="material-symbols-outlined text-[#1B3022]" style="font-variation-settings: 'FILL' 1;">lightbulb</span>
               <h3 class="font-headline-lg-mobile text-headline-lg-mobile text-[#1B3022] font-bold" style="font-size: 18px;">Smart Insights</h3>
