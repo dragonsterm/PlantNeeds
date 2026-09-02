@@ -144,21 +144,21 @@ export function mountUi() {
       return;
     }
 
-    // Render Dark Dashboard (When currentTheme === 'dark')
+    // Render Dark Dashboard (When currentTheme === 'dark') — 100% exact from Stitch code.html
     root.innerHTML = `
       <!-- Dashboard Background (Dark Moody Foliage with Raindrops) -->
       <div class="bg-layer"></div>
 
-      <!-- TopNavBar Dark -->
+      <!-- TopNavBar Dark (Exact 1:1 from Stitch code.html) -->
       <div class="fixed top-4 left-4 right-4 z-50 max-w-7xl mx-auto">
-        <nav class="glass-panel rounded-full px-6 py-2.5 shadow-sm transition-all duration-300">
+        <nav class="glass-panel rounded-full px-6 py-3 shadow-sm transition-all duration-300">
           <div class="flex justify-between items-center w-full">
             <!-- Logo Area -->
             <div class="flex items-center gap-3 cursor-pointer">
               <img src="/assets/plantneeds-leaf-drop-logo.png" alt="PlantNeeds Logo" style="height: 34px; width: auto; object-fit: contain;" />
               <span class="font-headline-lg text-headline-lg font-bold text-white">PlantNeeds</span>
             </div>
-            <!-- Navigation Links -->
+            <!-- Navigation Links (Web) -->
             <div class="hidden md:flex items-center gap-8">
               <a class="text-white font-semibold border-b-2 border-white pb-1 transition-all duration-150 ease-in-out scale-95" href="#dashboard">My Garden</a>
               <a class="text-white/70 hover:text-white transition-colors hover:bg-white/10 px-3 py-1 rounded-md duration-300" href="#schedule">Care Schedule</a>
@@ -167,17 +167,15 @@ export function mountUi() {
             </div>
             <!-- Trailing Actions -->
             <div class="flex items-center gap-4">
-              <button id="nav-add-plant-btn" class="bg-primary text-white px-5 py-2 rounded-full font-body-sm font-semibold hover:bg-primary-container transition-colors flex items-center gap-2 shadow-sm border border-white/10">
+              <button id="nav-add-plant-btn" class="bg-primary text-white px-5 py-2 rounded-full font-body-sm font-semibold hover:bg-primary-container transition-colors flex items-center gap-2 shadow-sm border border-white/10 cursor-pointer">
                 <span class="material-symbols-outlined text-sm">add</span> Add Plant
               </button>
               <div class="flex items-center gap-2 text-white">
-                <button class="p-2 rounded-full hover:bg-white/20 transition-colors bg-white/10">
-                  <span class="material-symbols-outlined">notifications</span>
-                </button>
-                <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-fixed/30 shadow-sm ml-2 cursor-pointer hover:border-primary-fixed transition-colors">
+                <button class="p-2 rounded-full hover:bg-white/20 transition-colors bg-white/10" style="border: none; cursor: pointer;"><span class="material-symbols-outlined">notifications</span></button>
+                <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-white/50 shadow-sm ml-2 cursor-pointer hover:border-white transition-colors">
                   <img class="w-full h-full object-cover" alt="User Avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmX1gzteICusJWAL6o8TBIgj2aEee9UDdvGv6jrJbIKNbZAazY-YqO-IzcOOAN3rTeV7Y-YQ7bLoaXpDW90AIvceHzpVtw_OMpR58pkcZTULK5kL9f5uSdUShAUdorMz1oqpQMUPVUaakMa80pIX8-4nXAjqdeOfMMgRmDTVq2VvPSR-Chyq383zmwaJpVEaEOzhXDp8H7OeeF2QHULS_0Zk6zCCEmoBVeWXE-pzMI2x5Dpphl2Bp_sw"/>
                 </div>
-                <button id="logout-btn" title="Sign Out" class="text-white/60 text-xs hover:text-white underline ml-2">
+                <button id="logout-btn" title="Sign Out" class="text-white/60 text-xs hover:text-white underline ml-2" style="background: none; border: none; cursor: pointer;">
                   Sign Out
                 </button>
               </div>
@@ -186,75 +184,65 @@ export function mountUi() {
         </nav>
       </div>
 
-      <!-- Main Content (Exact padding matching Stitch) -->
+      <!-- Main Content (Exact 1:1 from Stitch code.html) -->
       <main class="pt-[120px] pb-12 px-container-margin max-w-7xl mx-auto">
-        <!-- Top Weather Banner -->
+        <!-- Top Banner -->
         <div class="glass-panel rounded-2xl p-4 mb-8 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm relative overflow-hidden">
-          <div class="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent pointer-events-none"></div>
+          <div class="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent pointer-events-none"></div>
           <div class="flex items-center gap-3 relative z-10">
             <div class="w-10 h-10 rounded-full bg-status-water/20 flex items-center justify-center text-status-water border border-status-water/30">
               <span class="material-symbols-outlined">rainy</span>
             </div>
-            <p class="text-white font-body-sm">
-              Rain covered <strong class="text-white font-semibold">3 outdoor garden crops</strong> (53.4 mm rain this week). <strong class="text-primary-fixed font-semibold">2 indoor houseplants</strong> due today.
-            </p>
+            <p class="font-body-sm text-white" style="margin: 0;">Rain covered <strong class="font-semibold">3 outdoor garden crops</strong> (53.4 mm rain this week). <strong class="font-semibold text-primary-fixed">2 indoor houseplants</strong> due today.</p>
           </div>
-          <div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary-fixed/20 border border-primary-fixed/30 relative z-10">
+          <div class="flex items-center gap-2 bg-primary/30 px-3 py-1.5 rounded-full relative z-10 border border-primary/40">
             <span class="w-2 h-2 rounded-full bg-primary-fixed"></span>
-            <span class="font-label-caps text-primary-fixed">Live Weather</span>
+            <span class="font-label-caps text-label-caps text-white">Live Weather</span>
           </div>
         </div>
 
-        <!-- 2-Column Split -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
           <!-- Left 2/3: Plant Grid -->
           <div class="lg:col-span-8">
             <div class="flex justify-between items-end mb-6">
               <h2 class="font-headline-xl text-headline-xl text-white drop-shadow-sm">My Plants</h2>
               <div class="flex gap-2">
-                <button class="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition border border-white/10">
-                  <span class="material-symbols-outlined" style="font-size: 18px;">grid_view</span>
-                </button>
-                <button class="p-2 rounded-full bg-white/5 hover:bg-white/10 text-white/50 transition border border-white/5">
-                  <span class="material-symbols-outlined" style="font-size: 18px;">format_list_bulleted</span>
-                </button>
+                <button class="p-2 rounded-full bg-white/20 hover:bg-white/30 transition text-white border border-white/20 cursor-pointer"><span class="material-symbols-outlined">grid_view</span></button>
+                <button class="p-2 rounded-full bg-white/10 hover:bg-white/20 transition text-white border border-white/10 cursor-pointer"><span class="material-symbols-outlined">format_list_bulleted</span></button>
               </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              ${userPlants.map(plant => `
+              ${userPlants.map((plant, idx) => `
                 <div class="glass-card rounded-3xl p-5 flex flex-col group hover:-translate-y-1 transition-transform duration-300">
-                  <div class="relative h-48 rounded-2xl overflow-hidden mb-4 border border-white/10">
-                    <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="${plant.name}" src="${plant.image_url}" />
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                    <span class="absolute top-3 right-3 ${plant.badge_bg} text-black font-label-caps px-2.5 py-1 rounded-full uppercase tracking-wider text-[11px] shadow-sm">
-                      ${plant.status_label}
-                    </span>
-                    <div class="absolute bottom-3 left-3 text-white">
-                      <p class="font-label-caps text-xs text-white/80 uppercase tracking-widest">${plant.subtitle}</p>
+                  <div class="relative h-48 rounded-2xl overflow-hidden mb-4 shadow-inner">
+                    <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="${plant.name}" src="${plant.image_url}" />
+                    <div class="absolute top-3 right-3 bg-black/40 backdrop-blur-md px-3 py-1 rounded-full flex items-center gap-1 shadow-sm border border-white/20">
+                      <div class="w-2 h-2 rounded-full ${plant.is_overdue ? 'bg-status-warning' : 'bg-primary-fixed'}"></div>
+                      <span class="font-label-caps text-label-caps text-white font-semibold">${plant.status_label}</span>
                     </div>
                   </div>
                   <div class="flex justify-between items-start mb-4">
                     <div>
-                      <h3 class="font-headline-lg-mobile text-white text-xl">${plant.name}</h3>
-                      <p class="text-xs text-white/60 font-body-sm mt-0.5">Hydration cycle on schedule</p>
-                    </div>
-                    <div class="flex items-center gap-1">
-                      <div class="relative w-8 h-8 flex items-center justify-center">
-                        <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
-                          <path class="text-white/10" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3"></path>
-                          <path class="${plant.ring_color}" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="100, 100" stroke-dashoffset="${plant.ring_dashoffset}" stroke-width="3"></path>
-                        </svg>
-                        <span class="absolute text-[10px] font-semibold text-white">${plant.days_remaining}d</span>
-                      </div>
+                      <h3 class="font-headline-lg-mobile text-headline-lg-mobile text-white mb-1 font-bold">${plant.name}</h3>
+                      <p class="font-body-sm text-sage-soft">${plant.species || 'Houseplant'} • ${plant.location === 'outdoor' ? 'Outdoor' : 'Indoor'}</p>
                     </div>
                   </div>
-                  <div class="mt-auto pt-2 border-t border-white/10 flex gap-2">
-                    <button class="water-btn flex-1 ${plant.btn_class} py-2.5 rounded-xl font-body-sm font-semibold transition-colors flex items-center justify-center gap-2 border border-white/10" data-id="${plant.id}">
-                      <span class="material-symbols-outlined text-sm">water_drop</span> Water Now
-                    </button>
-                    <button class="p-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors border border-white/10">
-                      <span class="material-symbols-outlined text-sm">more_vert</span>
+                  <div class="flex items-center justify-between mt-auto pt-4 border-t border-white/10">
+                    <div class="flex items-center gap-3">
+                      <div class="relative w-12 h-12 flex items-center justify-center">
+                        <svg class="w-full h-full transform -rotate-90" viewbox="0 0 36 36">
+                          <path class="text-white/20" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="4"></path>
+                          <path class="${plant.is_overdue ? 'text-status-warning' : 'text-primary-fixed'} progress-ring" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="100, 100" stroke-dashoffset="${plant.is_overdue ? '10' : '60'}" stroke-linecap="round" stroke-width="4"></path>
+                        </svg>
+                        <div class="absolute flex flex-col items-center">
+                          <span class="font-body-sm font-bold text-white leading-none font-mono">${plant.days_remaining}d</span>
+                        </div>
+                      </div>
+                      <span class="font-body-sm text-white font-semibold">${plant.is_overdue ? 'Due Today' : `${plant.days_remaining} Days Left`}</span>
+                    </div>
+                    <button class="water-btn ${plant.is_overdue ? 'bg-primary text-white hover:bg-primary-container shadow-md border border-white/10' : 'bg-white/10 text-white hover:bg-white/20 border border-white/20 shadow-sm'} px-6 py-2.5 rounded-full font-body-sm font-semibold transition-colors flex items-center gap-2 cursor-pointer" data-id="${plant.id}">
+                      <span class="material-symbols-outlined text-sm">water_drop</span> Water
                     </button>
                   </div>
                 </div>
@@ -262,62 +250,51 @@ export function mountUi() {
             </div>
           </div>
 
-          <!-- Right 1/3: Smart Insights -->
-          <div class="lg:col-span-4 flex flex-col gap-6">
-            <div class="glass-card rounded-3xl p-6">
-              <div class="flex items-center gap-2 text-primary-fixed mb-4">
-                <span class="material-symbols-outlined">psychology</span>
-                <span class="font-label-caps">Smart Insights</span>
+          <!-- Right 1/3: Sidebar (Exact 1:1 match with Light Dashboard structure) -->
+          <div class="lg:col-span-4 flex flex-col gap-6 pt-2 lg:pt-14">
+            <!-- Due for Care Card -->
+            <div class="glass-card rounded-3xl p-6 relative overflow-hidden">
+              <div class="absolute -right-10 -top-10 text-primary-fixed/10 transform rotate-12 pointer-events-none">
+                <span class="material-symbols-outlined text-[150px]" style="font-variation-settings: 'FILL' 1; color: #FFFFFF; opacity: 0.08;">water_drop</span>
               </div>
-              <h4 class="font-headline-lg-mobile text-white text-lg mb-2">Outdoor Rain Delay Active</h4>
-              <p class="font-body-sm text-white/70 mb-4">
-                Open-Meteo recorded 53.4 mm of precipitation this week. We have paused watering schedules for outdoor garden beds.
-              </p>
-              <div class="p-4 rounded-2xl bg-white/5 border border-white/10 mb-4">
-                <div class="flex justify-between items-center mb-1">
-                  <span class="font-body-sm text-white/80">Weekly Rain Target</span>
-                  <span class="font-body-sm text-primary-fixed font-semibold">120%</span>
+              <div class="relative z-10">
+                <h3 class="font-body-md font-semibold text-white mb-2">Due for Care</h3>
+                <div class="flex flex-col gap-2 mb-6">
+                  <div class="flex items-end gap-4">
+                    <span class="font-headline-xl text-[64px] leading-none text-white font-mono tracking-tighter drop-shadow-sm font-bold">3</span>
+                    <div class="mb-2 bg-status-warning/20 border border-status-warning/40 px-3 py-1 rounded-md">
+                      <span class="font-label-caps font-bold" style="color: #D97706;">1 OVERDUE</span>
+                    </div>
+                  </div>
+                  <p class="font-body-sm text-sage-soft font-medium">Monstera, Basil, and 1 more</p>
                 </div>
-                <div class="w-full h-2 rounded-full bg-white/10 overflow-hidden">
-                  <div class="h-full bg-primary-fixed rounded-full" style="width: 100%;"></div>
-                </div>
+                <a href="#schedule" id="sidebar-view-schedule-btn" class="w-full bg-primary text-white py-3 rounded-xl font-body-sm font-semibold hover:bg-primary-container transition-colors shadow-md border border-white/10 block text-center cursor-pointer" style="background: #154212; text-decoration: none;">
+                  View Schedule
+                </a>
               </div>
-              <p class="text-xs text-white/50 leading-relaxed">
-                Next scheduled check tomorrow at 06:00 AM. Indoor schedules remain unaffected.
-              </p>
             </div>
 
-            <!-- Due for Care Panel -->
+            <!-- Smart Care Insights Widget -->
             <div class="glass-card rounded-3xl p-6">
-              <div class="flex justify-between items-center mb-4">
-                <div class="flex items-center gap-2 text-status-warning">
-                  <span class="material-symbols-outlined">schedule</span>
-                  <span class="font-label-caps">Due For Care</span>
-                </div>
-                <span class="text-xs text-white/60 bg-white/10 px-2 py-0.5 rounded-full">${userPlants.filter(p => p.is_overdue).length} Pending</span>
+              <div class="flex items-center gap-3 mb-6">
+                <span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">lightbulb</span>
+                <h3 class="font-headline-lg-mobile text-headline-lg-mobile text-white font-bold" style="font-size: 18px;">Smart Insights</h3>
               </div>
-              <div class="flex flex-col gap-3">
-                ${userPlants.filter(p => p.is_overdue).map(plant => `
-                  <div class="flex items-center justify-between p-3 rounded-2xl bg-white/5 border border-white/10">
-                    <div class="flex items-center gap-3">
-                      <div class="w-10 h-10 rounded-xl overflow-hidden flex-shrink-0">
-                        <img class="w-full h-full object-cover" alt="${plant.name}" src="${plant.image_url}" />
-                      </div>
-                      <div>
-                        <p class="font-body-sm font-semibold text-white text-sm">${plant.name}</p>
-                        <p class="text-xs text-status-warning">${plant.status_label}</p>
-                      </div>
-                    </div>
-                    <button class="water-btn p-2 rounded-xl bg-primary text-white hover:bg-primary-container transition-colors shadow-sm" data-id="${plant.id}" title="Water Plant">
-                      <span class="material-symbols-outlined text-sm">water_drop</span>
-                    </button>
+              <div class="flex flex-col gap-4">
+                <div class="bg-white/5 border border-white/10 p-4 rounded-2xl flex gap-3 shadow-sm">
+                  <span class="material-symbols-outlined text-status-warning mt-0.5" style="color: #D97706; font-size: 22px;">water_drop</span>
+                  <div>
+                    <h4 class="font-body-sm font-semibold text-white">Monstera Humidity</h4>
+                    <p class="font-body-sm text-sage-soft text-xs mt-1 leading-relaxed">Indoor heating is drying the air. Mist leaves today to maintain ~60% humidity.</p>
                   </div>
-                `).join('')}
-              </div>
-              <div class="mt-4 pt-4 border-t border-white/10">
-                <a href="#schedule" id="sidebar-view-schedule-btn" class="w-full bg-primary text-white py-3 rounded-xl font-body-sm font-semibold hover:bg-primary-container transition-colors shadow-md border border-white/10 inline-block text-center cursor-pointer" style="background: #154212; text-decoration: none;">
-                  View Full Schedule
-                </a>
+                </div>
+                <div class="bg-white/5 border border-white/10 p-4 rounded-2xl flex gap-3 shadow-sm">
+                  <span class="material-symbols-outlined mt-0.5" style="color: #A1D494; font-size: 22px;">water_drop</span>
+                  <div>
+                    <h4 class="font-body-sm font-semibold text-white">Outdoor Watering</h4>
+                    <p class="font-body-sm text-sage-soft text-xs mt-1 leading-relaxed">Sufficient rain recorded. Skip garden watering today to avoid root rot.</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
