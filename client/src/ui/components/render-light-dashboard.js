@@ -15,6 +15,11 @@ import { getNavbarHtml, getWeatherBannerHtml } from './navbar.js';
 
 export function renderLightDashboard(container, { userPlants = [], onUpdate = () => {} } = {}) {
   container.innerHTML = `
+    <!-- Summer Vibes Background Layer -->
+    <div class="fixed inset-0 z-[-1] pointer-events-none">
+      <div class="w-full h-full bg-cover bg-center" style="background-image: url('/assets/summer-vibes-bg.jpg');"></div>
+    </div>
+
     <!-- Top Floating Navbar -->
     ${getNavbarHtml({ activeRoute: 'dashboard', theme: 'light' })}
 
@@ -189,13 +194,6 @@ export function renderLightDashboard(container, { userPlants = [], onUpdate = ()
       if (plant) {
         renderGrowthJournalModal(container, { plant, onClose: () => onUpdate() });
       }
-    });
-  });
-
-  container.querySelectorAll('a[href="#diagnose"]').forEach(link => {
-    link.addEventListener('click', (e) => {
-      e.preventDefault();
-      renderDiagnosisModal(() => onUpdate());
     });
   });
 

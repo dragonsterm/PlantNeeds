@@ -35,7 +35,7 @@ export function getNavbarHtml({ activeRoute = 'dashboard', theme = 'light' } = {
           </a>
 
           <!-- Navigation Links (Zero-Shift Fixed Box Model) -->
-          <div class="hidden md:flex items-center gap-6">
+          <div class="flex items-center gap-3 sm:gap-6">
             <!-- My Garden -->
             <a href="#dashboard" class="relative px-3 py-1.5 font-medium text-sm transition-colors cursor-pointer" style="color: ${isGardenActive ? activeColor : inactiveColor}; text-decoration: none;">
               <span class="${isGardenActive ? 'font-bold' : 'font-medium'}">My Garden</span>

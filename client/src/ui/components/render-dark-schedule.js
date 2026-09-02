@@ -255,14 +255,7 @@ export function renderDarkSchedule(container, { plants = [], onUpdate = () => {}
     renderAddPlantModal(container, { onClose: () => onUpdate() });
   });
 
-  container.querySelectorAll('a[href="#diagnose"]').forEach(link => {
-    link.addEventListener('click', (e) => {
-      e.preventDefault();
-      renderDiagnosisModal(() => onUpdate());
-    });
-  });
-
-  container.querySelectorAll('.dark-sched-water-action-btn').forEach(btn => {
+  container.querySelectorAll('.dark-sched-water-btn').forEach(btn => {
     btn.addEventListener('click', async () => {
       const id = btn.getAttribute('data-id');
       btn.textContent = 'Watering...';
