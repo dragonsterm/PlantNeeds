@@ -7,7 +7,8 @@ import { on, clearCache } from '../state/store.js';
 import { hasToken, clearToken, setToken } from '../api/client.js';
 import { renderAuthForm } from './components/auth-form.js';
 import { renderLightDashboard } from './components/render-light-dashboard.js';
-import { renderCareScheduleView } from './components/care-schedule-view.js';
+import { renderLightSchedule } from './components/render-light-schedule.js';
+import { renderDarkSchedule } from './components/render-dark-schedule.js';
 import { renderAddPlantModal } from './components/add-plant-form.js';
 import { renderScheduleModal } from './components/schedule-modal.js';
 import { renderDiagnosisModal } from './components/diagnosis-panel.js';
@@ -95,9 +96,15 @@ export function mountUi() {
     // Keep store cache synchronized for WebMCP tools (Single Source of Truth)
     setCache('plants', userPlants);
 
-    // Dedicated Care Activity Tree & Schedule View (#schedule)
-    if (isScheduleView) {
-      renderCareScheduleView(root, { plants: userPlants, onUpdate: () => render() });
+    // Dedicated Dark Care Activity Tree & Schedule View (#dark-schedule)
+    if (currentHash === '#dark-schedule') {
+      renderDarkSchedule(root, { plants: userPlants, onUpdate: () => render() });
+      return;
+    }
+
+    // Dedicated Light Care Activity Tree & Schedule View (#light-schedule or #schedule)
+    if (currentHash === '#light-schedule' || currentHash === '#schedule') {
+      renderLightSchedule(root, { plants: userPlants, onUpdate: () => render() });
       return;
     }
 
@@ -124,7 +131,7 @@ export function mountUi() {
             <!-- Navigation Links -->
             <div class="hidden md:flex items-center gap-8">
               <a class="text-white font-semibold border-b-2 border-white pb-1 transition-all duration-150 ease-in-out scale-95" href="#dark-dashboard">My Garden</a>
-              <a class="text-white/70 hover:text-white transition-colors hover:bg-white/10 px-3 py-1 rounded-md duration-300" href="#schedule">Care Schedule</a>
+              <a class="text-white/70 hover:text-white transition-colors hover:bg-white/10 px-3 py-1 rounded-md duration-300" href="#dark-schedule">Care Schedule</a>
               <a class="text-white/70 hover:text-white transition-colors hover:bg-white/10 px-3 py-1 rounded-md duration-300" href="#diagnose">Diagnosis</a>
               <a class="text-primary-fixed hover:underline text-xs" href="#light-dashboard">[Switch to Light Theme]</a>
             </div>

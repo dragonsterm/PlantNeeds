@@ -1,5 +1,5 @@
 /**
- * client/src/ui/components/care-schedule-view.js
+ * client/src/ui/components/render-light-schedule.js
  * Care Activity Tree & Schedule View (Light Mode Schedule).
  * 100% IDENTICAL NAVBAR, GLASSMORPHISM TOKENS, AND PADDING AS LIGHT DASHBOARD.
  */
@@ -7,7 +7,7 @@ import { logCareActivity, computePlantSchedule } from '../../logic/plants.js';
 import { clearToken } from '../../api/client.js';
 import { renderAddPlantModal } from './add-plant-form.js';
 
-export function renderCareScheduleView(container, { plants = [], onUpdate = () => {} } = {}) {
+export function renderLightSchedule(container, { plants = [], onUpdate = () => {} } = {}) {
   const scheduleItems = computePlantSchedule(plants, { days_ahead: 14 });
 
   const dueItems = scheduleItems.filter(i => i.overdue || i.days_remaining === 0);
@@ -32,9 +32,9 @@ export function renderCareScheduleView(container, { plants = [], onUpdate = () =
           <!-- Navigation Links -->
           <div class="hidden md:flex items-center gap-8">
             <a class="transition-colors px-3 py-1 rounded-md duration-300 font-medium" href="#light-dashboard" style="color: #556353; text-decoration: none;">My Garden</a>
-            <a class="font-semibold border-b-2 pb-1 transition-all duration-150 ease-in-out scale-95" href="#schedule" style="color: #1B3022; border-color: #1B3022; text-decoration: none;">Care Schedule</a>
+            <a class="font-semibold border-b-2 pb-1 transition-all duration-150 ease-in-out scale-95" href="#light-schedule" style="color: #1B3022; border-color: #1B3022; text-decoration: none;">Care Schedule</a>
             <a class="transition-colors px-3 py-1 rounded-md duration-300 font-medium" href="#diagnose" style="color: #556353; text-decoration: none;">Diagnosis</a>
-            <a class="text-xs hover:underline" href="#dark-dashboard" style="color: #154212; font-weight: 600; text-decoration: none;">[Switch to Dark Theme]</a>
+            <a class="text-xs hover:underline" href="#dark-schedule" style="color: #154212; font-weight: 600; text-decoration: none;">[Switch to Dark Theme]</a>
           </div>
 
           <!-- Trailing Actions -->
