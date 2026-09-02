@@ -114,7 +114,6 @@ export function mountUi() {
   if (!root) return;
 
   let userPlants = getSavedPlants();
-
   let isFetchingLive = false;
 
   async function syncLivePlants() {
@@ -145,7 +144,21 @@ export function mountUi() {
     }
   }
 
+  function handleSignOut() {
+    clearToken();
+    clearCache();
+    window.location.hash = '';
+    render();
+  }
+
   function render() {
+    // Check authentication gating first
+    if (!hasToken()) {
+      clearCache();
+      renderAuthForm(root);
+      return;
+    }
+
     userPlants = getSavedPlants();
     const rawHash = (window.location.hash || '').toLowerCase();
     
@@ -157,17 +170,6 @@ export function mountUi() {
 
     const currentTheme = getAppTheme();
     const isScheduleView = rawHash.includes('schedule');
-    const isDashboardActive = rawHash.includes('dashboard') || rawHash.includes('garden') || isScheduleView || rawHash === '';
-    
-    if (!hasToken() && !isDashboardActive) {
-      clearCache();
-      renderAuthForm(root);
-      return;
-    }
-
-    if (!hasToken() && isDashboardActive) {
-      setToken('demo-token');
-    }
 
     setCache('plants', userPlants);
     syncLivePlants();
@@ -331,11 +333,7 @@ export function mountUi() {
       renderSeasonalPlannerModal(root, { onClose: () => render() });
     });
 
-    root.querySelector('#global-logout-btn')?.addEventListener('click', () => {
-      clearToken();
-      window.location.hash = '';
-      render();
-    });
+    root.querySelector('#global-logout-btn')?.addEventListener('click', handleSignOut);
 
     root.querySelectorAll('.open-journal-btn').forEach(btn => {
       btn.addEventListener('click', () => {

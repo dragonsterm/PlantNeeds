@@ -4,6 +4,7 @@
  * 100% Shared Navbar & Weather Banner for exact parity with Dashboard.
  */
 import { logCareActivity, computePlantSchedule } from '../../logic/plants.js';
+import { clearCache, emit } from "../../state/store.js";
 import { clearToken } from '../../api/client.js';
 import { renderAddPlantModal } from './add-plant-form.js';
 import { renderDiagnosisModal } from './diagnosis-panel.js';
@@ -245,7 +246,7 @@ export function renderDarkSchedule(container, { plants = [], onUpdate = () => {}
   });
 
   container.querySelector('#global-logout-btn')?.addEventListener('click', () => {
-    clearToken();
+    clearToken(); clearCache(); emit("auth-changed");
     window.location.hash = '';
     onUpdate();
   });
