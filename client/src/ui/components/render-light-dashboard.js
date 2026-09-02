@@ -1,91 +1,48 @@
 /**
  * client/src/ui/components/render-light-dashboard.js
  * Dedicated Light Mode Dashboard (Summer Vibes Theme from Google Stitch Export 2).
- * Background: /assets/summer-vibes-bg.jpg
- * 100% IDENTICAL layout structure, padding, alignment, and sizing to Dark Dashboard.
+ * Uses shared getNavbarHtml & getWeatherBannerHtml for 100% position & dimension parity.
  */
 import { clearToken } from '../../api/client.js';
 import { renderAddPlantModal } from './add-plant-form.js';
-import { renderScheduleModal } from './schedule-modal.js';
 import { renderDiagnosisModal } from './diagnosis-panel.js';
+import { renderGrowthJournalModal } from './growth-journal-modal.js';
+import { renderSeasonalPlannerModal } from './seasonal-planner-modal.js';
 import { toggleAppTheme } from '../render.js';
 import { logCareActivity } from '../../logic/plants.js';
+import { getNavbarHtml, getWeatherBannerHtml } from './navbar.js';
 
 export function renderLightDashboard(container, { userPlants = [], onUpdate = () => {} } = {}) {
   container.innerHTML = `
     <!-- Summer Vibes Background Layer -->
-    <div class="fixed inset-0 z-[-1]">
+    <div class="fixed inset-0 z-[-1] pointer-events-none">
       <div class="w-full h-full bg-cover bg-center" style="background-image: url('/assets/summer-vibes-bg.jpg');"></div>
     </div>
 
-    <!-- TopNavBar Light (100% Exact dimensions & alignment of Dark Navbar) -->
-    <div class="fixed top-4 left-4 right-4 z-50 max-w-7xl mx-auto">
-      <nav class="glass-panel rounded-full px-6 py-2.5 shadow-sm transition-all duration-300" style="background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.85); box-shadow: 0 4px 24px rgba(27, 48, 34, 0.08);">
-        <div class="flex justify-between items-center w-full">
-          <!-- Logo Area -->
-          <div class="flex items-center gap-3 cursor-pointer">
-            <img src="/assets/plantneeds-leaf-drop-logo.png" alt="PlantNeeds Logo" style="height: 34px; width: auto; object-fit: contain;" />
-            <span class="font-headline-lg text-headline-lg font-bold" style="color: #1B3022;">PlantNeeds</span>
-          </div>
-          <!-- Navigation Links -->
-          <div class="hidden md:flex items-center gap-8">
-            <a class="font-semibold border-b-2 pb-1 transition-all duration-150 ease-in-out scale-95" href="#dashboard" style="color: #1B3022; border-color: #1B3022; text-decoration: none;">My Garden</a>
-            <a class="transition-colors px-3 py-1 rounded-md duration-300" href="#schedule" style="color: #556353; text-decoration: none;">Care Schedule</a>
-            <a class="transition-colors px-3 py-1 rounded-md duration-300" href="#diagnose" style="color: #556353; text-decoration: none;">Diagnosis</a>
-            <button id="light-theme-toggle-btn" class="text-xs hover:underline" style="color: #154212; font-weight: 600; background: none; border: none; cursor: pointer;">[Switch to Dark Theme]</button>
-          </div>
-          <!-- Trailing Actions -->
-          <div class="flex items-center gap-4">
-            <button id="light-add-plant-btn" class="bg-forest-deep text-white px-5 py-2 rounded-full font-body-sm font-semibold hover:bg-primary-container transition-colors flex items-center gap-2 shadow-sm border border-transparent" style="background: #1B3022;">
-              <span class="material-symbols-outlined text-sm">add</span> Add Plant
-            </button>
-            <div class="flex items-center gap-2" style="color: #1B3022;">
-              <button class="p-2 rounded-full hover:bg-black/10 transition-colors bg-black/5" style="border: none; cursor: pointer;">
-                <span class="material-symbols-outlined">notifications</span>
-              </button>
-              <div class="w-10 h-10 rounded-full overflow-hidden border-2 shadow-sm ml-2 cursor-pointer transition-colors" style="border-color: rgba(27, 48, 34, 0.25);">
-                <img class="w-full h-full object-cover" alt="User Avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmX1gzteICusJWAL6o8TBIgj2aEee9UDdvGv6jrJbIKNbZAazY-YqO-IzcOOAN3rTeV7Y-YQ7bLoaXpDW90AIvceHzpVtw_OMpR58pkcZTULK5kL9f5uSdUShAUdorMz1oqpQMUPVUaakMa80pIX8-4nXAjqdeOfMMgRmDTVq2VvPSR-Chyq383zmwaJpVEaEOzhXDp8H7OeeF2QHULS_0Zk6zCCEmoBVeWXE-pzMI2x5Dpphl2Bp_sw"/>
-              </div>
-              <button id="light-logout-btn" title="Sign Out" class="text-xs underline hover:text-black ml-2" style="color: #556353; background: none; border: none; cursor: pointer;">
-                Sign Out
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
-    </div>
+    <!-- Top Floating Navbar -->
+    ${getNavbarHtml({ activeRoute: 'dashboard', theme: 'light' })}
 
     <!-- Main Content (Exact padding & layout matching Dark Dashboard) -->
     <main class="pt-[120px] pb-12 px-container-margin max-w-7xl mx-auto">
-      <!-- Top Weather Banner Light -->
-      <div class="glass-panel rounded-2xl p-4 mb-8 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm relative overflow-hidden" style="background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.85); box-shadow: 0 4px 24px rgba(27, 48, 34, 0.08);">
-        <div class="absolute inset-0 bg-gradient-to-r from-white/40 to-transparent pointer-events-none"></div>
-        <div class="flex items-center gap-3 relative z-10">
-          <div class="w-10 h-10 rounded-full bg-status-water/20 flex items-center justify-center text-status-water border border-status-water/30">
-            <span class="material-symbols-outlined">rainy</span>
-          </div>
-          <p class="font-body-sm" style="color: #1B3022; margin: 0;">
-            Rain covered <strong class="font-semibold">3 outdoor garden crops</strong> (53.4 mm rain this week). <strong class="font-semibold">2 indoor houseplants</strong> due today.
-          </p>
-        </div>
-        <div class="flex items-center gap-2 px-3 py-1.5 rounded-full relative z-10 border" style="background: rgba(188, 240, 174, 0.45); border-color: rgba(45, 90, 39, 0.3);">
-          <span class="w-2 h-2 rounded-full" style="background: #154212;"></span>
-          <span class="font-label-caps" style="color: #1B3022; font-weight: 700;">Live Weather</span>
-        </div>
-      </div>
+      <!-- Top Weather Banner -->
+      ${getWeatherBannerHtml({ theme: 'light' })}
 
       <!-- 2-Column Split (Exact 12-col grid) -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         <!-- Left 2/3: Plant Grid -->
         <div class="lg:col-span-8">
-          <div class="flex justify-between items-end mb-6">
-            <h2 class="font-headline-xl text-headline-xl drop-shadow-sm" style="color: #1B3022;">My Plants</h2>
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-6">
+            <div>
+              <h2 class="font-headline-xl text-headline-xl drop-shadow-sm" style="color: #1B3022; font-family: 'Plus Jakarta Sans', sans-serif;">My Plants</h2>
+              <div class="flex items-center gap-2 mt-2">
+                <button class="light-loc-filter-btn px-3 py-1 rounded-full text-xs font-semibold bg-white/70 text-[#1B3022] border border-black/10 cursor-pointer" data-filter="all">All Plants (${userPlants.length})</button>
+                <button class="light-loc-filter-btn px-3 py-1 rounded-full text-xs font-semibold bg-white/30 text-[#556353] border border-black/5 hover:bg-white/50 cursor-pointer" data-filter="indoor">Indoor (${userPlants.filter(p => p.location !== 'outdoor').length})</button>
+                <button class="light-loc-filter-btn px-3 py-1 rounded-full text-xs font-semibold bg-white/30 text-[#556353] border border-black/5 hover:bg-white/50 cursor-pointer" data-filter="outdoor">Outdoor (${userPlants.filter(p => p.location === 'outdoor').length})</button>
+              </div>
+            </div>
             <div class="flex gap-2">
-              <button class="p-2 rounded-full transition border" style="background: rgba(255,255,255,0.7); border-color: rgba(255,255,255,0.9); color: #1B3022; cursor: pointer;">
-                <span class="material-symbols-outlined" style="font-size: 18px;">grid_view</span>
-              </button>
-              <button class="p-2 rounded-full transition border" style="background: rgba(255,255,255,0.4); border-color: rgba(255,255,255,0.6); color: #556353; cursor: pointer;">
-                <span class="material-symbols-outlined" style="font-size: 18px;">format_list_bulleted</span>
+              <button id="light-open-seasonal-planner-btn" class="px-3.5 py-1.5 rounded-full bg-white/70 text-[#1B3022] border border-black/10 hover:bg-white transition flex items-center gap-1.5 text-xs font-semibold shadow-sm cursor-pointer">
+                <span class="material-symbols-outlined text-sm" style="color: #10B981;">calendar_month</span> Seasonal Planner
               </button>
             </div>
           </div>
@@ -99,14 +56,13 @@ export function renderLightDashboard(container, { userPlants = [], onUpdate = ()
                     <div class="w-2 h-2 rounded-full ${plant.badge_bg}"></div>
                     <span class="font-label-caps text-label-caps font-bold" style="color: #1B3022;">${plant.status_label}</span>
                   </div>
-                </div>
-                <div class="flex justify-between items-start mb-4">
-                  <div>
-                    <h3 class="font-headline-lg-mobile text-headline-lg-mobile mb-1 font-bold" style="color: #1B3022;">${plant.name}</h3>
-                    <p class="font-body-sm" style="color: #556353;">${plant.subtitle}</p>
+                  <div class="absolute bottom-3 left-3 text-white">
+                    <p class="font-label-caps text-xs text-white/90 uppercase tracking-widest drop-shadow-sm">${plant.subtitle}</p>
                   </div>
                 </div>
-                <div class="flex items-center justify-between mt-auto pt-4 border-t border-black/10">
+                <h3 class="font-headline-lg-mobile text-headline-lg-mobile mb-1 font-bold" style="color: #1B3022;">${plant.name}</h3>
+                <p class="font-body-sm text-xs mb-4" style="color: #556353;">${plant.subtitle}</p>
+                <div class="mt-auto pt-4 border-t border-black/10 flex justify-between items-center">
                   <div class="flex items-center gap-3">
                     <div class="relative w-12 h-12 flex items-center justify-center">
                       <svg class="w-full h-full transform -rotate-90" viewbox="0 0 36 36">
@@ -119,9 +75,14 @@ export function renderLightDashboard(container, { userPlants = [], onUpdate = ()
                     </div>
                     <span class="font-body-sm font-semibold" style="color: #1B3022;">${plant.status_label}</span>
                   </div>
-                  <button class="light-water-btn bg-forest-deep text-white px-6 py-2.5 rounded-full font-body-sm font-semibold hover:bg-primary-container transition-colors flex items-center gap-2 shadow-md border border-transparent" data-id="${plant.id}" style="background: #1B3022;">
-                    <span class="material-symbols-outlined text-sm">water_drop</span> Water
-                  </button>
+                  <div class="flex items-center gap-2">
+                    <button class="light-open-journal-btn p-2 rounded-full bg-white/70 hover:bg-white text-[#1B3022] transition border border-black/10 shadow-sm cursor-pointer" data-id="${plant.id}" title="View Growth Journal">
+                      <span class="material-symbols-outlined text-sm">psychiatry</span>
+                    </button>
+                    <button class="light-water-btn bg-forest-deep text-white px-5 py-2.5 rounded-full font-body-sm font-semibold hover:bg-primary-container transition-colors flex items-center gap-2 shadow-md border border-transparent cursor-pointer" data-id="${plant.id}" style="background: #1B3022;">
+                      <span class="material-symbols-outlined text-sm">water_drop</span> Water
+                    </button>
+                  </div>
                 </div>
               </div>
             `).join('')}
@@ -146,9 +107,9 @@ export function renderLightDashboard(container, { userPlants = [], onUpdate = ()
                 </div>
                 <p class="font-body-sm font-medium" style="color: #556353;">Monstera, Basil, and 1 more</p>
               </div>
-              <button id="light-sidebar-sched-btn" class="w-full bg-forest-deep text-white py-3 rounded-xl font-body-sm font-semibold hover:bg-primary-container transition-colors shadow-md border border-transparent" style="background: #1B3022;">
+              <a href="#schedule" class="w-full bg-forest-deep text-white py-3 rounded-xl font-body-sm font-semibold hover:bg-primary-container transition-colors shadow-md border border-transparent block text-center cursor-pointer" style="background: #1B3022; text-decoration: none;">
                 View Schedule
-              </button>
+              </a>
             </div>
           </div>
 
@@ -181,42 +142,38 @@ export function renderLightDashboard(container, { userPlants = [], onUpdate = ()
   `;
 
   // Bindings for Light Dashboard
-  container.querySelector('#light-theme-toggle-btn')?.addEventListener('click', () => {
+  container.querySelector('#global-theme-toggle-btn')?.addEventListener('click', () => {
     toggleAppTheme();
   });
 
-  container.querySelector('#light-logout-btn')?.addEventListener('click', () => {
+  container.querySelector('#global-logout-btn')?.addEventListener('click', () => {
     clearToken();
     window.location.hash = '';
     onUpdate();
   });
 
-  const openAddPlant = () => {
+  container.querySelector('#global-add-plant-btn')?.addEventListener('click', () => {
     renderAddPlantModal(container, { onClose: () => onUpdate() });
-  };
+  });
 
-  const openSchedule = () => {
-    renderScheduleModal(container, { plants: userPlants, onClose: () => onUpdate() });
-  };
+  container.querySelector('#light-open-seasonal-planner-btn')?.addEventListener('click', () => {
+    renderSeasonalPlannerModal(container, { onClose: () => onUpdate() });
+  });
 
-  const openDiagnosis = () => {
-    renderDiagnosisModal(() => onUpdate());
-  };
-
-  container.querySelector('#light-add-plant-btn')?.addEventListener('click', openAddPlant);
-  container.querySelector('#light-sidebar-sched-btn')?.addEventListener('click', openSchedule);
-
-  container.querySelectorAll('a[href="#schedule"]').forEach(link => {
-    link.addEventListener('click', (e) => {
-      e.preventDefault();
-      openSchedule();
+  container.querySelectorAll('.light-open-journal-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.getAttribute('data-id');
+      const plant = userPlants.find(p => p.id === id);
+      if (plant) {
+        renderGrowthJournalModal(container, { plant, onClose: () => onUpdate() });
+      }
     });
   });
 
   container.querySelectorAll('a[href="#diagnose"]').forEach(link => {
     link.addEventListener('click', (e) => {
       e.preventDefault();
-      openDiagnosis();
+      renderDiagnosisModal(() => onUpdate());
     });
   });
 
@@ -227,15 +184,13 @@ export function renderLightDashboard(container, { userPlants = [], onUpdate = ()
       btn.disabled = true;
       try {
         await logCareActivity({ plant_id: plantId, activity: 'watered', source: 'human' });
+        onUpdate();
       } catch {
         const plant = userPlants.find(p => p.id === plantId);
         if (plant) {
           plant.days_remaining = 7;
           plant.status_label = 'Healthy';
           plant.is_overdue = false;
-          plant.badge_bg = 'bg-primary-fixed';
-          plant.ring_color = 'text-primary-fixed';
-          plant.ring_dashoffset = '60';
         }
         onUpdate();
       }

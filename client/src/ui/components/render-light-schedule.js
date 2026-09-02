@@ -1,12 +1,14 @@
 /**
  * client/src/ui/components/render-light-schedule.js
  * Care Activity Tree & Schedule View (Light Mode Schedule).
- * 100% IDENTICAL NAVBAR, GLASSMORPHISM TOKENS, AND PADDING AS LIGHT DASHBOARD.
+ * 100% Shared Navbar & Weather Banner for exact parity with Dashboard.
  */
 import { logCareActivity, computePlantSchedule } from '../../logic/plants.js';
 import { clearToken } from '../../api/client.js';
 import { renderAddPlantModal } from './add-plant-form.js';
+import { renderDiagnosisModal } from './diagnosis-panel.js';
 import { toggleAppTheme } from '../render.js';
+import { getNavbarHtml, getWeatherBannerHtml } from './navbar.js';
 
 export function renderLightSchedule(container, { plants = [], onUpdate = () => {} } = {}) {
   const scheduleItems = computePlantSchedule(plants, { days_ahead: 14 });
@@ -20,47 +22,14 @@ export function renderLightSchedule(container, { plants = [], onUpdate = () => {
       <div class="w-full h-full bg-cover bg-center" style="background-image: url('/assets/summer-vibes-bg.jpg');"></div>
     </div>
 
-    <!-- Top Floating Navbar (Exact 1:1 clone of Light Dashboard) -->
-    <div class="fixed top-4 left-4 right-4 z-50 max-w-7xl mx-auto">
-      <nav class="glass-panel rounded-full px-6 py-2.5 shadow-sm transition-all duration-300" style="background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.85); box-shadow: 0 4px 24px rgba(27, 48, 34, 0.08);">
-        <div class="flex justify-between items-center w-full">
-          <!-- Logo Area -->
-          <a href="#dashboard" class="flex items-center gap-3 cursor-pointer" style="text-decoration: none;">
-            <img src="/assets/plantneeds-leaf-drop-logo.png" alt="PlantNeeds Logo" style="height: 34px; width: auto; object-fit: contain;" />
-            <span class="font-headline-lg text-headline-lg font-bold" style="color: #1B3022;">PlantNeeds</span>
-          </a>
-
-          <!-- Navigation Links -->
-          <div class="hidden md:flex items-center gap-8">
-            <a class="transition-colors px-3 py-1 rounded-md duration-300 font-medium" href="#dashboard" style="color: #556353; text-decoration: none;">My Garden</a>
-            <a class="font-semibold border-b-2 pb-1 transition-all duration-150 ease-in-out scale-95" href="#schedule" style="color: #1B3022; border-color: #1B3022; text-decoration: none;">Care Schedule</a>
-            <a class="transition-colors px-3 py-1 rounded-md duration-300 font-medium" href="#diagnose" style="color: #556353; text-decoration: none;">Diagnosis</a>
-            <button id="sched-theme-toggle-btn" class="text-xs hover:underline" style="color: #154212; font-weight: 600; background: none; border: none; cursor: pointer;">[Switch to Dark Theme]</button>
-          </div>
-
-          <!-- Trailing Actions -->
-          <div class="flex items-center gap-4">
-            <button id="sched-add-plant-btn" class="bg-forest-deep text-white px-5 py-2 rounded-full font-body-sm font-semibold hover:bg-primary-container transition-colors flex items-center gap-2 shadow-sm border border-transparent" style="background: #1B3022; cursor: pointer;">
-              <span class="material-symbols-outlined text-sm">add</span> Add Plant
-            </button>
-            <div class="flex items-center gap-2" style="color: #1B3022;">
-              <button class="p-2 rounded-full hover:bg-black/10 transition-colors bg-black/5" style="border: none; cursor: pointer;">
-                <span class="material-symbols-outlined">notifications</span>
-              </button>
-              <div class="w-10 h-10 rounded-full overflow-hidden border-2 shadow-sm ml-2 cursor-pointer transition-colors" style="border-color: rgba(27, 48, 34, 0.25);">
-                <img class="w-full h-full object-cover" alt="User Avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmX1gzteICusJWAL6o8TBIgj2aEee9UDdvGv6jrJbIKNbZAazY-YqO-IzcOOAN3rTeV7Y-YQ7bLoaXpDW90AIvceHzpVtw_OMpR58pkcZTULK5kL9f5uSdUShAUdorMz1oqpQMUPVUaakMa80pIX8-4nXAjqdeOfMMgRmDTVq2VvPSR-Chyq383zmwaJpVEaEOzhXDp8H7OeeF2QHULS_0Zk6zCCEmoBVeWXE-pzMI2x5Dpphl2Bp_sw"/>
-              </div>
-              <button id="sched-logout-btn" title="Sign Out" class="text-xs underline hover:text-black ml-2" style="color: #556353; background: none; border: none; cursor: pointer;">
-                Sign Out
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
-    </div>
+    <!-- Top Floating Navbar -->
+    ${getNavbarHtml({ activeRoute: 'schedule', theme: 'light' })}
 
     <!-- Main Content (Exact offset & grid alignment with Light Dashboard) -->
     <main class="pt-[120px] pb-12 px-container-margin max-w-7xl mx-auto">
+      <!-- Top Weather Banner -->
+      ${getWeatherBannerHtml({ theme: 'light' })}
+
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         <!-- Left Column: Activity Tree (8 cols) -->
         <div class="lg:col-span-8 flex flex-col gap-4">
@@ -69,22 +38,6 @@ export function renderLightSchedule(container, { plants = [], onUpdate = () => {
             <span class="text-xs font-semibold px-3 py-1 rounded-full border shadow-sm" style="background: rgba(255, 255, 255, 0.65); color: #1B3022; border-color: rgba(255, 255, 255, 0.85);">
               ${scheduleItems.length} Total Care Nodes
             </span>
-          </div>
-
-          <!-- Top Weather Banner (Exact glass-panel style from Light Dashboard) -->
-          <div class="glass-panel rounded-2xl p-4 mb-2 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm relative overflow-hidden" style="background: rgba(255, 255, 255, 0.55); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.75); box-shadow: 0 10px 30px rgba(27, 48, 34, 0.08);">
-            <div class="flex items-center gap-3 relative z-10">
-              <div class="w-10 h-10 rounded-full flex items-center justify-center border shrink-0" style="background: rgba(74, 144, 226, 0.15); border-color: rgba(74, 144, 226, 0.3); color: #4A90E2;">
-                <span class="material-symbols-outlined">rainy</span>
-              </div>
-              <p class="font-body-sm" style="color: #1B3022; margin: 0;">
-                <strong class="font-semibold">Open-Meteo Rain Delay Active:</strong> 53.4 mm rainfall received this week. 2 outdoor tasks automatically shifted to prevent overwatering.
-              </p>
-            </div>
-            <div class="flex items-center gap-2 px-3 py-1.5 rounded-full relative z-10 border shrink-0" style="background: rgba(188, 240, 174, 0.45); border-color: rgba(45, 90, 39, 0.3);">
-              <span class="w-2 h-2 rounded-full" style="background: #154212;"></span>
-              <span class="font-label-caps" style="color: #1B3022; font-weight: 700; font-size: 11px;">Live Weather</span>
-            </div>
           </div>
 
           <!-- Git-Style Visual Activity Tree Container -->
@@ -287,19 +240,26 @@ export function renderLightSchedule(container, { plants = [], onUpdate = () => {
     </main>
   `;
 
-  // Bind Navbar and Component Actions
-  container.querySelector('#sched-theme-toggle-btn')?.addEventListener('click', () => {
+  // Bindings
+  container.querySelector('#global-theme-toggle-btn')?.addEventListener('click', () => {
     toggleAppTheme();
   });
 
-  container.querySelector('#sched-add-plant-btn')?.addEventListener('click', () => {
-    renderAddPlantModal(container, { onClose: () => onUpdate() });
-  });
-
-  container.querySelector('#sched-logout-btn')?.addEventListener('click', () => {
+  container.querySelector('#global-logout-btn')?.addEventListener('click', () => {
     clearToken();
     window.location.hash = '';
     onUpdate();
+  });
+
+  container.querySelector('#global-add-plant-btn')?.addEventListener('click', () => {
+    renderAddPlantModal(container, { onClose: () => onUpdate() });
+  });
+
+  container.querySelectorAll('a[href="#diagnose"]').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      renderDiagnosisModal(() => onUpdate());
+    });
   });
 
   container.querySelectorAll('.sched-water-action-btn').forEach(btn => {
