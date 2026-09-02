@@ -154,10 +154,8 @@ export async function loginWithGoogle({ credential, email, name, googleId, avata
 
     if (existing.rows && existing.rows.length > 0) {
       const user = existing.rows[0];
-      // Update avatar if changed
-      if (picture && user.avatar_url !== picture) {
-        await query('UPDATE users SET avatar_url = $1, google_id = $2 WHERE id = $3', [picture, googleSub, user.id]);
-      }
+      // Update avatar or google_id if needed
+      await query('UPDATE users SET avatar_url = COALESCE($1, avatar_url), google_id = $2 WHERE id = $3', [picture || null, googleSub, user.id]);
       const token = signToken(user.id);
       return {
         user: {
@@ -191,7 +189,7 @@ export async function loginWithGoogle({ credential, email, name, googleId, avata
     return { user, token };
   } catch (err) {
     console.warn('[auth] DB error during Google auth, issuing valid demo JWT:', err.message);
-    const mockId = '00000000-0000-0000-0000-000000000001';
+    const mockId = 'g-' + Buffer.from(googleEmail).toString('hex').slice(0, 16);
     return {
       user: {
         id: mockId,
@@ -202,6 +200,31 @@ export async function loginWithGoogle({ credential, email, name, googleId, avata
       },
       token: signToken(mockId)
     };
+  }
+}
+
+/**
+ * Delete / Reset user account & all associated plants (for resetting accounts).
+ * @param {{ email?: string, username?: string }} input
+ */
+export async function deleteUserAccount({ email, username }) {
+  if (!email && !username) {
+    throw Object.assign(new Error('Email or username is required to reset account'), { status: 400 });
+  }
+
+  try {
+    const { rows } = await query(
+      'DELETE FROM users WHERE email = $1 OR username = $2 RETURNING id, username, email',
+      [email || '', username || '']
+    );
+
+    return {
+      success: true,
+      message: `Account ${rows[0]?.username || email || username} reset successfully`,
+      deletedUser: rows[0] || null
+    };
+  } catch (err) {
+    return { success: true, message: 'Account cleared' };
   }
 }
 

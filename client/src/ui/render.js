@@ -3,7 +3,7 @@
  * Central UI render controller & unified routing with per-user persistent state.
  */
 import { on, clearCache, setCache } from '../state/store.js';
-import { hasToken, clearToken } from '../api/client.js';
+import { hasToken, clearToken, readStoredToken } from '../api/client.js';
 import { renderAuthForm } from './components/auth-form.js';
 import { renderLightDashboard } from './components/render-light-dashboard.js';
 import { renderLightSchedule } from './components/render-light-schedule.js';
@@ -126,7 +126,8 @@ export function mountUi() {
   }
 
   function render() {
-    if (!hasToken()) {
+    const activeToken = hasToken() || readStoredToken();
+    if (!activeToken) {
       clearCache();
       localStorage.removeItem('plantneeds_local_plants');
       renderAuthForm(root);
