@@ -1,7 +1,7 @@
 /**
- * server/logic/auth.js — auth business logic (T-05)
- * --------------------------------------------------
- * register/login/me — pure functions over the DB (no req/res, C4).
+ * server/logic/auth.js — authentication business logic (T-05 + T-19)
+ * ------------------------------------------------------------------
+ * register/login/me/google oauth — pure functions over DB (no req/res, C4).
  * Passwords bcrypt-hashed (cost 10) before insert (ADR-010).
  * Uses bcryptjs (pure JS) — avoids native binding issues on Windows/CI.
  * JWT issued via middleware/auth.js signToken().
@@ -9,13 +9,14 @@
 import bcrypt from 'bcryptjs';
 import { query } from '../db/pool.js';
 import { signToken } from '../middleware/auth.js';
+import fetch from 'node-fetch';
 
 const SALT_ROUNDS = 10;
 
 /**
  * Register a new user.
  * @param {{ username: string, password: string }} input
- * @returns {Promise<{ user: { id, username }, token: string }>}
+ * @returns {Promise<{ user: { id, username }, token: string }}>}
  * @throws {Error & {status?: number}} — 400 validation, 409 duplicate
  */
 export async function registerUser({ username, password }) {
@@ -56,7 +57,7 @@ export async function registerUser({ username, password }) {
 /**
  * Log in an existing user.
  * @param {{ username: string, password: string }} input
- * @returns {Promise<{ user: { id, username }, token: string }>}
+ * @returns {Promise<{ user: { id, username }, token: string }}>}
  * @throws {Error & {status?: number}} — 400 missing fields, 401 bad creds
  */
 export async function loginUser({ username, password }) {
@@ -85,7 +86,7 @@ export async function loginUser({ username, password }) {
 /**
  * Get current user by id (from JWT req.userId).
  * @param {string} userId
- * @returns {Promise<{ user: { id, username, created_at } }>}
+ * @returns {Promise<{ user: { id, username, created_at } }}>}
  * @throws {Error & {status?: number}} — 404 not found
  */
 export async function getCurrentUser(userId) {
@@ -98,4 +99,22 @@ export async function getCurrentUser(userId) {
     throw Object.assign(new Error('User not found'), { status: 404 });
   }
   return { user: { id: user.id, username: user.username, created_at: user.created_at } };
+}
+
+/**
+ * Handle Google OAuth callback (placeholder for Day 9).
+ * For hackathon purposes, this returns a simplified success message.
+ * 
+ * In production, you would:
+ * 1. Exchange authorization code for access token with Google
+ * 2. Get user profile info from Google API
+ * 3. Create/find user in database
+ * 4. Return JWT token
+ */
+export async function handleGoogleCallback(code) {
+  // TODO: Implement full OAuth flow with Google Client ID/SECRET
+  // This requires configuration of GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REDIRECT_URI
+  
+  // For now, return error to indicate feature is not yet implemented
+  throw Object.assign(new Error('Google OAuth is under development for the hackathon demo. Please use username/password.'), { status: 501 });
 }
