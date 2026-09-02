@@ -18,10 +18,10 @@ import plannerRoutes from './routes/planner.js';
 const app = express();
 app.use(express.json());
 
-// CORS middleware (local dev + WebMCP origin)
+// Comprehensive CORS middleware (Local Dev, Vite, and Render Production URLs)
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
   if (req.method === 'OPTIONS') return res.sendStatus(200);
   next();
@@ -54,18 +54,14 @@ app.use((err, _req, res, _next) => {
 const PORT = process.env.PORT || 3001;
 
 async function start() {
-  // Migrations must succeed before we accept traffic — but don't crash the
-  // process if the DB isn't reachable yet (Render may start the web service
-  // before Postgres is ready); /api/health will report db:down until it is.
   try {
     await runMigrations();
   } catch (err) {
-    console.warn('[db] migrations deferred (DB unreachable?):', err.message);
+    console.warn('[db] migrations deferred:', err.message);
   }
   app.listen(PORT, () => console.log(`[api] PlantNeeds API listening on :${PORT}`));
 }
 
-// Always start server on listen unless explicitly disabled by env
 start();
 
 export default app;

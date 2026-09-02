@@ -1,8 +1,8 @@
 /**
- * client/src/api/client.js — fast fetch wrapper with cookie persistence & failover (C4)
+ * client/src/api/client.js — fast fetch wrapper with cookie persistence & retry (C4)
  * ----------------------------------------------------------------------------------
  * Handles cookie-persisted JWT tokens so users stay signed in across browser reloads,
- * plus fast offline-first failover (350ms network timeout) so UI never freezes.
+ * with standard 30s timeout to support Render free-tier cold starts.
  */
 import { emit } from '../state/store.js';
 
@@ -55,12 +55,12 @@ export function hasToken() {
 }
 
 /**
- * Authenticated JSON fetch with fast AbortSignal timeout.
+ * Authenticated JSON fetch with production-ready timeout (30s for Render cold starts).
  * @param {string} path     e.g. '/api/plants'
  * @param {object} [opts]   { method, body, headers, timeout }
  * @returns {Promise<any>}  parsed JSON body
  */
-export async function api(path, { method = 'GET', body, headers = {}, timeout = 350 } = {}) {
+export async function api(path, { method = 'GET', body, headers = {}, timeout = 30000 } = {}) {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeout);
 
@@ -99,7 +99,11 @@ export async function api(path, { method = 'GET', body, headers = {}, timeout = 
     return data;
   } catch (err) {
     clearTimeout(timeoutId);
-    // Fast failover for offline or timed out connection
+    if (err.name === 'AbortError') {
+      const timeoutErr = new Error('Connection timed out. Render backend may be spinning up from sleep, please try again in a few seconds.');
+      timeoutErr.name = 'TimeoutError';
+      throw timeoutErr;
+    }
     throw err;
   }
 }
