@@ -24,7 +24,7 @@ type: tracker
 ## 🔨 In Progress
 | ID | Task | Day | Notes |
 |---|---|---|---|
-| T-15 | ChatGPT-browser E2E pass + description iteration | 7 | Testing in Chrome/ChatGPT WebMCP environment |
+| T-16 | Growth journal UI + log_growth endpoint | 8 | [[tasks/day-08]] |
 
 ## 🐛 Bugs
 _(log with repro steps — see [[docs/testing-strategy#Bug Protocol|bug protocol]])_
@@ -32,6 +32,7 @@ _(log with repro steps — see [[docs/testing-strategy#Bug Protocol|bug protocol
 ## ✅ Done
 | ID | Task | Day | Completed | Links |
 |---|---|---|---|---|
+| T-15 | ChatGPT-browser E2E pass + description iteration | 7 | 2026-09-02 | [[tasks/day-07]] |
 | T-01 | Scaffold Vite client + Express server + repo structure | 1 | 2026-09-01 (`45d343f`) | [[specification#1. Technology Stack (Locked)\|spec §1]] |
 | T-02 | PostgreSQL schema (`migrate.sql`) + `db/pool.js` + reactive store | 1 | 2026-09-01 (`45d343f`) | [[docs/database-schema]] |
 | T-03 | plants-db.json — 53 species seed data (30 indoor + 23 outdoor) | 2 | 2026-09-01 (`5bd7296`) | [[docs/data-model#Plant Database Format\|data-model]] |

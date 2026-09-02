@@ -75,7 +75,15 @@ router.post('/', async (req, res) => {
 router.get('/schedule', async (req, res) => {
   try {
     const plant_id = req.query.plant_id?.toString() || null;
-    const days_ahead = parseInt(req.query.days_ahead?.toString() || '7');
+    const rawDays = req.query.days_ahead?.toString();
+    let days_ahead = 7;
+    
+    if (rawDays !== undefined && rawDays !== null && rawDays !== '') {
+      days_ahead = Number(rawDays);
+      if (isNaN(days_ahead) || !Number.isInteger(days_ahead) || days_ahead < 1 || days_ahead > 365) {
+        return res.status(400).json({ error: 'Invalid days_ahead parameter. Must be an integer between 1 and 365.' });
+      }
+    }
     
     const schedule = await getScheduleLogic(req.userId, { plant_id, days_ahead });
     

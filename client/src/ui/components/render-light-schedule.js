@@ -103,7 +103,7 @@ export function renderLightSchedule(container, { plants = [], onUpdate = () => {
                     <h3 class="text-xl font-bold tracking-tight" style="color: #1B3022; font-family: 'Plus Jakarta Sans', sans-serif;">${item.plant_name} — Watering Due (250ml)</h3>
                     <button class="text-forest-deep/50 hover:text-forest-deep" style="background: none; border: none; cursor: pointer;"><span class="material-symbols-outlined">more_horiz</span></button>
                   </div>
-                  <p class="text-xs mb-3" style="color: #556353;">${item.species} • Last watered ${item.days_since_watered >= 0 ? item.days_since_watered + 'd ago' : 'Never'}</p>
+                  <p class="text-xs mb-3" style="color: #556353;">${item.species || 'Houseplant'} • Last watered ${item.days_since_watered >= 0 ? item.days_since_watered + 'd ago' : 'Never'}</p>
                   
                   <!-- Tag Badges in One Clean Row with Small Consistent Font -->
                   <div class="flex flex-wrap items-center gap-2 mb-4">
