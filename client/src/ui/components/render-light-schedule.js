@@ -7,7 +7,8 @@ import { logCareActivity, computePlantSchedule } from '../../logic/plants.js';
 import { clearToken } from '../../api/client.js';
 import { renderAddPlantModal } from './add-plant-form.js';
 import { renderDiagnosisModal } from './diagnosis-panel.js';
-import { toggleAppTheme } from '../render.js';
+import { toggleAppTheme, savePlantsLocally, getSavedPlants } from '../render.js';
+import { showToast } from './toast-notification.js';
 import { getNavbarHtml, getWeatherBannerHtml } from './navbar.js';
 
 export function renderLightSchedule(container, { plants = [], onUpdate = () => {} } = {}) {
@@ -267,12 +268,27 @@ export function renderLightSchedule(container, { plants = [], onUpdate = () => {
       const id = btn.getAttribute('data-id');
       btn.textContent = 'Watering...';
       btn.disabled = true;
+
+      const currentPlants = getSavedPlants();
+      const plant = currentPlants.find(p => p.id === id);
+      if (plant) {
+        plant.last_watered = new Date().toISOString().split('T')[0];
+        plant.days_remaining = plant.water_frequency_days || 7;
+        plant.status_label = 'Healthy';
+        plant.is_overdue = false;
+        plant.badge_bg = 'bg-primary-fixed';
+        plant.ring_color = 'text-primary-fixed';
+        plant.ring_dashoffset = '60';
+        savePlantsLocally(currentPlants);
+      }
+
       try {
         await logCareActivity({ plant_id: id, activity: 'watered', source: 'human' });
-        onUpdate();
       } catch {
-        btn.textContent = 'Watered ✓';
+        /* saved locally */
       }
+      showToast({ title: `${plant?.name || 'Plant'} Watered`, message: 'Schedule updated to 7 days ahead', source: 'human' });
+      onUpdate();
     });
   });
 }

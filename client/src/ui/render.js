@@ -1,27 +1,19 @@
 /**
  * client/src/ui/render.js
- * Central UI render controller & unified routing with persistent Theme State (Light / Dark).
- * Routes:
- * - #dashboard / #garden / "" -> My Garden (uses active theme)
- * - #schedule -> Care Schedule (uses active theme)
- * - #diagnose -> Diagnosis Panel
+ * Central UI render controller & unified routing with persistent Theme & Plant State.
  */
-import { on, clearCache } from '../state/store.js';
+import { on, clearCache, setCache } from '../state/store.js';
 import { hasToken, clearToken, setToken } from '../api/client.js';
 import { renderAuthForm } from './components/auth-form.js';
 import { renderLightDashboard } from './components/render-light-dashboard.js';
 import { renderLightSchedule } from './components/render-light-schedule.js';
 import { renderDarkSchedule } from './components/render-dark-schedule.js';
 import { renderAddPlantModal } from './components/add-plant-form.js';
-import { renderScheduleModal } from './components/schedule-modal.js';
 import { renderDiagnosisModal } from './components/diagnosis-panel.js';
 import { renderGrowthJournalModal } from './components/growth-journal-modal.js';
 import { renderSeasonalPlannerModal } from './components/seasonal-planner-modal.js';
 import { showToast } from './components/toast-notification.js';
 import { listPlants, logCareActivity } from '../logic/plants.js';
-import { api } from '../api/client.js';
-import { setCache } from '../state/store.js';
-
 import { getNavbarHtml, getWeatherBannerHtml } from './components/navbar.js';
 
 export function getAppTheme() {
@@ -38,47 +30,90 @@ export function toggleAppTheme() {
   setAppTheme(nextTheme);
 }
 
+// Compute plant dynamic care status from last_watered (Timezone-Proof YYYY-MM-DD)
+export function computePlantStatus(p) {
+  const now = new Date();
+  const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  
+  const freq = Number(p.water_frequency_days) || 7;
+  const lastWateredStr = p.last_watered || null;
+
+  let daysSinceWatered = freq;
+  if (lastWateredStr) {
+    const [y1, m1, d1] = todayStr.split('-').map(Number);
+    const [y2, m2, d2] = lastWateredStr.split('-').map(Number);
+    const date1 = new Date(y1, m1 - 1, d1);
+    const date2 = new Date(y2, m2 - 1, d2);
+    daysSinceWatered = Math.max(0, Math.round((date1 - date2) / (1000 * 60 * 60 * 24)));
+  }
+
+  const daysRemaining = Math.max(0, freq - daysSinceWatered);
+  const isOverdue = daysSinceWatered >= freq;
+
+  return {
+    ...p,
+    last_watered: lastWateredStr,
+    days_since_watered: daysSinceWatered,
+    days_remaining: daysRemaining,
+    status_label: isOverdue ? 'Due Today' : `${daysRemaining}d Left`,
+    is_overdue: isOverdue,
+    badge_bg: isOverdue ? 'bg-status-warning' : 'bg-primary-fixed',
+    ring_color: isOverdue ? 'text-status-warning' : 'text-primary-fixed',
+    ring_dashoffset: isOverdue ? '10' : '60',
+    btn_class: isOverdue ? 'bg-primary text-white hover:bg-primary-container' : 'bg-white/10 text-white hover:bg-white/20'
+  };
+}
+
+// Persistent Local Plant State
+export function getSavedPlants() {
+  const saved = localStorage.getItem('plantneeds_local_plants');
+  let rawList = [];
+  if (saved) {
+    try {
+      rawList = JSON.parse(saved);
+    } catch {
+      /* ignore */
+    }
+  }
+
+  if (!rawList || rawList.length === 0) {
+    rawList = [
+      {
+        id: '1',
+        name: 'Monstera Deliciosa',
+        species: 'Monstera deliciosa',
+        location: 'indoor',
+        water_frequency_days: 7,
+        last_watered: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        subtitle: 'Houseplant • Indoor',
+        image_url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAhEkaeKyuoBmmFgEVi4XkgE5zr14wDdg-UMmpjk-ne84t6WCC6gvm6rfVlReiJSqhNRfJdfEAsxG2ghiWQLKN7zfvRGZ-XpKcO4ey8BdjqxooUrkZcD_FF2_CVerxj42LG9oElK1zM_Lzgpn937KCuEi5sJIn_p8jaxgE-B-5QpywJ25ocmygtN0A3AQgknTrweb_F6gCgJp0zj88WQ2pFawAiIKDMEegkTmjs-U2EDgAMfDSzQuXuQw'
+      },
+      {
+        id: '2',
+        name: 'Golden Pothos',
+        species: 'Epipremnum aureum',
+        location: 'indoor',
+        water_frequency_days: 7,
+        last_watered: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        subtitle: 'Houseplant • Indoor',
+        image_url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAxW8RBbT4YPXuDPqRLeQZQr-aXgWG48D8hE_oQLERilCYbEBCHF2gjHmR1fXjqucqbGnduvacZ3V3g9I5boK1H0Wtb9UrOfNj05whoLSdKDEHpmh_LZtbGOeTl7TTIe_pI_C1U_1uqhs1yM7MsHa4T4pH6JQHnNX1VaNeigoC04P3z_su3uuKq5TS9-ANEBa3ebnz18U0PhkUAnYdUN1Rmu1yFC4VeIGeD2DNb5FKvVNQnwEcchk8Yig'
+      }
+    ];
+  }
+
+  return rawList.map(computePlantStatus);
+}
+
+export function savePlantsLocally(plants) {
+  localStorage.setItem('plantneeds_local_plants', JSON.stringify(plants));
+  setCache('plants', plants.map(computePlantStatus));
+}
+
 export function mountUi() {
   const root = document.getElementById('app');
   if (!root) return;
 
-  // Fallback initial plants
-  let userPlants = [
-    {
-      id: '1',
-      name: 'Monstera Deliciosa',
-      species: 'Monstera deliciosa',
-      location: 'indoor',
-      water_frequency_days: 7,
-      last_watered: new Date().toISOString().split('T')[0],
-      subtitle: 'Houseplant • Indoor',
-      days_remaining: 0,
-      status_label: 'Due Today',
-      is_overdue: true,
-      badge_bg: 'bg-status-warning',
-      ring_color: 'text-status-warning',
-      ring_dashoffset: '10',
-      btn_class: 'bg-primary text-white hover:bg-primary-container',
-      image_url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAhEkaeKyuoBmmFgEVi4XkgE5zr14wDdg-UMmpjk-ne84t6WCC6gvm6rfVlReiJSqhNRfJdfEAsxG2ghiWQLKN7zfvRGZ-XpKcO4ey8BdjqxooUrkZcD_FF2_CVerxj42LG9oElK1zM_Lzgpn937KCuEi5sJIn_p8jaxgE-B-5QpywJ25ocmygtN0A3AQgknTrweb_F6gCgJp0zj88WQ2pFawAiIKDMEegkTmjs-U2EDgAMfDSzQuXuQw'
-    },
-    {
-      id: '2',
-      name: 'Golden Pothos',
-      species: 'Epipremnum aureum',
-      location: 'indoor',
-      water_frequency_days: 7,
-      last_watered: new Date().toISOString().split('T')[0],
-      subtitle: 'Houseplant • Indoor',
-      days_remaining: 3,
-      status_label: 'Healthy',
-      is_overdue: false,
-      badge_bg: 'bg-primary-fixed',
-      ring_color: 'text-primary-fixed',
-      ring_dashoffset: '60',
-      btn_class: 'bg-white/10 text-white hover:bg-white/20',
-      image_url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAxW8RBbT4YPXuDPqRLeQZQr-aXgWG48D8hE_oQLERilCYbEBCHF2gjHmR1fXjqucqbGnduvacZ3V3g9I5boK1H0Wtb9UrOfNj05whoLSdKDEHpmh_LZtbGOeTl7TTIe_pI_C1U_1uqhs1yM7MsHa4T4pH6JQHnNX1VaNeigoC04P3z_su3uuKq5TS9-ANEBa3ebnz18U0PhkUAnYdUN1Rmu1yFC4VeIGeD2DNb5FKvVNQnwEcchk8Yig'
-    }
-  ];
+  let userPlants = getSavedPlants();
 
   let isFetchingLive = false;
 
@@ -87,7 +122,7 @@ export function mountUi() {
     isFetchingLive = true;
     try {
       const livePlants = await listPlants();
-      if (livePlants && livePlants.length > 0) {
+      if (livePlants && Array.isArray(livePlants) && livePlants.length > 0) {
         userPlants = livePlants.map((p, idx) => ({
           id: p.id,
           name: p.name,
@@ -96,34 +131,24 @@ export function mountUi() {
           water_frequency_days: p.water_frequency_days || 7,
           last_watered: p.last_watered || null,
           subtitle: `${p.species || 'Houseplant'} • ${p.location === 'outdoor' ? 'Outdoor Bed' : 'Indoor'}`,
-          days_remaining: p.days_remaining ?? idx * 3,
-          status_label: (p.days_remaining ?? idx * 3) <= 0 ? 'Due Today' : 'Healthy',
-          is_overdue: (p.days_remaining ?? idx * 3) <= 0,
-          badge_bg: (p.days_remaining ?? idx * 3) <= 0 ? 'bg-status-warning' : 'bg-primary-fixed',
-          ring_color: (p.days_remaining ?? idx * 3) <= 0 ? 'text-status-warning' : 'text-primary-fixed',
-          ring_dashoffset: (p.days_remaining ?? idx * 3) <= 0 ? '10' : '60',
-          btn_class: (p.days_remaining ?? idx * 3) <= 0 ? 'bg-primary text-white hover:bg-primary-container' : 'bg-white/10 text-white hover:bg-white/20',
           image_url: p.image_url || (idx % 2 === 0 
             ? 'https://lh3.googleusercontent.com/aida-public/AB6AXuAhEkaeKyuoBmmFgEVi4XkgE5zr14wDdg-UMmpjk-ne84t6WCC6gvm6rfVlReiJSqhNRfJdfEAsxG2ghiWQLKN7zfvRGZ-XpKcO4ey8BdjqxooUrkZcD_FF2_CVerxj42LG9oElK1zM_Lzgpn937KCuEi5sJIn_p8jaxgE-B-5QpywJ25ocmygtN0A3AQgknTrweb_F6gCgJp0zj88WQ2pFawAiIKDMEegkTmjs-U2EDgAMfDSzQuXuQw'
             : 'https://lh3.googleusercontent.com/aida-public/AB6AXuAxW8RBbT4YPXuDPqRLeQZQr-aXgWG48D8hE_oQLERilCYbEBCHF2gjHmR1fXjqucqbGnduvacZ3V3g9I5boK1H0Wtb9UrOfNj05whoLSdKDEHpmh_LZtbGOeTl7TTIe_pI_C1U_1uqhs1yM7MsHa4T4pH6JQHnNX1VaNeigoC04P3z_su3uuKq5TS9-ANEBa3ebnz18U0PhkUAnYdUN1Rmu1yFC4VeIGeD2DNb5FKvVNQnwEcchk8Yig')
         }));
-        setCache('plants', userPlants);
+        savePlantsLocally(userPlants);
+        render();
       }
     } catch {
-      // Offline-first graceful fallback
+      // Backend offline — keep local persistent storage
     } finally {
       isFetchingLive = false;
     }
   }
 
-  // Preload background assets into memory
-  const preloadBg = new Image();
-  preloadBg.src = '/assets/summer-vibes-bg.jpg';
-
   function render() {
+    userPlants = getSavedPlants();
     const rawHash = (window.location.hash || '').toLowerCase();
     
-    // Check if user explicitly navigated to a legacy themed hash
     if (rawHash.includes('dark')) {
       localStorage.setItem('plantneeds_theme', 'dark');
     } else if (rawHash.includes('light')) {
@@ -144,10 +169,7 @@ export function mountUi() {
       setToken('demo-token');
     }
 
-    // Keep store cache synchronized for WebMCP tools (Single Source of Truth)
     setCache('plants', userPlants);
-
-    // Non-blocking background revalidation
     syncLivePlants();
 
     // 1. Single Route for Care Schedule (#schedule)
@@ -166,9 +188,8 @@ export function mountUi() {
       return;
     }
 
-    // Render Dark Dashboard (When currentTheme === 'dark') — 100% exact shared layout
+    // Render Dark Dashboard
     root.innerHTML = `
-      <!-- Dashboard Background (Dark Moody Foliage with Raindrops) -->
       <div class="bg-layer"></div>
 
       <!-- TopNavBar Dark -->
@@ -179,7 +200,7 @@ export function mountUi() {
         <!-- Top Banner -->
         ${getWeatherBannerHtml({ theme: 'dark' })}
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           <!-- Left 2/3: Plant Grid -->
           <div class="lg:col-span-8">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-6">
@@ -199,13 +220,16 @@ export function mountUi() {
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              ${userPlants.map((plant, idx) => `
+              ${userPlants.map(plant => `
                 <div class="glass-card rounded-3xl p-5 flex flex-col group hover:-translate-y-1 transition-transform duration-300">
                   <div class="relative h-48 rounded-2xl overflow-hidden mb-4 shadow-inner">
                     <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="${plant.name}" src="${plant.image_url}" />
                     <div class="absolute top-3 right-3 bg-black/40 backdrop-blur-md px-3 py-1 rounded-full flex items-center gap-1 shadow-sm border border-white/20">
-                      <div class="w-2 h-2 rounded-full ${plant.is_overdue ? 'bg-status-warning' : 'bg-primary-fixed'}"></div>
+                      <div class="w-2 h-2 rounded-full ${plant.badge_bg}"></div>
                       <span class="font-label-caps text-label-caps text-white font-semibold">${plant.status_label}</span>
+                    </div>
+                    <div class="absolute bottom-3 left-3 text-white">
+                      <p class="font-label-caps text-xs text-white/90 uppercase tracking-widest drop-shadow-sm">${plant.subtitle}</p>
                     </div>
                   </div>
                   <div class="flex justify-between items-start mb-4">
@@ -218,20 +242,20 @@ export function mountUi() {
                     <div class="flex items-center gap-3">
                       <div class="relative w-12 h-12 flex items-center justify-center">
                         <svg class="w-full h-full transform -rotate-90" viewbox="0 0 36 36">
-                          <path class="text-white/20" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="4"></path>
-                          <path class="${plant.is_overdue ? 'text-status-warning' : 'text-primary-fixed'} progress-ring" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="100, 100" stroke-dashoffset="${plant.is_overdue ? '10' : '60'}" stroke-linecap="round" stroke-width="4"></path>
+                          <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="4"></path>
+                          <path class="${plant.ring_color} progress-ring" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="100, 100" stroke-dashoffset="${plant.ring_dashoffset}" stroke-linecap="round" stroke-width="4"></path>
                         </svg>
                         <div class="absolute flex flex-col items-center">
                           <span class="font-body-sm font-bold text-white leading-none font-mono">${plant.days_remaining}d</span>
                         </div>
                       </div>
-                      <span class="font-body-sm text-white font-semibold">${plant.is_overdue ? 'Due Today' : `${plant.days_remaining} Days Left`}</span>
+                      <span class="font-body-sm text-white font-semibold">${plant.status_label}</span>
                     </div>
                     <div class="flex items-center gap-2">
                       <button class="open-journal-btn p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition border border-white/10 cursor-pointer" data-id="${plant.id}" title="View Growth Journal">
                         <span class="material-symbols-outlined text-sm">psychiatry</span>
                       </button>
-                      <button class="water-btn ${plant.is_overdue ? 'bg-primary text-white hover:bg-primary-container shadow-md border border-white/10' : 'bg-white/10 text-white hover:bg-white/20 border border-white/20 shadow-sm'} px-5 py-2.5 rounded-full font-body-sm font-semibold transition-colors flex items-center gap-2 cursor-pointer" data-id="${plant.id}">
+                      <button class="app-water-btn ${plant.btn_class} px-5 py-2.5 rounded-full font-body-sm font-semibold transition-colors flex items-center gap-2 cursor-pointer" data-id="${plant.id}">
                         <span class="material-symbols-outlined text-sm">water_drop</span> Water
                       </button>
                     </div>
@@ -241,7 +265,7 @@ export function mountUi() {
             </div>
           </div>
 
-          <!-- Right 1/3: Sidebar (Exact 1:1 match with Light Dashboard structure) -->
+          <!-- Right 1/3: Sidebar -->
           <div class="lg:col-span-4 flex flex-col gap-6 pt-2 lg:pt-14">
             <!-- Due for Care Card -->
             <div class="glass-card rounded-3xl p-6 relative overflow-hidden">
@@ -252,9 +276,9 @@ export function mountUi() {
                 <h3 class="font-body-md font-semibold text-white mb-2">Due for Care</h3>
                 <div class="flex flex-col gap-2 mb-6">
                   <div class="flex items-end gap-4">
-                    <span class="font-headline-xl text-[64px] leading-none text-white font-mono tracking-tighter drop-shadow-sm font-bold">3</span>
+                    <span class="font-headline-xl text-[64px] leading-none font-mono tracking-tighter drop-shadow-sm font-bold text-white">${userPlants.filter(p => p.is_overdue).length}</span>
                     <div class="mb-2 bg-status-warning/20 border border-status-warning/40 px-3 py-1 rounded-md">
-                      <span class="font-label-caps font-bold" style="color: #D97706;">1 OVERDUE</span>
+                      <span class="font-label-caps font-bold" style="color: #D97706;">${userPlants.filter(p => p.is_overdue).length} OVERDUE</span>
                     </div>
                   </div>
                   <p class="font-body-sm text-sage-soft font-medium">Monstera, Basil, and 1 more</p>
@@ -273,7 +297,7 @@ export function mountUi() {
               </div>
               <div class="flex flex-col gap-4">
                 <div class="bg-white/5 border border-white/10 p-4 rounded-2xl flex gap-3 shadow-sm">
-                  <span class="material-symbols-outlined text-status-warning mt-0.5" style="color: #D97706; font-size: 22px;">water_drop</span>
+                  <span class="material-symbols-outlined text-status-warning mt-0.5" style="font-size: 22px;">water_drop</span>
                   <div>
                     <h4 class="font-body-sm font-semibold text-white">Monstera Humidity</h4>
                     <p class="font-body-sm text-sage-soft text-xs mt-1 leading-relaxed">Indoor heating is drying the air. Mist leaves today to maintain ~60% humidity.</p>
@@ -330,27 +354,26 @@ export function mountUi() {
       });
     });
 
-    root.querySelectorAll('.water-btn').forEach(btn => {
+    root.querySelectorAll('.app-water-btn').forEach(btn => {
       btn.addEventListener('click', async () => {
         const plantId = btn.getAttribute('data-id');
         btn.textContent = 'Watering...';
         btn.disabled = true;
+
+        const currentPlants = getSavedPlants();
+        const plant = currentPlants.find(p => p.id === plantId);
+        if (plant) {
+          plant.last_watered = new Date().toISOString().split('T')[0];
+          savePlantsLocally(currentPlants);
+        }
+
         try {
           await logCareActivity({ plant_id: plantId, activity: 'watered', source: 'human' });
-          render();
         } catch {
-          const plant = userPlants.find(p => p.id === plantId);
-          if (plant) {
-            plant.days_remaining = 7;
-            plant.status_label = 'Healthy';
-            plant.is_overdue = false;
-            plant.badge_bg = 'bg-primary-fixed';
-            plant.ring_color = 'text-primary-fixed';
-            plant.ring_dashoffset = '60';
-            plant.btn_class = 'bg-white/10 text-white hover:bg-white/20';
-          }
-          render();
+          /* saved locally */
         }
+        showToast({ title: `${plant?.name || 'Plant'} Watered`, message: 'Schedule updated to 7 days ahead', source: 'human' });
+        render();
       });
     });
   }

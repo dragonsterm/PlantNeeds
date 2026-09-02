@@ -8,7 +8,8 @@ import { renderAddPlantModal } from './add-plant-form.js';
 import { renderDiagnosisModal } from './diagnosis-panel.js';
 import { renderGrowthJournalModal } from './growth-journal-modal.js';
 import { renderSeasonalPlannerModal } from './seasonal-planner-modal.js';
-import { toggleAppTheme } from '../render.js';
+import { toggleAppTheme, savePlantsLocally, getSavedPlants } from '../render.js';
+import { showToast } from './toast-notification.js';
 import { logCareActivity } from '../../logic/plants.js';
 import { getNavbarHtml, getWeatherBannerHtml } from './navbar.js';
 
@@ -79,7 +80,7 @@ export function renderLightDashboard(container, { userPlants = [], onUpdate = ()
                     <button class="light-open-journal-btn p-2 rounded-full bg-white/70 hover:bg-white text-[#1B3022] transition border border-black/10 shadow-sm cursor-pointer" data-id="${plant.id}" title="View Growth Journal">
                       <span class="material-symbols-outlined text-sm">psychiatry</span>
                     </button>
-                    <button class="light-water-btn bg-forest-deep text-white px-5 py-2.5 rounded-full font-body-sm font-semibold hover:bg-primary-container transition-colors flex items-center gap-2 shadow-md border border-transparent cursor-pointer" data-id="${plant.id}" style="background: #1B3022;">
+                    <button class="app-water-btn bg-forest-deep text-white px-5 py-2.5 rounded-full font-body-sm font-semibold hover:bg-primary-container transition-colors flex items-center gap-2 shadow-md border border-transparent cursor-pointer" data-id="${plant.id}" style="background: #1B3022;">
                       <span class="material-symbols-outlined text-sm">water_drop</span> Water
                     </button>
                   </div>
@@ -177,23 +178,26 @@ export function renderLightDashboard(container, { userPlants = [], onUpdate = ()
     });
   });
 
-  container.querySelectorAll('.light-water-btn').forEach(btn => {
+  container.querySelectorAll('.app-water-btn').forEach(btn => {
     btn.addEventListener('click', async () => {
       const plantId = btn.getAttribute('data-id');
       btn.textContent = 'Watering...';
       btn.disabled = true;
+
+      const currentPlants = getSavedPlants();
+      const plant = currentPlants.find(p => p.id === plantId);
+      if (plant) {
+        plant.last_watered = new Date().toISOString().split('T')[0];
+        savePlantsLocally(currentPlants);
+      }
+
       try {
         await logCareActivity({ plant_id: plantId, activity: 'watered', source: 'human' });
-        onUpdate();
       } catch {
-        const plant = userPlants.find(p => p.id === plantId);
-        if (plant) {
-          plant.days_remaining = 7;
-          plant.status_label = 'Healthy';
-          plant.is_overdue = false;
-        }
-        onUpdate();
+        /* saved locally */
       }
+      showToast({ title: `${plant?.name || 'Plant'} Watered`, message: 'Schedule updated to 7 days ahead', source: 'human' });
+      onUpdate();
     });
   });
 }
