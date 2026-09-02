@@ -148,78 +148,12 @@ export function renderAuthForm(container, { initialMode = 'login' } = {}) {
       googleBtn.disabled = true;
       googleBtn.style.opacity = '0.7';
 
-      // RFC 6749 Compliant redirect URI (matches exactly the URL in Authorized redirect URIs: http://localhost:5173)
+      // Clean RFC 6749 OAuth 2.0 full-page redirect (prevents COOP popup blocking)
       const redirectUri = window.location.origin;
-      
       const oauthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(GOOGLE_CLIENT_ID)}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token%20id_token&scope=openid%20email%20profile&nonce=plantneeds_${Date.now()}`;
 
-      // Open OAuth popup window
-      const width = 500;
-      const height = 600;
-      const left = window.screenX + (window.outerWidth - width) / 2;
-      const top = window.screenY + (window.outerHeight - height) / 2;
-
-      const popup = window.open(
-        oauthUrl,
-        'google_oauth_popup',
-        `width=${width},height=${height},left=${left},top=${top},status=no,resizable=yes`
-      );
-
-      // Poll popup completion
-      let handled = false;
-      const interval = setInterval(async () => {
-        try {
-          if (!popup || popup.closed) {
-            clearInterval(interval);
-            if (!handled) {
-              await completeGoogleLogin();
-            }
-            return;
-          }
-
-          const popupHref = popup.location?.href || '';
-          if (popupHref && popupHref.includes(redirectUri)) {
-            const popupHash = popup.location?.hash || '';
-            if (popupHash && (popupHash.includes('id_token=') || popupHash.includes('access_token='))) {
-              handled = true;
-              clearInterval(interval);
-              popup.close();
-
-              const params = new URLSearchParams(popupHash.replace(/^#/, ''));
-              const idToken = params.get('id_token');
-              const accessToken = params.get('access_token');
-
-              await completeGoogleLogin({ credential: idToken, accessToken });
-            }
-          }
-        } catch (crossOriginErr) {
-          // Normal cross-origin access restriction while on accounts.google.com
-        }
-      }, 500);
+      window.location.href = oauthUrl;
     });
-
-    async function completeGoogleLogin(payload = {}) {
-      try {
-        const result = await api('/api/auth/google', {
-          method: 'POST',
-          body: {
-            credential: payload.credential,
-            email: 'mahardhika2505@gmail.com',
-            name: 'Mahardhika Putra',
-            googleId: 'google-oauth-user-id'
-          }
-        });
-
-        if (result && result.token) {
-          setToken(result.token);
-          emit('auth-changed');
-        }
-      } catch (err) {
-        console.error('[auth] Google auth completion failed:', err);
-        setToken('demo-token');
-        emit('auth-changed');
-      }
-    }
 
     container.querySelector('#forgot-pw-btn')?.addEventListener('click', () => {
       alert('Use your test credentials or register a new user for this hackathon.');
