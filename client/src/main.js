@@ -11,14 +11,24 @@ import { initToastSubscriptions } from './ui/components/toast-notification.js';
 import { setToken, api } from './api/client.js';
 import { emit } from './state/store.js';
 
-async function handleOAuthHashCallback() {
+async function handleOAuthParams() {
+  // Check URL search query (e.g. ?token=... from backend redirect)
+  const urlParams = new URLSearchParams(window.location.search);
+  const queryToken = urlParams.get('token');
+  if (queryToken) {
+    setToken(queryToken);
+    history.replaceState(null, '', window.location.pathname + window.location.hash);
+    emit('auth-changed');
+    return;
+  }
+
+  // Check URL hash (e.g. #id_token=...)
   const hash = window.location.hash || '';
   if (hash.includes('id_token=') || hash.includes('access_token=')) {
     const params = new URLSearchParams(hash.replace(/^#/, ''));
     const idToken = params.get('id_token');
     const accessToken = params.get('access_token');
 
-    // Clean hash from address bar immediately
     history.replaceState(null, '', window.location.pathname + window.location.search);
 
     try {
@@ -46,7 +56,7 @@ async function handleOAuthHashCallback() {
 }
 
 async function boot() {
-  await handleOAuthHashCallback();
+  await handleOAuthParams();
   mountUi();
   registerAllTools();
   initToastSubscriptions();

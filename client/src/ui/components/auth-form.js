@@ -148,9 +148,11 @@ export function renderAuthForm(container, { initialMode = 'login' } = {}) {
       googleBtn.disabled = true;
       googleBtn.style.opacity = '0.7';
 
-      // Clean RFC 6749 OAuth 2.0 full-page redirect (prevents COOP popup blocking)
-      const redirectUri = window.location.origin;
-      const oauthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(GOOGLE_CLIENT_ID)}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token%20id_token&scope=openid%20email%20profile&nonce=plantneeds_${Date.now()}`;
+      // Standard Authorization Code flow via backend callback to guarantee valid redirect_uri
+      const backendUrl = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_URL) || 'https://plantneeds-api.onrender.com';
+      const redirectUri = `${backendUrl}/api/auth/google/callback`;
+      
+      const oauthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(GOOGLE_CLIENT_ID)}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=openid%20email%20profile&access_type=offline&prompt=consent`;
 
       window.location.href = oauthUrl;
     });
