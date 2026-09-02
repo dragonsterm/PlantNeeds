@@ -278,12 +278,16 @@ export function mountUi() {
                 <h3 class="font-body-md font-semibold text-white mb-2">Due for Care</h3>
                 <div class="flex flex-col gap-2 mb-6">
                   <div class="flex items-end gap-4">
-                    <span class="font-headline-xl text-[64px] leading-none font-mono tracking-tighter drop-shadow-sm font-bold text-white">${userPlants.filter(p => p.is_overdue).length}</span>
+                    <span class="font-headline-xl text-[64px] leading-none font-mono tracking-tighter drop-shadow-sm font-bold text-white">${userPlants.filter(p => p.is_overdue || p.days_remaining === 0).length}</span>
                     <div class="mb-2 bg-status-warning/20 border border-status-warning/40 px-3 py-1 rounded-md">
                       <span class="font-label-caps font-bold" style="color: #D97706;">${userPlants.filter(p => p.is_overdue).length} OVERDUE</span>
                     </div>
                   </div>
-                  <p class="font-body-sm text-sage-soft font-medium">Monstera, Basil, and 1 more</p>
+                  <p class="font-body-sm text-sage-soft font-medium">
+                    ${userPlants.filter(p => p.is_overdue || p.days_remaining === 0).length > 0 
+                      ? userPlants.filter(p => p.is_overdue || p.days_remaining === 0).map(p => p.name).join(', ')
+                      : 'All plants are hydrated & happy'}
+                  </p>
                 </div>
                 <a href="#schedule" id="sidebar-view-schedule-btn" class="w-full bg-primary text-white py-3 rounded-xl font-body-sm font-semibold hover:bg-primary-container transition-colors shadow-md border border-white/10 block text-center cursor-pointer" style="background: #154212; text-decoration: none;">
                   View Schedule
