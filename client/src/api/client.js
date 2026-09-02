@@ -10,23 +10,23 @@ const BASE_URL = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_AP
 
 const TOKEN_COOKIE_KEY = 'plantneeds_auth_token';
 
-// Helper to get cookie by name
+// Helper to get cookie by name (SSR / Node.js safe)
 function getCookie(name) {
-  if (typeof document === 'undefined') return null;
+  if (typeof document === 'undefined' || !document.cookie) return null;
   const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
   return match ? decodeURIComponent(match[2]) : null;
 }
 
 // Helper to set cookie
 function setCookie(name, value, days = 7) {
-  if (typeof document === 'undefined') return;
+  if (typeof document === 'undefined' || !document.cookie) return;
   const expires = new Date(Date.now() + days * 864e5).toUTCString();
   document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/; SameSite=Lax`;
 }
 
 // Helper to erase cookie
 function eraseCookie(name) {
-  if (typeof document === 'undefined') return;
+  if (typeof document === 'undefined' || !document.cookie) return;
   document.cookie = `${name}=; Max-Age=-99999999; path=/; SameSite=Lax`;
 }
 
