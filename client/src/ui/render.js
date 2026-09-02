@@ -8,6 +8,8 @@ import { renderAuthForm } from './components/auth-form.js';
 import { renderLightDashboard } from './components/render-light-dashboard.js';
 import { renderLightSchedule } from './components/render-light-schedule.js';
 import { renderDarkSchedule } from './components/render-dark-schedule.js';
+import { renderLightDiagnosis } from './components/render-light-diagnosis.js';
+import { renderDarkDiagnosis } from './components/render-dark-diagnosis.js';
 import { renderAddPlantModal } from './components/add-plant-form.js';
 import { renderDiagnosisModal } from './components/diagnosis-panel.js';
 import { renderGrowthJournalModal } from './components/growth-journal-modal.js';
@@ -142,6 +144,7 @@ export function mountUi() {
 
     const currentTheme = getAppTheme();
     const isScheduleView = rawHash.includes('schedule');
+    const isDiagnoseView = rawHash.includes('diagnose');
 
     setCache('plants', userPlants);
     syncLivePlants();
@@ -152,6 +155,16 @@ export function mountUi() {
         renderDarkSchedule(root, { plants: userPlants, onUpdate: () => render() });
       } else {
         renderLightSchedule(root, { plants: userPlants, onUpdate: () => render() });
+      }
+      return;
+    }
+
+    // 2. Single Route for Diagnosis Page (#diagnose)
+    if (isDiagnoseView) {
+      if (currentTheme === 'dark') {
+        renderDarkDiagnosis(root, { onUpdate: () => render() });
+      } else {
+        renderLightDiagnosis(root, { onUpdate: () => render() });
       }
       return;
     }

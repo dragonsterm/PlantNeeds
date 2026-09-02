@@ -257,13 +257,6 @@ export function renderLightSchedule(container, { plants = [], onUpdate = () => {
     renderAddPlantModal(container, { onClose: () => onUpdate() });
   });
 
-  container.querySelectorAll('a[href="#diagnose"]').forEach(link => {
-    link.addEventListener('click', (e) => {
-      e.preventDefault();
-      renderDiagnosisModal(() => onUpdate());
-    });
-  });
-
   container.querySelectorAll('.sched-water-action-btn').forEach(btn => {
     btn.addEventListener('click', async () => {
       const id = btn.getAttribute('data-id');
