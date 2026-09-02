@@ -1,0 +1,38 @@
+services:
+  # --- Static Frontend ---
+  - type: web
+    name: plantneeds-web
+    env: static
+    buildCommand: cd client && npm install && npm run build
+    staticPublishPath: client/dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_URL
+        value: https://plantneeds-api.onrender.com
+      - key: VITE_GOOGLE_CLIENT_ID
+        value: 737088584080-2jstr8naric3ue0m8d3jr1useaf7321i.apps.googleusercontent.com
+
+  # --- Backend API ---
+  - type: web
+    name: plantneeds-api
+    env: node
+    rootDir: server
+    buildCommand: npm install
+    startCommand: node index.js
+    healthCheckPath: /api/health
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: NODE_ENV
+        value: production
+      - key: BACKEND_URL
+        value: https://plantneeds-api.onrender.com
+      - key: FRONTEND_URL
+        value: https://plantneeds-web.onrender.com
+      - key: GOOGLE_CLIENT_ID
+        value: 737088584080-2jstr8naric3ue0m8d3jr1useaf7321i.apps.googleusercontent.com
