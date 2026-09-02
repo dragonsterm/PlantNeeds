@@ -6,6 +6,7 @@
 import { logCareActivity, computePlantSchedule } from '../../logic/plants.js';
 import { clearToken } from '../../api/client.js';
 import { renderAddPlantModal } from './add-plant-form.js';
+import { toggleAppTheme } from '../render.js';
 
 export function renderLightSchedule(container, { plants = [], onUpdate = () => {} } = {}) {
   const scheduleItems = computePlantSchedule(plants, { days_ahead: 14 });
@@ -24,17 +25,17 @@ export function renderLightSchedule(container, { plants = [], onUpdate = () => {
       <nav class="glass-panel rounded-full px-6 py-2.5 shadow-sm transition-all duration-300" style="background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.85); box-shadow: 0 4px 24px rgba(27, 48, 34, 0.08);">
         <div class="flex justify-between items-center w-full">
           <!-- Logo Area -->
-          <a href="#light-dashboard" class="flex items-center gap-3 cursor-pointer" style="text-decoration: none;">
+          <a href="#dashboard" class="flex items-center gap-3 cursor-pointer" style="text-decoration: none;">
             <img src="/assets/plantneeds-leaf-drop-logo.png" alt="PlantNeeds Logo" style="height: 34px; width: auto; object-fit: contain;" />
             <span class="font-headline-lg text-headline-lg font-bold" style="color: #1B3022;">PlantNeeds</span>
           </a>
 
           <!-- Navigation Links -->
           <div class="hidden md:flex items-center gap-8">
-            <a class="transition-colors px-3 py-1 rounded-md duration-300 font-medium" href="#light-dashboard" style="color: #556353; text-decoration: none;">My Garden</a>
-            <a class="font-semibold border-b-2 pb-1 transition-all duration-150 ease-in-out scale-95" href="#light-schedule" style="color: #1B3022; border-color: #1B3022; text-decoration: none;">Care Schedule</a>
+            <a class="transition-colors px-3 py-1 rounded-md duration-300 font-medium" href="#dashboard" style="color: #556353; text-decoration: none;">My Garden</a>
+            <a class="font-semibold border-b-2 pb-1 transition-all duration-150 ease-in-out scale-95" href="#schedule" style="color: #1B3022; border-color: #1B3022; text-decoration: none;">Care Schedule</a>
             <a class="transition-colors px-3 py-1 rounded-md duration-300 font-medium" href="#diagnose" style="color: #556353; text-decoration: none;">Diagnosis</a>
-            <a class="text-xs hover:underline" href="#dark-schedule" style="color: #154212; font-weight: 600; text-decoration: none;">[Switch to Dark Theme]</a>
+            <button id="sched-theme-toggle-btn" class="text-xs hover:underline" style="color: #154212; font-weight: 600; background: none; border: none; cursor: pointer;">[Switch to Dark Theme]</button>
           </div>
 
           <!-- Trailing Actions -->
@@ -287,6 +288,10 @@ export function renderLightSchedule(container, { plants = [], onUpdate = () => {
   `;
 
   // Bind Navbar and Component Actions
+  container.querySelector('#sched-theme-toggle-btn')?.addEventListener('click', () => {
+    toggleAppTheme();
+  });
+
   container.querySelector('#sched-add-plant-btn')?.addEventListener('click', () => {
     renderAddPlantModal(container, { onClose: () => onUpdate() });
   });

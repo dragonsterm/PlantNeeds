@@ -8,6 +8,7 @@ import { clearToken } from '../../api/client.js';
 import { renderAddPlantModal } from './add-plant-form.js';
 import { renderScheduleModal } from './schedule-modal.js';
 import { renderDiagnosisModal } from './diagnosis-panel.js';
+import { toggleAppTheme } from '../render.js';
 import { logCareActivity } from '../../logic/plants.js';
 
 export function renderLightDashboard(container, { userPlants = [], onUpdate = () => {} } = {}) {
@@ -28,10 +29,10 @@ export function renderLightDashboard(container, { userPlants = [], onUpdate = ()
           </div>
           <!-- Navigation Links -->
           <div class="hidden md:flex items-center gap-8">
-            <a class="font-semibold border-b-2 pb-1 transition-all duration-150 ease-in-out scale-95" href="#light-dashboard" style="color: #1B3022; border-color: #1B3022;">My Garden</a>
-            <a class="transition-colors px-3 py-1 rounded-md duration-300" href="#light-schedule" style="color: #556353;">Care Schedule</a>
-            <a class="transition-colors px-3 py-1 rounded-md duration-300" href="#diagnose" style="color: #556353;">Diagnosis</a>
-            <a class="text-xs hover:underline" href="#dark-dashboard" style="color: #154212; font-weight: 600;">[Switch to Dark Theme]</a>
+            <a class="font-semibold border-b-2 pb-1 transition-all duration-150 ease-in-out scale-95" href="#dashboard" style="color: #1B3022; border-color: #1B3022; text-decoration: none;">My Garden</a>
+            <a class="transition-colors px-3 py-1 rounded-md duration-300" href="#schedule" style="color: #556353; text-decoration: none;">Care Schedule</a>
+            <a class="transition-colors px-3 py-1 rounded-md duration-300" href="#diagnose" style="color: #556353; text-decoration: none;">Diagnosis</a>
+            <button id="light-theme-toggle-btn" class="text-xs hover:underline" style="color: #154212; font-weight: 600; background: none; border: none; cursor: pointer;">[Switch to Dark Theme]</button>
           </div>
           <!-- Trailing Actions -->
           <div class="flex items-center gap-4">
@@ -180,6 +181,10 @@ export function renderLightDashboard(container, { userPlants = [], onUpdate = ()
   `;
 
   // Bindings for Light Dashboard
+  container.querySelector('#light-theme-toggle-btn')?.addEventListener('click', () => {
+    toggleAppTheme();
+  });
+
   container.querySelector('#light-logout-btn')?.addEventListener('click', () => {
     clearToken();
     window.location.hash = '';
