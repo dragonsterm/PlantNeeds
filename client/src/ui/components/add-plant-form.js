@@ -39,22 +39,24 @@ export function renderAddPlantModal(container, { onClose = () => {}, onSuccess =
     padding: 16px;
   `;
 
-  // Color tokens
-  const modalBg = isDark ? '#141E16' : '#F6F5EE';
-  const modalBorder = isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(255, 255, 255, 0.9)';
+  // Glassmorphic styling calibrated to match Google Stitch / Botanical Ether components
+  const cardGlass = isDark
+    ? `background: rgba(18, 26, 20, 0.78); backdrop-filter: blur(28px) saturate(150%); -webkit-backdrop-filter: blur(28px) saturate(150%); border: 1.5px solid rgba(255, 255, 255, 0.18); box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65), 0 4px 16px rgba(0, 0, 0, 0.2); color: #FFFFFF;`
+    : `background: rgba(255, 255, 255, 0.78); backdrop-filter: blur(28px) saturate(160%); -webkit-backdrop-filter: blur(28px) saturate(160%); border: 1.5px solid rgba(255, 255, 255, 0.92); box-shadow: 0 24px 60px rgba(27, 48, 34, 0.14), 0 4px 16px rgba(27, 48, 34, 0.04); color: #1B3022;`;
+
   const textColor = isDark ? '#FFFFFF' : '#162719';
   const labelColor = isDark ? '#E1E8E0' : '#1F2F23';
   const subtextColor = isDark ? 'rgba(255, 255, 255, 0.65)' : '#6B7280';
-  const inputBg = isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(255, 255, 255, 0.92)';
-  const inputBorder = isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(27, 48, 34, 0.14)';
-  const cardFieldBg = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(255, 255, 255, 0.7)';
-  const cardFieldBorder = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(27, 48, 34, 0.1)';
-  const menuBg = isDark ? '#1A261C' : '#FFFFFF';
-  const itemHover = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(26, 58, 34, 0.06)';
+  const inputBg = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.68)';
+  const inputBorder = isDark ? 'rgba(255, 255, 255, 0.16)' : 'rgba(27, 48, 34, 0.13)';
+  const cardFieldBg = isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(255, 255, 255, 0.55)';
+  const cardFieldBorder = isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(27, 48, 34, 0.11)';
+  const menuBg = isDark ? 'rgba(20, 30, 22, 0.95)' : 'rgba(255, 255, 255, 0.92)';
+  const itemHover = isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(26, 58, 34, 0.08)';
   const primaryBtnBg = isDark ? '#244D2E' : '#1A3A22';
 
   modalOverlay.innerHTML = `
-    <div class="glass-modal" style="width: 100%; max-width: 530px; background: ${modalBg}; border: 1.5px solid ${modalBorder}; border-radius: 28px; box-shadow: 0 24px 60px rgba(27, 48, 34, 0.18), 0 4px 16px rgba(27, 48, 34, 0.06); overflow: hidden; position: relative; font-family: 'Plus Jakarta Sans', sans-serif;">
+    <div class="glass-modal" style="width: 100%; max-width: 530px; ${cardGlass} border-radius: 28px; overflow: hidden; position: relative; font-family: 'Plus Jakarta Sans', sans-serif;">
       
       <!-- Modal Header -->
       <div style="padding: 20px 24px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(26, 58, 34, 0.08)'};">
@@ -117,7 +119,7 @@ export function renderAddPlantModal(container, { onClose = () => {}, onSuccess =
           </div>
 
           <!-- Autocomplete Dropdown Menu -->
-          <div id="species-suggestions" style="position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 70; background: ${menuBg}; border: 1px solid ${inputBorder}; border-radius: 14px; max-height: 200px; overflow-y: auto; display: none; box-shadow: 0 16px 36px rgba(0,0,0,0.25); padding: 4px;"></div>
+          <div id="species-suggestions" style="position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 70; background: ${menuBg}; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid ${inputBorder}; border-radius: 14px; max-height: 200px; overflow-y: auto; display: none; box-shadow: 0 16px 36px rgba(0,0,0,0.25); padding: 4px;"></div>
 
           <!-- Popular Quick Chips -->
           <div style="margin-top: 8px; display: flex; align-items: center; gap: 6px; overflow-x: auto; padding-bottom: 2px;">
@@ -161,7 +163,7 @@ export function renderAddPlantModal(container, { onClose = () => {}, onSuccess =
               </svg>
             </div>
 
-            <div id="custom-location-menu" role="listbox" style="position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 60; background: ${menuBg}; border: 1px solid ${inputBorder}; border-radius: 14px; padding: 4px; display: none; box-shadow: 0 16px 36px rgba(0,0,0,0.25);">
+            <div id="custom-location-menu" role="listbox" style="position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 60; background: ${menuBg}; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid ${inputBorder}; border-radius: 14px; padding: 4px; display: none; box-shadow: 0 16px 36px rgba(0,0,0,0.25);">
               <div class="custom-dropdown-item" role="option" data-value="indoor" data-text="Indoor Houseplant" style="padding: 9px 12px; border-radius: 8px; font-size: 13px; color: ${textColor}; cursor: pointer; display: flex; align-items: center; justify-content: space-between;">
                 <span>Indoor Houseplant</span>
                 <span class="check-icon" style="color: #16a34a; font-size: 14px; font-weight: 700;">✓</span>
@@ -193,7 +195,7 @@ export function renderAddPlantModal(container, { onClose = () => {}, onSuccess =
               </svg>
             </div>
 
-            <div id="custom-light-menu" role="listbox" style="position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 60; background: ${menuBg}; border: 1px solid ${inputBorder}; border-radius: 14px; padding: 4px; display: none; box-shadow: 0 16px 36px rgba(0,0,0,0.25);">
+            <div id="custom-light-menu" role="listbox" style="position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 60; background: ${menuBg}; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid ${inputBorder}; border-radius: 14px; padding: 4px; display: none; box-shadow: 0 16px 36px rgba(0,0,0,0.25);">
               <div class="custom-dropdown-item" role="option" data-value="bright_indirect" data-text="Bright Indirect" style="padding: 9px 12px; border-radius: 8px; font-size: 13px; color: ${textColor}; cursor: pointer; display: flex; align-items: center; justify-content: space-between;">
                 <span>Bright Indirect</span>
                 <span class="check-icon" style="color: #16a34a; font-size: 14px; font-weight: 700;">✓</span>
