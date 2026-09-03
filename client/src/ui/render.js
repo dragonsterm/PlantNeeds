@@ -66,15 +66,43 @@ export function computePlantStatus(p) {
   };
 }
 
+export const DEFAULT_BOTANICAL_PLANTS = [
+  {
+    id: '1',
+    name: 'Monstera Deliciosa',
+    species: 'Monstera deliciosa',
+    location: 'indoor',
+    water_frequency_days: 7,
+    last_watered: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+    subtitle: 'Houseplant • Indoor',
+    pot_has_drainage: false,
+    image_url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAhEkaeKyuoBmmFgEVi4XkgE5zr14wDdg-UMmpjk-ne84t6WCC6gvm6rfVlReiJSqhNRfJdfEAsxG2ghiWQLKN7zfvRGZ-XpKcO4ey8BdjqxooUrkZcD_FF2_CVerxj42LG9oElK1zM_Lzgpn937KCuEi5sJIn_p8jaxgE-B-5QpywJ25ocmygtN0A3AQgknTrweb_F6gCgJp0zj88WQ2pFawAiIKDMEegkTmjs-U2EDgAMfDSzQuXuQw'
+  },
+  {
+    id: '2',
+    name: 'Golden Pothos',
+    species: 'Epipremnum aureum',
+    location: 'indoor',
+    water_frequency_days: 7,
+    last_watered: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+    subtitle: 'Houseplant • Indoor',
+    pot_has_drainage: true,
+    image_url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAxW8RBbT4YPXuDPqRLeQZQr-aXgWG48D8hE_oQLERilCYbEBCHF2gjHmR1fXjqucqbGnduvacZ3V3g9I5boK1H0Wtb9UrOfNj05whoLSdKDEHpmh_LZtbGOeTl7TTIe_pI_C1U_1uqhs1yM7MsHa4T4pH6JQHnNX1VaNeigoC04P3z_su3uuKq5TS9-ANEBa3ebnz18U0PhkUAnYdUN1Rmu1yFC4VeIGeD2DNb5FKvVNQnwEcchk8Yig'
+  }
+];
+
 export function getSavedPlants() {
-  const saved = localStorage.getItem('plantneeds_local_plants');
-  let rawList = [];
+  const saved = typeof localStorage !== 'undefined' ? localStorage.getItem('plantneeds_local_plants') : null;
+  let rawList = null;
   if (saved) {
     try {
       rawList = JSON.parse(saved);
     } catch {}
   }
-  return Array.isArray(rawList) ? rawList.map(computePlantStatus) : [];
+  if (!rawList || !Array.isArray(rawList) || rawList.length === 0) {
+    rawList = DEFAULT_BOTANICAL_PLANTS;
+  }
+  return rawList.map(computePlantStatus);
 }
 
 export function savePlantsLocally(plants) {

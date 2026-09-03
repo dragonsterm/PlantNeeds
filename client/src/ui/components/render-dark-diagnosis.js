@@ -60,11 +60,20 @@ export function renderDarkDiagnosis(container, { onUpdate = () => {} } = {}) {
   runDiagnosisCalculation();
 
   function renderPage() {
-    const currentPlant = userPlants.find(p => p.id === selectedPlantId) || userPlants[0];
+    const currentPlant = userPlants.find(p => p.id === selectedPlantId) || userPlants[0] || {
+      id: '1',
+      name: 'Monstera Deliciosa',
+      species: 'Monstera deliciosa',
+      days_since_watered: 2,
+      water_frequency_days: 7,
+      pot_has_drainage: false,
+      location: 'indoor',
+      image_url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAhEkaeKyuoBmmFgEVi4XkgE5zr14wDdg-UMmpjk-ne84t6WCC6gvm6rfVlReiJSqhNRfJdfEAsxG2ghiWQLKN7zfvRGZ-XpKcO4ey8BdjqxooUrkZcD_FF2_CVerxj42LG9oElK1zM_Lzgpn937KCuEi5sJIn_p8jaxgE-B-5QpywJ25ocmygtN0A3AQgknTrweb_F6gCgJp0zj88WQ2pFawAiIKDMEegkTmjs-U2EDgAMfDSzQuXuQw'
+    };
     const topDiag = diagnosisResult?.top_diagnosis || {
       condition: 'Overwatering & Early Root Rot',
       confidence: 92,
-      evidence: `Watered every 4 days vs 10-day recommended schedule for ${currentPlant?.name || 'Monstera'} in a pot without drainage.`,
+      evidence: `Watered every ${currentPlant.days_since_watered || 2} days vs 10-day recommended schedule for ${currentPlant.name} in a pot ${currentPlant.pot_has_drainage ? 'with' : 'without'} drainage.`,
       suggested_fix: 'Hold watering for 12–14 days until top 2 inches dry. Inspect root ball and trim any black mushy roots. Repot into well-draining soil in a pot with drainage holes.'
     };
 
@@ -73,11 +82,9 @@ export function renderDarkDiagnosis(container, { onUpdate = () => {} } = {}) {
       { condition: 'Natural Lower Leaf Shedding', confidence: 18 }
     ];
 
-    const fixSteps = [
-      'Hold watering for 12–14 days until top 2 inches dry.',
-      'Inspect root ball and trim any black mushy roots.',
-      'Repot into well-draining soil in a pot with drainage holes.'
-    ];
+    const fixSteps = typeof topDiag.suggested_fix === 'string'
+      ? topDiag.suggested_fix.split(/\.\s+/).filter(Boolean).map(s => s.endsWith('.') ? s : s + '.')
+      : ['Hold watering until top 2 inches dry.', 'Inspect roots for rot.', 'Resume regular cadence.'];
 
     container.innerHTML = `
       <!-- Dark Maple Leaf Background Layer -->
@@ -119,16 +126,16 @@ export function renderDarkDiagnosis(container, { onUpdate = () => {} } = {}) {
               <!-- Telemetry Soft Capsule Chips (Matching Schedule View) -->
               <div class="flex flex-wrap gap-2">
                 <span class="inline-flex items-center px-3 py-1 rounded-full bg-white/10 border border-white/15 text-xs text-white font-medium shadow-xs">
-                  Last Watered: ${currentPlant?.days_since_watered ?? 2}d ago
+                  Last Watered: ${currentPlant.days_since_watered ?? 2}d ago
                 </span>
                 <span class="inline-flex items-center px-3 py-1 rounded-full bg-white/10 border border-white/15 text-xs text-white font-medium shadow-xs">
-                  Watering: Every ${currentPlant?.water_frequency_days || 4}d
+                  Interval: Every ${currentPlant.water_frequency_days || 7}d
                 </span>
                 <span class="inline-flex items-center px-3 py-1 rounded-full bg-white/10 border border-white/15 text-xs text-white font-medium shadow-xs">
                   Recommended: Every 10d
                 </span>
                 <span class="inline-flex items-center px-3 py-1 rounded-full bg-white/10 border border-white/15 text-xs text-white font-medium shadow-xs">
-                  Pot: No Drainage
+                  Pot: ${currentPlant.pot_has_drainage === false ? 'No Drainage' : 'Has Drainage'}
                 </span>
               </div>
             </div>

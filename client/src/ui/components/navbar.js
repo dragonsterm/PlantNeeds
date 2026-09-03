@@ -16,8 +16,13 @@ export function getNavbarHtml({ activeRoute = 'dashboard', theme = 'light' } = {
   const logoTextColor = isDark ? '#FFFFFF' : '#1B3022';
   const activeColor = isDark ? '#FFFFFF' : '#1B3022';
   const inactiveColor = isDark ? 'rgba(255, 255, 255, 0.65)' : '#556353';
-  const themeToggleText = isDark ? '[Switch to Light Theme]' : '[Switch to Dark Theme]';
-  const themeToggleColor = isDark ? '#bcf0ae' : '#154212';
+  const themeToggleHtml = isDark
+    ? `<button id="global-theme-toggle-btn" class="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold hover:opacity-90 transition border cursor-pointer" style="background: rgba(255,255,255,0.1); color: #bcf0ae; border-color: rgba(255,255,255,0.15);">
+        <span class="material-symbols-outlined text-sm">light_mode</span> Light
+      </button>`
+    : `<button id="global-theme-toggle-btn" class="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold hover:opacity-90 transition border cursor-pointer" style="background: rgba(27,48,34,0.06); color: #154212; border-color: rgba(27,48,34,0.12);">
+        <span class="material-symbols-outlined text-sm">dark_mode</span> Dark
+      </button>`;
   const addBtnBg = isDark ? '#154212' : '#1B3022';
   const notifBtnBg = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)';
   const notifIconColor = isDark ? '#FFFFFF' : '#1B3022';
@@ -55,9 +60,7 @@ export function getNavbarHtml({ activeRoute = 'dashboard', theme = 'light' } = {
             </a>
 
             <!-- Theme Switcher -->
-            <button id="global-theme-toggle-btn" class="text-xs hover:underline ml-2" style="color: ${themeToggleColor}; font-weight: 600; background: none; border: none; cursor: pointer;">
-              ${themeToggleText}
-            </button>
+            ${themeToggleHtml}
           </div>
 
           <!-- Trailing Actions -->
