@@ -63,6 +63,17 @@ function initSqlite() {
     try {
       sqliteDb.exec(`ALTER TABLE plants ADD COLUMN image_url TEXT`);
     } catch {}
+
+    // Backfill any legacy users created with NULL id
+    try {
+      const nullUsers = sqliteDb.prepare('SELECT rowid, username FROM users WHERE id IS NULL').all();
+      for (const u of nullUsers) {
+        const generatedId = 'id-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
+        sqliteDb.prepare('UPDATE users SET id = ? WHERE rowid = ?').run(generatedId, u.rowid);
+      }
+    } catch (e) {
+      console.warn('[db] Error backfilling user IDs:', e.message);
+    }
   }
   return sqliteDb;
 }

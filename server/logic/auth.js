@@ -246,7 +246,17 @@ export async function getCurrentUser(userId) {
       'SELECT id, username, email, avatar_url, provider, created_at FROM users WHERE id = $1',
       [userId],
     );
-    const user = rows[0];
+    let user = rows && rows[0];
+    
+    // If not found by exact ID, fallback search by username or Google sub
+    if (!user) {
+      const fallbackRes = await query(
+        'SELECT id, username, email, avatar_url, provider, created_at FROM users WHERE username = $1 OR google_id = $1 LIMIT 1',
+        [userId]
+      );
+      user = fallbackRes.rows && fallbackRes.rows[0];
+    }
+
     if (!user) {
       throw Object.assign(new Error('User not found'), { status: 404 });
     }
