@@ -12,7 +12,7 @@ Visual design terkunci pada tema **Botanical Ether Glassmorphism** yang disinkro
 2. **Component-Based**: Menggunakan token CSS terpusat di `client/src/style.css`.
 3. **Live-Sync Drivethrough (C5)**: Aksi AI agent melalui WebMCP langsung memperbarui tampilan antarmuka secara reaktif via pub/sub store.
 4. **Accessible**: Kontras teks tinggi dengan fondasi warna Forest Deep di atas permukaan frosted glass.
-5. **Anti-AI Slop**: Tanpa emoji dekoratif di headings/tombol, tanpa neon glow buatan, dan tanpa teks em-dash.
+5. **Clean Botanical Aesthetics**: Tipografi jernih, hierarki visual terstruktur, dan komponen terisolasi tanpa visual noise.
 
 ## Komponen Antarmuka Utama
 

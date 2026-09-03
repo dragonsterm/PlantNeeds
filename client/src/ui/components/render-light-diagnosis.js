@@ -1,7 +1,6 @@
 /**
  * client/src/ui/components/render-light-diagnosis.js
  * Dedicated Light Mode Plant Health Doctor & Diagnosis Page.
- * Botanical Theme, Anti-AI Slop Clean Badges, Organic Glassmorphism.
  */
 import { diagnoseProblem } from '../../logic/diagnose.js';
 import { getNavbarHtml } from './navbar.js';

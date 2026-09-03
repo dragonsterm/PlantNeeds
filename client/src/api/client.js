@@ -35,7 +35,13 @@ function eraseCookie(name) {
 // Read token from cookie or localStorage or in-memory
 export function readStoredToken() {
   if (typeof window === 'undefined') return null;
-  return getCookie(TOKEN_KEY) || localStorage.getItem(TOKEN_KEY) || null;
+  let localVal = null;
+  try {
+    if (typeof localStorage !== 'undefined') {
+      localVal = localStorage.getItem(TOKEN_KEY);
+    }
+  } catch {}
+  return getCookie(TOKEN_KEY) || localVal || null;
 }
 
 let token = readStoredToken();
