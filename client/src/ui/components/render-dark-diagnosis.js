@@ -60,16 +60,42 @@ export function renderDarkDiagnosis(container, { onUpdate = () => {} } = {}) {
   runDiagnosisCalculation();
 
   function renderPage() {
-    const currentPlant = userPlants.find(p => p.id === selectedPlantId) || userPlants[0] || {
-      id: '1',
-      name: 'Monstera Deliciosa',
-      species: 'Monstera deliciosa',
-      days_since_watered: 2,
-      water_frequency_days: 7,
-      pot_has_drainage: false,
-      location: 'indoor',
-      image_url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAhEkaeKyuoBmmFgEVi4XkgE5zr14wDdg-UMmpjk-ne84t6WCC6gvm6rfVlReiJSqhNRfJdfEAsxG2ghiWQLKN7zfvRGZ-XpKcO4ey8BdjqxooUrkZcD_FF2_CVerxj42LG9oElK1zM_Lzgpn937KCuEi5sJIn_p8jaxgE-B-5QpywJ25ocmygtN0A3AQgknTrweb_F6gCgJp0zj88WQ2pFawAiIKDMEegkTmjs-U2EDgAMfDSzQuXuQw'
-    };
+    if (userPlants.length === 0) {
+      container.innerHTML = `
+        <div class="bg-layer"></div>
+        ${getNavbarHtml({ activeRoute: 'diagnose', theme: 'dark' })}
+        <main class="container mx-auto px-6 pt-[140px] pb-12 max-w-xl text-center">
+          <div class="p-12 rounded-[28px] border shadow-sm" style="background: rgba(0, 0, 0, 0.35); backdrop-filter: blur(24px); border-color: rgba(255, 255, 255, 0.15);">
+            <span class="material-symbols-outlined text-5xl mb-4 text-primary-fixed">stethoscope</span>
+            <h2 class="text-2xl font-bold text-white mb-2" style="font-family: 'Plus Jakarta Sans', sans-serif;">Your Garden is Empty</h2>
+            <p class="text-sm text-white/70 mb-6">Add a plant to your garden first to run history-aware health checks and root rot evaluations.</p>
+            <button id="dark-diag-empty-add-btn" class="bg-[#154212] text-white px-6 py-3 rounded-full font-semibold text-xs hover:bg-emerald-900 transition shadow-sm inline-flex items-center gap-2 cursor-pointer border border-white/15">
+              <span class="material-symbols-outlined text-sm">add</span> Add Your First Plant
+            </button>
+          </div>
+        </main>
+      `;
+
+      container.querySelector('#dark-diag-empty-add-btn')?.addEventListener('click', () => {
+        renderAddPlantModal(container, { onSuccess: () => onUpdate() });
+      });
+      container.querySelector('#global-add-plant-btn')?.addEventListener('click', () => {
+        renderAddPlantModal(container, { onSuccess: () => onUpdate() });
+      });
+      container.querySelector('#global-theme-toggle-btn')?.addEventListener('click', () => {
+        toggleAppTheme();
+        onUpdate();
+      });
+      container.querySelector('#global-logout-btn')?.addEventListener('click', () => {
+        clearToken();
+        clearCache();
+        window.location.hash = '';
+        onUpdate();
+      });
+      return;
+    }
+
+    const currentPlant = userPlants.find(p => p.id === selectedPlantId) || userPlants[0];
     const topDiag = diagnosisResult?.top_diagnosis || {
       condition: 'Overwatering & Early Root Rot',
       confidence: 92,

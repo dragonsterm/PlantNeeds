@@ -93,16 +93,22 @@ export const DEFAULT_BOTANICAL_PLANTS = [
 
 export function getSavedPlants() {
   const saved = typeof localStorage !== 'undefined' ? localStorage.getItem('plantneeds_local_plants') : null;
-  let rawList = null;
-  if (saved) {
+  if (saved !== null) {
     try {
-      rawList = JSON.parse(saved);
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed)) {
+        return parsed.map(computePlantStatus);
+      }
     } catch {}
   }
-  if (!rawList || !Array.isArray(rawList) || rawList.length === 0) {
-    rawList = DEFAULT_BOTANICAL_PLANTS;
+  
+  // Only inject default demo plants if user is NOT logged in (preview mode)
+  const isAuth = Boolean(hasToken() || readStoredToken());
+  if (!isAuth) {
+    return DEFAULT_BOTANICAL_PLANTS.map(computePlantStatus);
   }
-  return rawList.map(computePlantStatus);
+
+  return [];
 }
 
 export function savePlantsLocally(plants) {

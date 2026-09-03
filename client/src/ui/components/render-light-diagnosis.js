@@ -60,16 +60,44 @@ export function renderLightDiagnosis(container, { onUpdate = () => {} } = {}) {
   runDiagnosisCalculation();
 
   function renderPage() {
-    const currentPlant = userPlants.find(p => p.id === selectedPlantId) || userPlants[0] || {
-      id: '1',
-      name: 'Monstera Deliciosa',
-      species: 'Monstera deliciosa',
-      days_since_watered: 2,
-      water_frequency_days: 7,
-      pot_has_drainage: false,
-      location: 'indoor',
-      image_url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAhEkaeKyuoBmmFgEVi4XkgE5zr14wDdg-UMmpjk-ne84t6WCC6gvm6rfVlReiJSqhNRfJdfEAsxG2ghiWQLKN7zfvRGZ-XpKcO4ey8BdjqxooUrkZcD_FF2_CVerxj42LG9oElK1zM_Lzgpn937KCuEi5sJIn_p8jaxgE-B-5QpywJ25ocmygtN0A3AQgknTrweb_F6gCgJp0zj88WQ2pFawAiIKDMEegkTmjs-U2EDgAMfDSzQuXuQw'
-    };
+    if (userPlants.length === 0) {
+      container.innerHTML = `
+        <div class="fixed inset-0 z-[-1] pointer-events-none">
+          <div class="w-full h-full bg-cover bg-center" style="background-image: url('/assets/summer-vibes-bg.jpg');"></div>
+        </div>
+        ${getNavbarHtml({ activeRoute: 'diagnose', theme: 'light' })}
+        <main class="container mx-auto px-6 pt-[140px] pb-12 max-w-xl text-center">
+          <div class="p-12 rounded-[28px] border shadow-sm" style="background-color: rgba(255, 255, 255, 0.65); backdrop-filter: blur(20px); border-color: rgba(255, 255, 255, 0.85);">
+            <span class="material-symbols-outlined text-5xl mb-4 text-[#154212]">stethoscope</span>
+            <h2 class="text-2xl font-bold text-[#1B3022] mb-2" style="font-family: 'Plus Jakarta Sans', sans-serif;">Your Garden is Empty</h2>
+            <p class="text-sm text-[#556353] mb-6">Add a plant to your garden first to run history-aware health checks and root rot evaluations.</p>
+            <button id="diag-empty-add-btn" class="bg-[#154212] text-white px-6 py-3 rounded-full font-semibold text-xs hover:bg-[#1B3022] transition shadow-sm inline-flex items-center gap-2 cursor-pointer">
+              <span class="material-symbols-outlined text-sm">add</span> Add Your First Plant
+            </button>
+          </div>
+        </main>
+      `;
+
+      container.querySelector('#diag-empty-add-btn')?.addEventListener('click', () => {
+        renderAddPlantModal(container, { onSuccess: () => onUpdate() });
+      });
+      container.querySelector('#global-add-plant-btn')?.addEventListener('click', () => {
+        renderAddPlantModal(container, { onSuccess: () => onUpdate() });
+      });
+      container.querySelector('#global-theme-toggle-btn')?.addEventListener('click', () => {
+        toggleAppTheme();
+        onUpdate();
+      });
+      container.querySelector('#global-logout-btn')?.addEventListener('click', () => {
+        clearToken();
+        clearCache();
+        window.location.hash = '';
+        onUpdate();
+      });
+      return;
+    }
+
+    const currentPlant = userPlants.find(p => p.id === selectedPlantId) || userPlants[0];
     const topDiag = diagnosisResult?.top_diagnosis || {
       condition: 'Overwatering & Early Root Rot',
       confidence: 92,
