@@ -29,7 +29,23 @@ router.get('/', async (req, res) => {
     
     query += ` ORDER BY created_at ASC`;
     
-    const result = await db.query(query, queryParams);
+    let result;
+    try {
+      result = await db.query(query, queryParams);
+    } catch (colErr) {
+      // Fallback if image_url column is not yet migrated in PostgreSQL
+      if (colErr.code === '42703' || colErr.message?.includes('image_url')) {
+        try {
+          await db.query('ALTER TABLE plants ADD COLUMN IF NOT EXISTS image_url TEXT');
+          result = await db.query(query, queryParams);
+        } catch {
+          const fallbackQuery = query.replace(', image_url', '');
+          result = await db.query(fallbackQuery, queryParams);
+        }
+      } else {
+        throw colErr;
+      }
+    }
     
     res.json({ plants: result.rows });
   } catch (error) {
