@@ -17,25 +17,28 @@ async function handleOAuthParams() {
   const queryToken = urlParams.get('token');
   const queryUsername = urlParams.get('username');
 
-  if (queryToken) {
-    setToken(queryToken);
-    if (queryUsername) localStorage.setItem('plantneeds_username', decodeURIComponent(queryUsername));
-    history.replaceState(null, '', window.location.pathname + window.location.hash);
-    
-    // Fetch real profile from server
-    try {
-      const meRes = await api('/api/auth/me');
-      if (meRes && meRes.user) {
-        if (meRes.user.username) localStorage.setItem('plantneeds_username', meRes.user.username);
-        if (meRes.user.email) localStorage.setItem('plantneeds_email', meRes.user.email);
-        if (meRes.user.avatar_url) localStorage.setItem('plantneeds_avatar', meRes.user.avatar_url);
-        if (meRes.user.provider) localStorage.setItem('plantneeds_provider', meRes.user.provider);
-      }
-    } catch {}
-    
-    emit('auth-changed');
-    return;
-  }
+    if (queryToken) {
+      setToken(queryToken);
+      if (queryUsername) localStorage.setItem('plantneeds_username', decodeURIComponent(queryUsername));
+      history.replaceState(null, '', window.location.pathname + window.location.hash);
+      
+      // Clear previous local cache before fetching new user profile
+      localStorage.removeItem('plantneeds_local_plants');
+      
+      // Fetch real profile from server
+      try {
+        const meRes = await api('/api/auth/me');
+        if (meRes && meRes.user) {
+          if (meRes.user.username) localStorage.setItem('plantneeds_username', meRes.user.username);
+          if (meRes.user.email) localStorage.setItem('plantneeds_email', meRes.user.email);
+          if (meRes.user.avatar_url) localStorage.setItem('plantneeds_avatar', meRes.user.avatar_url);
+          if (meRes.user.provider) localStorage.setItem('plantneeds_provider', meRes.user.provider);
+        }
+      } catch {}
+      
+      emit('auth-changed');
+      return;
+    }
 
   // Check URL hash (e.g. #id_token=...)
   const hash = window.location.hash || '';

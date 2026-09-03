@@ -19,7 +19,7 @@ export function requireAuth(req, res, next) {
 
   // Allow demo token in local development / hackathon testing
   if (token === 'demo-token' || token.startsWith('demo-')) {
-    req.userId = '00000000-0000-0000-0000-000000000001';
+    req.userId = 'id-mtlyprnk-grxk1v'; // Map demo token to real local user
     return next();
   }
 

@@ -42,11 +42,9 @@ export async function addPlant({ name, species, location, light_exposure, pot_ha
 
 /** getCareSchedule(userId, {plant_id?, days_ahead?}) → ScheduleItem[] sorted by next_watering. Day 4. */
 export async function getCareSchedule(userId, { plant_id = null, days_ahead = 7 } = {}) {
-  // Fetch all user's plants with last_watered info
+  // Fetch all user's plants with last_watered info (cross-engine SQL: works on Postgres & SQLite)
   let query = `
-    SELECT p.id, p.name, p.species, p.location, p.water_frequency_days,
-           p.last_watered,
-           CASE WHEN p.last_watered IS NOT NULL THEN p.last_watered + INTERVAL '${days_ahead} days' >= CURRENT_DATE ELSE false END as needs_attention
+    SELECT p.id, p.name, p.species, p.location, p.water_frequency_days, p.last_watered
     FROM plants p
     WHERE p.user_id = $1
   `;
