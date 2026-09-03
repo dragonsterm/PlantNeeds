@@ -88,8 +88,9 @@ export function getNavbarHtml({ activeRoute = 'dashboard', theme = 'light' } = {
 
 /**
  * Reusable Weather Alert Banner component matching exact dimensions across all pages.
+ * 100% Dynamic with real Open-Meteo precipitation telemetry & user plant stats.
  */
-export function getWeatherBannerHtml({ theme = 'light', weather = null, outdoorCount = 0, indoorDueCount = 0 } = {}) {
+export function getWeatherBannerHtml({ theme = 'light', plants = [], weather = null, weatherData = null, outdoorCount = 0, indoorDueCount = 0 } = {}) {
   const isDark = theme === 'dark';
   const bannerGlass = isDark
     ? `background: rgba(0, 0, 0, 0.25); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.15); box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);`
@@ -103,9 +104,25 @@ export function getWeatherBannerHtml({ theme = 'light', weather = null, outdoorC
   const iconBg = isDark ? 'rgba(74, 144, 226, 0.2)' : '#D4E4F0';
   const iconColor = isDark ? '#93C5FD' : '#2B6CB0';
 
-  const rainMm = weather?.recent_rain_mm ?? 53.4;
-  const isLive = weather?.data_source === 'live' || weather?.data_source === 'cache';
+  const w = weather || weatherData || window.__plantneeds_weather || null;
+  const rainMm = (w && typeof w.recent_rain_mm === 'number') ? w.recent_rain_mm : 0;
+  const isLive = w?.data_source === 'live' || w?.data_source === 'cache';
   const badgeLabel = isLive ? 'LIVE WEATHER' : 'WEATHER';
+
+  const derivedOutdoorCount = plants && plants.length > 0
+    ? plants.filter(p => p.location === 'outdoor').length
+    : 0;
+  const finalOutdoorCount = typeof outdoorCount === 'number' ? outdoorCount : derivedOutdoorCount;
+
+  const derivedIndoorDueCount = plants && plants.length > 0
+    ? plants.filter(p => p.location !== 'outdoor' && (p.is_overdue || p.days_remaining === 0)).length
+    : 0;
+  const finalIndoorDueCount = typeof indoorDueCount === 'number' ? indoorDueCount : derivedIndoorDueCount;
+
+  const hasPlantContext = finalOutdoorCount > 0 || finalIndoorDueCount > 0 || (plants && plants.length > 0);
+  const bannerText = hasPlantContext
+    ? `Rain covered <strong style="font-weight: 700;">${finalOutdoorCount} outdoor garden crops</strong> (${rainMm.toFixed(1)} mm rain this week). <strong style="font-weight: 700;">${finalIndoorDueCount} indoor houseplants</strong> due today.`
+    : `Live weather connected (<strong style="font-weight: 700;">${rainMm.toFixed(1)} mm rain this week</strong>). Add plants to receive automated watering adjustments.`;
 
   return `
     <div id="weather-top-banner" class="rounded-2xl p-3.5 mb-8 flex flex-col sm:flex-row items-center justify-between gap-4 relative overflow-hidden transition-all duration-300" style="${bannerGlass}">
@@ -119,7 +136,7 @@ export function getWeatherBannerHtml({ theme = 'light', weather = null, outdoorC
           </svg>
         </div>
         <p class="font-body-sm" style="color: ${textColor}; margin: 0; font-size: 14px; line-height: 1.4;">
-          Rain covered <strong style="font-weight: 700;">${outdoorCount} outdoor garden crops</strong> (${rainMm} mm rain this week). <strong style="font-weight: 700;">${indoorDueCount} indoor houseplants</strong> due today.
+          ${bannerText}
         </p>
       </div>
       <div class="flex items-center gap-3 shrink-0">
@@ -127,9 +144,9 @@ export function getWeatherBannerHtml({ theme = 'light', weather = null, outdoorC
           <span class="material-symbols-outlined" style="font-size: 14px;">location_on</span>
           <span id="banner-location-city">Locate</span>
         </button>
-        <div class="flex items-center gap-1.5 px-3 py-1 rounded-full relative z-10 shrink-0" style="background: ${badgeBg}; border: 1px solid ${badgeBorder};">
-          <span class="w-1.5 h-1.5 rounded-full" style="background: ${dotColor};"></span>
-          <span class="text-[11px] font-bold tracking-wide" style="color: ${badgeText};">${badgeLabel}</span>
+        <div class="flex items-center gap-2 px-3 py-1.5 rounded-full border shrink-0" style="background: ${badgeBg}; border-color: ${badgeBorder};">
+          <span class="w-2 h-2 rounded-full" style="background: ${dotColor};"></span>
+          <span class="font-label-caps text-xs font-bold uppercase tracking-wider" style="color: ${badgeText};">${badgeLabel}</span>
         </div>
       </div>
     </div>

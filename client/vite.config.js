@@ -9,5 +9,12 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: true,
+    rollupOptions: {
+      output: {
+        entryFileNames: `assets/[name]-bundle-${Date.now()}.js`,
+        chunkFileNames: `assets/[name]-chunk-${Date.now()}.js`,
+        assetFileNames: `assets/[name]-[hash].[ext]`
+      }
+    }
   },
 });

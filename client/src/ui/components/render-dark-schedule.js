@@ -11,7 +11,7 @@ import { toggleAppTheme, savePlantsLocally, getSavedPlants } from '../render.js'
 import { showToast } from './toast-notification.js';
 import { getNavbarHtml, getWeatherBannerHtml } from './navbar.js';
 
-export function renderDarkSchedule(container, { plants = [], onUpdate = () => {} } = {}) {
+export function renderDarkSchedule(container, { plants = [], weatherData = null, onUpdate = () => {} } = {}) {
   // Use saved plants fallback if none passed
   const activePlants = plants.length > 0 ? plants : getSavedPlants();
   const scheduleItems = computePlantSchedule(activePlants, { days_ahead: 14 });
@@ -21,6 +21,23 @@ export function renderDarkSchedule(container, { plants = [], onUpdate = () => {}
 
   // All active tree nodes are derived 100% dynamically from user plants
   const allNodes = [...dueItems, ...upcomingItems];
+
+  const w = weatherData || window.__plantneeds_weather || null;
+  const dailyHistory = (Array.isArray(w?.daily_history) && w.daily_history.length === 7)
+    ? w.daily_history
+    : [
+        { day: 'M', rain_mm: 0 },
+        { day: 'T', rain_mm: 0 },
+        { day: 'W', rain_mm: 0 },
+        { day: 'T', rain_mm: 0 },
+        { day: 'F', rain_mm: 0 },
+        { day: 'S', rain_mm: 0 },
+        { day: 'S', rain_mm: 0 }
+      ];
+
+  const totalRain = typeof w?.recent_rain_mm === 'number'
+    ? w.recent_rain_mm
+    : dailyHistory.reduce((acc, d) => acc + (d.rain_mm || 0), 0);
 
   container.innerHTML = `
     <!-- Dark Dashboard Background -->
@@ -34,8 +51,9 @@ export function renderDarkSchedule(container, { plants = [], onUpdate = () => {}
       <!-- Top Weather Banner -->
       ${getWeatherBannerHtml({
         theme: 'dark',
-        weather: window.__plantneeds_weather || null,
-        outdoorCount: plants.filter(p => p.location === 'outdoor').length,
+        plants: activePlants,
+        weather: window.__plantneeds_weather || weatherData || null,
+        outdoorCount: activePlants.filter(p => p.location === 'outdoor').length,
         indoorDueCount: dueItems.filter(i => i.location !== 'outdoor').length
       })}
 
@@ -137,53 +155,32 @@ export function renderDarkSchedule(container, { plants = [], onUpdate = () => {}
             </h3>
             <p class="text-xs mb-4 text-white/70">7-day rainfall history synced live from Open-Meteo API.</p>
 
-            <!-- 7-Day Mini Bar Chart -->
+            <!-- 7-Day Mini Bar Chart (100% Dynamic from Open-Meteo) -->
             <div class="flex items-end justify-between h-32 mb-4 px-2 border-b pb-2 border-white/10">
-              <div class="flex flex-col items-center gap-1.5">
-                <span class="text-[10px] font-mono text-white/60">14.0</span>
-                <div class="w-8 rounded-t-md transition-all" style="height: 48px; background: rgba(82, 183, 136, 0.65);"></div>
-                <span class="text-xs font-mono font-bold text-white">M</span>
-              </div>
-              <div class="flex flex-col items-center gap-1.5">
-                <span class="text-[10px] font-mono text-white/60">6.2</span>
-                <div class="w-8 rounded-t-md transition-all" style="height: 24px; background: rgba(82, 183, 136, 0.45);"></div>
-                <span class="text-xs font-mono font-bold text-white">T</span>
-              </div>
-              <div class="flex flex-col items-center gap-1.5">
-                <span class="text-[10px] font-mono text-white/40">0.0</span>
-                <div class="w-8 rounded-t-md" style="height: 8px; background: rgba(255,255,255,0.08);"></div>
-                <span class="text-xs font-mono font-bold text-white">W</span>
-              </div>
-              <div class="flex flex-col items-center gap-1.5">
-                <span class="text-[10px] font-mono text-white/60">18.2</span>
-                <div class="w-8 rounded-t-md transition-all" style="height: 72px; background: #52B788;"></div>
-                <span class="text-xs font-mono font-bold text-white">T</span>
-              </div>
-              <div class="flex flex-col items-center gap-1.5">
-                <span class="text-[10px] font-mono text-white/40">0.0</span>
-                <div class="w-8 rounded-t-md" style="height: 8px; background: rgba(255,255,255,0.08);"></div>
-                <span class="text-xs font-mono font-bold text-white">F</span>
-              </div>
-              <div class="flex flex-col items-center gap-1.5">
-                <span class="text-[10px] font-mono text-white/60">15.0</span>
-                <div class="w-8 rounded-t-md transition-all" style="height: 60px; background: rgba(82, 183, 136, 0.75);"></div>
-                <span class="text-xs font-mono font-bold text-white">S</span>
-              </div>
-              <div class="flex flex-col items-center gap-1.5">
-                <span class="text-[10px] font-mono text-white/40">0.0</span>
-                <div class="w-8 rounded-t-md" style="height: 8px; background: rgba(255,255,255,0.08);"></div>
-                <span class="text-xs font-mono font-bold text-white">S</span>
-              </div>
+              ${dailyHistory.map(d => {
+                const val = Number(d.rain_mm) || 0;
+                const barHeight = Math.max(8, Math.min(80, Math.round(val * 4)));
+                const barBg = val >= 5 
+                  ? '#52B788' 
+                  : (val > 0 ? 'rgba(82, 183, 136, 0.65)' : 'rgba(255,255,255,0.08)');
+                return `
+                  <div class="flex flex-col items-center gap-1.5">
+                    <span class="text-[10px] font-mono ${val > 0 ? 'text-primary-fixed font-semibold' : 'text-white/40'}">${val.toFixed(1)}</span>
+                    <div class="w-8 rounded-t-md transition-all" style="height: ${barHeight}px; background: ${barBg};"></div>
+                    <span class="text-xs font-mono font-bold text-white">${d.day}</span>
+                  </div>
+                `;
+              }).join('')}
             </div>
 
             <!-- Rainfall Summary Box -->
             <div class="rounded-2xl p-4 flex items-center justify-between border shadow-sm bg-white/5 border-white/10">
               <div>
                 <span class="text-xs font-medium block text-white/60">7-Day Cumulative</span>
-                <span class="text-xl font-bold tracking-tight text-white">53.4 mm</span>
+                <span class="text-xl font-bold tracking-tight text-white">${totalRain.toFixed(1)} mm</span>
               </div>
               <span class="text-xs px-3 py-1 rounded-full font-semibold border bg-emerald-950/60 text-primary-fixed border-primary-fixed/30">
-                +18% vs Normal
+                ${totalRain >= 5 ? 'Rain Active' : 'Normal Conditions'}
               </span>
             </div>
           </div>
