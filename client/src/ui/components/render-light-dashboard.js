@@ -6,15 +6,15 @@ import { clearToken } from '../../api/client.js';
 import { clearCache, emit } from '../../state/store.js';
 import { getAppTheme, toggleAppTheme, getSavedPlants, savePlantsLocally } from '../render.js';
 import { renderAddPlantModal } from './add-plant-form.js';
-import { renderDiagnosisModal } from './diagnosis-panel.js';
 import { renderGrowthJournalModal } from './growth-journal-modal.js';
 import { renderSeasonalPlannerModal } from './seasonal-planner-modal.js';
 import { showToast } from './toast-notification.js';
 import { logCareActivity } from '../../logic/plants.js';
 import { getNavbarHtml, getWeatherBannerHtml } from './navbar.js';
+import { getSmartInsightsHtml } from './smart-insights.js';
 import { resolveUserCoordinates, getWateringForecast } from '../../logic/weather.js';
 
-export function renderLightDashboard(container, { userPlants = [], onUpdate = () => {} } = {}) {
+export function renderLightDashboard(container, { userPlants = [], weatherData = null, onUpdate = () => {} } = {}) {
   container.innerHTML = `
     <!-- Summer Vibes Background Layer -->
     <div class="fixed inset-0 z-[-1] pointer-events-none">
@@ -24,14 +24,13 @@ export function renderLightDashboard(container, { userPlants = [], onUpdate = ()
     <!-- Top Floating Navbar -->
     ${getNavbarHtml({ activeRoute: 'dashboard', theme: 'light' })}
 
-    <!-- Main Content Container -->
+    <!-- Main Content -->
     <main class="pt-[120px] pb-12 px-container-margin max-w-7xl mx-auto">
       <!-- Top Weather Banner -->
       ${getWeatherBannerHtml({
         theme: 'light',
-        weather: window.__plantneeds_weather || null,
-        outdoorCount: userPlants.filter(p => p.location === 'outdoor').length,
-        indoorDueCount: userPlants.filter(p => p.location !== 'outdoor' && (p.is_overdue || p.days_remaining === 0)).length
+        plants: userPlants,
+        weather: window.__plantneeds_weather || weatherData || null
       })}
 
       <!-- Main Layout: Grid + Sidebar -->
@@ -146,22 +145,7 @@ export function renderLightDashboard(container, { userPlants = [], onUpdate = ()
               <span class="material-symbols-outlined text-[#1B3022]" style="font-variation-settings: 'FILL' 1;">lightbulb</span>
               <h3 class="font-headline-lg-mobile text-headline-lg-mobile text-[#1B3022] font-bold" style="font-size: 18px;">Smart Insights</h3>
             </div>
-            <div class="flex flex-col gap-4">
-              <div class="bg-black/5 border border-black/10 p-4 rounded-2xl flex gap-3 shadow-sm">
-                <span class="material-symbols-outlined text-amber-600 mt-0.5" style="font-size: 22px;">water_drop</span>
-                <div>
-                  <h4 class="font-body-sm font-semibold text-[#1B3022]">Monstera Humidity</h4>
-                  <p class="font-body-sm text-[#556353] text-xs mt-1 leading-relaxed">Indoor heating is drying the air. Mist leaves today to maintain ~60% humidity.</p>
-                </div>
-              </div>
-              <div class="bg-black/5 border border-black/10 p-4 rounded-2xl flex gap-3 shadow-sm">
-                <span class="material-symbols-outlined text-emerald-700 mt-0.5" style="font-size: 22px;">water_drop</span>
-                <div>
-                  <h4 class="font-body-sm font-semibold text-[#1B3022]">Outdoor Watering</h4>
-                  <p class="font-body-sm text-[#556353] text-xs mt-1 leading-relaxed">Sufficient rain recorded. Skip garden watering today to avoid root rot.</p>
-                </div>
-              </div>
-            </div>
+            ${getSmartInsightsHtml({ plants: userPlants, weatherData, theme: 'light' })}
           </div>
         </div>
       </div>

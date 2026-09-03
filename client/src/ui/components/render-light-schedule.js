@@ -11,7 +11,7 @@ import { toggleAppTheme, savePlantsLocally, getSavedPlants } from '../render.js'
 import { showToast } from './toast-notification.js';
 import { getNavbarHtml, getWeatherBannerHtml } from './navbar.js';
 
-export function renderLightSchedule(container, { plants = [], onUpdate = () => {} } = {}) {
+export function renderLightSchedule(container, { plants = [], weatherData = null, onUpdate = () => {} } = {}) {
   // Use saved plants fallback if none passed
   const activePlants = plants.length > 0 ? plants : getSavedPlants();
   const scheduleItems = computePlantSchedule(activePlants, { days_ahead: 14 });
@@ -36,9 +36,8 @@ export function renderLightSchedule(container, { plants = [], onUpdate = () => {
       <!-- Top Weather Banner -->
       ${getWeatherBannerHtml({
         theme: 'light',
-        weather: window.__plantneeds_weather || null,
-        outdoorCount: plants.filter(p => p.location === 'outdoor').length,
-        indoorDueCount: dueItems.filter(i => i.location !== 'outdoor').length
+        plants: activePlants,
+        weather: window.__plantneeds_weather || weatherData || null
       })}
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -182,10 +181,10 @@ export function renderLightSchedule(container, { plants = [], onUpdate = () => {
             <div class="rounded-2xl p-4 flex items-center justify-between border shadow-sm" style="background: rgba(255, 255, 255, 0.7); border-color: rgba(27, 48, 34, 0.1);">
               <div>
                 <span class="text-xs font-medium block" style="color: #556353;">7-Day Cumulative</span>
-                <span class="text-xl font-bold tracking-tight" style="color: #1B3022;">53.4 mm</span>
+                <span class="text-xl font-bold tracking-tight" style="color: #1B3022;">${typeof weatherData?.recent_rain_mm === 'number' ? weatherData.recent_rain_mm.toFixed(1) : '0.0'} mm</span>
               </div>
               <span class="text-xs px-3 py-1 rounded-full font-semibold border" style="background: rgba(82, 183, 136, 0.2); color: #2D6A4F; border-color: rgba(82, 183, 136, 0.35);">
-                +18% vs Normal
+                ${(weatherData?.recent_rain_mm || 0) >= 5 ? 'Rain Active' : 'Normal Conditions'}
               </span>
             </div>
           </div>

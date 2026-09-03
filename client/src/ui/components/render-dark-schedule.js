@@ -11,7 +11,7 @@ import { toggleAppTheme, savePlantsLocally, getSavedPlants } from '../render.js'
 import { showToast } from './toast-notification.js';
 import { getNavbarHtml, getWeatherBannerHtml } from './navbar.js';
 
-export function renderDarkSchedule(container, { plants = [], onUpdate = () => {} } = {}) {
+export function renderDarkSchedule(container, { plants = [], weatherData = null, onUpdate = () => {} } = {}) {
   // Use saved plants fallback if none passed
   const activePlants = plants.length > 0 ? plants : getSavedPlants();
   const scheduleItems = computePlantSchedule(activePlants, { days_ahead: 14 });
@@ -34,9 +34,8 @@ export function renderDarkSchedule(container, { plants = [], onUpdate = () => {}
       <!-- Top Weather Banner -->
       ${getWeatherBannerHtml({
         theme: 'dark',
-        weather: window.__plantneeds_weather || null,
-        outdoorCount: plants.filter(p => p.location === 'outdoor').length,
-        indoorDueCount: dueItems.filter(i => i.location !== 'outdoor').length
+        plants: activePlants,
+        weather: window.__plantneeds_weather || weatherData || null
       })}
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -180,10 +179,10 @@ export function renderDarkSchedule(container, { plants = [], onUpdate = () => {}
             <div class="rounded-2xl p-4 flex items-center justify-between border shadow-sm bg-white/5 border-white/10">
               <div>
                 <span class="text-xs font-medium block text-white/60">7-Day Cumulative</span>
-                <span class="text-xl font-bold tracking-tight text-white">53.4 mm</span>
+                <span class="text-xl font-bold tracking-tight text-white">${typeof weatherData?.recent_rain_mm === 'number' ? weatherData.recent_rain_mm.toFixed(1) : '0.0'} mm</span>
               </div>
               <span class="text-xs px-3 py-1 rounded-full font-semibold border bg-emerald-950/60 text-primary-fixed border-primary-fixed/30">
-                +18% vs Normal
+                ${(weatherData?.recent_rain_mm || 0) >= 5 ? 'Rain Active' : 'Normal Conditions'}
               </span>
             </div>
           </div>
