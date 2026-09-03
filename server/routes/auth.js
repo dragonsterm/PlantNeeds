@@ -143,4 +143,52 @@ router.delete('/account', async (req, res) => {
   }
 });
 
+// POST /api/auth/verify-username — check if username exists for password reset
+router.post('/verify-username', async (req, res) => {
+  try {
+    const { username } = req.body ?? {};
+    if (!username || typeof username !== 'string') {
+      return res.status(400).json({ error: 'Username is required' });
+    }
+    const { rows } = await import('../db/pool.js').then(m => m.query(
+      'SELECT id, username FROM users WHERE username = $1 OR email = $1',
+      [username.trim()]
+    ));
+    if (!rows || rows.length === 0) {
+      return res.status(404).json({ error: 'No account found with that username or email.' });
+    }
+    res.status(200).json({ success: true, username: rows[0].username });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST /api/auth/reset-password — update password after verified username
+router.post('/reset-password', async (req, res) => {
+  try {
+    const { username, password } = req.body ?? {};
+    if (!username || !password) {
+      return res.status(400).json({ error: 'Username and new password are required' });
+    }
+    if (password.length < 8) {
+      return res.status(400).json({ error: 'Password must be at least 8 characters' });
+    }
+    const bcrypt = (await import('bcryptjs')).default;
+    const pool = await import('../db/pool.js');
+    const passwordHash = await bcrypt.hash(password, 10);
+    const { rows } = await pool.query(
+      'UPDATE users SET password_hash = $1 WHERE username = $2 OR email = $2 RETURNING id, username, email',
+      [passwordHash, username.trim()]
+    );
+    if (!rows || rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    const { signToken } = await import('../middleware/auth.js');
+    const token = signToken(rows[0].id);
+    res.status(200).json({ success: true, message: 'Password updated successfully', token, user: rows[0] });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 export default router;
