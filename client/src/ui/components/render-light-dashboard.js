@@ -12,6 +12,7 @@ import { showToast } from './toast-notification.js';
 import { logCareActivity } from '../../logic/plants.js';
 import { getNavbarHtml, getWeatherBannerHtml } from './navbar.js';
 import { getSmartInsightsHtml } from './smart-insights.js';
+import { resolveUserCoordinates, getWateringForecast } from '../../logic/weather.js';
 
 export function renderLightDashboard(container, { userPlants = [], weatherData = null, onUpdate = () => {} } = {}) {
   container.innerHTML = `
@@ -26,7 +27,11 @@ export function renderLightDashboard(container, { userPlants = [], weatherData =
     <!-- Main Content -->
     <main class="pt-[120px] pb-12 px-container-margin max-w-7xl mx-auto">
       <!-- Top Weather Banner -->
-      ${getWeatherBannerHtml({ theme: 'light', plants: userPlants, weatherData })}
+      ${getWeatherBannerHtml({
+        theme: 'light',
+        plants: userPlants,
+        weather: window.__plantneeds_weather || weatherData || null
+      })}
 
       <!-- Main Layout: Grid + Sidebar -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -150,6 +155,41 @@ export function renderLightDashboard(container, { userPlants = [], weatherData =
   // Bindings for Light Dashboard
   container.querySelector('#global-theme-toggle-btn')?.addEventListener('click', () => {
     toggleAppTheme();
+  });
+
+  // Location request in weather banner
+  container.querySelector('#banner-request-location-btn')?.addEventListener('click', async () => {
+    const text = container.querySelector('#banner-location-city');
+    if (text) text.textContent = 'Locating...';
+    try {
+      const coords = await resolveUserCoordinates(true);
+      const forecast = await getWateringForecast(coords);
+      window.__plantneeds_weather = forecast;
+      showToast({ title: 'Location Updated', message: 'Live weather & rain delay refreshed', source: 'human' });
+    } catch {}
+    onUpdate();
+  });
+
+  container.querySelectorAll('.loc-filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const filter = btn.getAttribute('data-filter');
+      container.querySelectorAll('.loc-filter-btn').forEach(b => {
+        b.classList.remove('bg-[#1B3022]/15', 'text-[#1B3022]');
+        b.classList.add('bg-white/40', 'text-[#42493e]');
+      });
+      btn.classList.remove('bg-white/40', 'text-[#42493e]');
+      btn.classList.add('bg-[#1B3022]/15', 'text-[#1B3022]');
+
+      container.querySelectorAll('.grid > div.glass-card').forEach(card => {
+        if (filter === 'all') {
+          card.style.display = '';
+        } else {
+          const locText = card.querySelector('p')?.textContent?.toLowerCase() || '';
+          const matches = filter === 'outdoor' ? locText.includes('outdoor') : !locText.includes('outdoor');
+          card.style.display = matches ? '' : 'none';
+        }
+      });
+    });
   });
 
   container.querySelector('#global-logout-btn')?.addEventListener('click', () => {

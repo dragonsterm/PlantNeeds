@@ -11,7 +11,7 @@ import { pool } from './pool.js';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export async function runMigrations() {
-  if (process.env.DATABASE_URL) {
+  if (process.env.DATABASE_URL && process.env.NODE_ENV === 'production') {
     try {
       const sql = await readFile(join(__dirname, 'migrate.sql'), 'utf8');
       await pool.query(sql);

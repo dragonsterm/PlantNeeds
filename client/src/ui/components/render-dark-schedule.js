@@ -32,7 +32,11 @@ export function renderDarkSchedule(container, { plants = [], weatherData = null,
     <!-- Main Content -->
     <main class="pt-[120px] pb-12 px-container-margin max-w-7xl mx-auto">
       <!-- Top Weather Banner -->
-      ${getWeatherBannerHtml({ theme: 'dark', plants: activePlants, weatherData })}
+      ${getWeatherBannerHtml({
+        theme: 'dark',
+        plants: activePlants,
+        weather: window.__plantneeds_weather || weatherData || null
+      })}
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         <!-- Left Column: Activity Tree (8 cols) -->

@@ -15,7 +15,7 @@ import { renderGrowthJournalModal } from './components/growth-journal-modal.js';
 import { renderSeasonalPlannerModal } from './components/seasonal-planner-modal.js';
 import { showToast } from './components/toast-notification.js';
 import { listPlants, logCareActivity } from '../logic/plants.js';
-import { getWateringForecast } from '../logic/weather.js';
+import { getWateringForecast, getCachedWeather, resolveUserCoordinates } from '../logic/weather.js';
 import { getNavbarHtml, getWeatherBannerHtml } from './components/navbar.js';
 import { getSmartInsightsHtml } from './components/smart-insights.js';
 
@@ -124,6 +124,24 @@ export function mountUi() {
   let userPlants = getSavedPlants();
   let liveWeather = null;
   let isFetchingLive = false;
+  let isFetchingWeather = false;
+
+  async function syncWeather(promptGps = false) {
+    if (isFetchingWeather) return;
+    isFetchingWeather = true;
+    try {
+      const coords = await resolveUserCoordinates(promptGps);
+      const forecast = await getWateringForecast(coords);
+      window.__plantneeds_weather = forecast;
+      const city = coords.source === 'gps' ? 'Local GPS' : (coords.source === 'stored' ? 'Saved' : 'Auto');
+      const labelEl = document.getElementById('banner-location-city');
+      if (labelEl) labelEl.textContent = city;
+    } catch (err) {
+      console.warn('[weather] Sync weather warning:', err.message);
+    } finally {
+      isFetchingWeather = false;
+    }
+  }
 
   async function syncLivePlants() {
     if (isFetchingLive || !hasToken()) return;
@@ -194,6 +212,10 @@ export function mountUi() {
 
     setCache('plants', userPlants);
     syncLivePlants();
+    if (!window.__plantneeds_weather) {
+      window.__plantneeds_weather = getCachedWeather();
+      syncWeather(false);
+    }
 
     // 1. Single Route for Care Schedule (#schedule)
     if (isScheduleView) {
@@ -231,7 +253,11 @@ export function mountUi() {
       <!-- Main Content -->
       <main class="pt-[120px] pb-12 px-container-margin max-w-7xl mx-auto">
         <!-- Top Banner -->
-        ${getWeatherBannerHtml({ theme: 'dark', plants: userPlants, weatherData: liveWeather })}
+        ${getWeatherBannerHtml({
+          theme: 'dark',
+          plants: userPlants,
+          weather: window.__plantneeds_weather || liveWeather || null
+        })}
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           <!-- Left 2/3: Plant Grid -->
@@ -350,6 +376,38 @@ export function mountUi() {
       </main>
     `;
 
+    root.querySelectorAll('.loc-filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const filter = btn.getAttribute('data-filter');
+        root.querySelectorAll('.loc-filter-btn').forEach(b => {
+          b.classList.remove('bg-[#1B3022]/15', 'text-[#1B3022]', 'bg-white/20', 'text-white');
+          b.classList.add('bg-white/40', 'text-[#42493e]');
+        });
+        btn.classList.remove('bg-white/40', 'text-[#42493e]');
+        btn.classList.add(getAppTheme() === 'dark' ? 'bg-white/20' : 'bg-[#1B3022]/15', getAppTheme() === 'dark' ? 'text-white' : 'text-[#1B3022]');
+
+        root.querySelectorAll('.grid > div.glass-card').forEach(card => {
+          if (filter === 'all') {
+            card.style.display = '';
+          } else {
+            const locText = card.querySelector('p')?.textContent?.toLowerCase() || '';
+            const matches = filter === 'outdoor' ? locText.includes('outdoor') : !locText.includes('outdoor');
+            card.style.display = matches ? '' : 'none';
+          }
+        });
+      });
+    });
+
+    // Request GPS location on button click in weather banner
+    root.querySelector('#banner-request-location-btn')?.addEventListener('click', async () => {
+      const btn = root.querySelector('#banner-request-location-btn');
+      const text = root.querySelector('#banner-location-city');
+      if (text) text.textContent = 'Locating...';
+      await syncWeather(true);
+      showToast({ title: 'Location Updated', message: 'Weather and rain delay updated with local data', source: 'human' });
+      render();
+    });
+
     // Modal Helpers
     const openAddPlantModal = () => renderAddPlantModal(root, { onClose: () => render() });
     const openDiagnosisModal = () => renderDiagnosisModal(() => render());
@@ -405,6 +463,7 @@ export function mountUi() {
   on('plants-changed', () => render());
   on('care-logged', () => render());
   on('auth-changed', () => render());
+  on('weather-updated', () => render());
   window.addEventListener('hashchange', () => render());
   window.addEventListener('theme-changed', () => render());
 
