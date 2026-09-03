@@ -1,5 +1,5 @@
 /**
- * client/src/logic/weather.js — watering forecast via server proxy (C4). Day 4 (T-09).
+ * client/src/logic/weather.js — watering forecast via direct Open-Meteo or server proxy.
  */
 import { api } from '../api/client.js';
 import { emit, setCache, getCache } from '../state/store.js';
@@ -53,7 +53,7 @@ export async function resolveUserCoordinates(promptPermission = false) {
   const savedLat = localStorage.getItem('plantneeds_weather_lat');
   const savedLon = localStorage.getItem('plantneeds_weather_lon');
 
-  // 1. If explicit promptGps requested, try browser GPS first
+  // 1. If explicit prompt requested, trigger browser GPS
   if (promptPermission && typeof navigator !== 'undefined' && 'geolocation' in navigator) {
     try {
       const pos = await new Promise((resolve, reject) => {
@@ -71,7 +71,7 @@ export async function resolveUserCoordinates(promptPermission = false) {
         return { latitude: lat, longitude: lon, source: 'gps' };
       }
     } catch (err) {
-      console.warn('[weather] GPS prompt rejected or timed out:', err?.message || err);
+      console.warn('[weather] GPS prompt error:', err?.message || err);
     }
   }
 
@@ -96,7 +96,43 @@ export async function resolveUserCoordinates(promptPermission = false) {
   };
 }
 
-/** getWateringForecast({latitude, longitude}) → GET /api/weather/forecast → emits 'weather-updated'. */
+/** Process raw Open-Meteo daily response into standardized client weather object */
+export function formatOpenMeteoPayload(data) {
+  if (!data?.daily?.time || !data?.daily?.precipitation_sum) {
+    throw new Error('Invalid Open-Meteo daily payload');
+  }
+  const times = data.daily.time;
+  const precipitation = data.daily.precipitation_sum;
+
+  // Past 7 days slice (0..7)
+  const recentRainMm = precipitation.slice(0, 7).reduce((sum, val) => sum + (Number(val) || 0), 0);
+  const forecastRainMm = precipitation.slice(7, 14).reduce((sum, val) => sum + (Number(val) || 0), 0);
+
+  const dayNames = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+  const dailyHistory = times.slice(0, 7).map((t, idx) => {
+    const val = Number(precipitation[idx]) || 0;
+    const dateObj = new Date(t + 'T00:00:00');
+    const dayLetter = dayNames[dateObj.getDay()] || 'D';
+    return {
+      date: t,
+      day: dayLetter,
+      rain_mm: Math.round(val * 10) / 10
+    };
+  });
+
+  return {
+    recent_rain_mm: Math.round(recentRainMm * 100) / 100,
+    forecast_rain_mm: Math.round(forecastRainMm * 100) / 100,
+    daily_history: dailyHistory,
+    recommendations: [],
+    data_source: 'live'
+  };
+}
+
+/**
+ * Fetch weather from direct client Open-Meteo or backend proxy fallback.
+ * Ensures zero-failure live rainfall & 7-day distribution even if Render backend is sleeping.
+ */
 export async function getWateringForecast(coords = {}) {
   let { latitude, longitude } = coords;
 
@@ -106,9 +142,31 @@ export async function getWateringForecast(coords = {}) {
     longitude = resolved.longitude;
   }
 
-  const params = new URLSearchParams({ latitude, longitude });
-  const result = await api(`/api/weather/forecast?${params}`);
-  
+  let result = null;
+
+  // 1. Direct browser fetch to Open-Meteo (keyless, instant, resilient on Render)
+  try {
+    const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=precipitation_sum,temperature_2m_max&past_days=7&forecast_days=7&timezone=auto`;
+    const openRes = await fetch(apiUrl);
+    if (openRes.ok) {
+      const liveJson = await openRes.json();
+      result = formatOpenMeteoPayload(liveJson);
+    }
+  } catch (directErr) {
+    console.warn('[weather] Direct Open-Meteo fetch failed, attempting server proxy:', directErr.message);
+  }
+
+  // 2. Server API fallback if direct failed
+  if (!result) {
+    try {
+      const params = new URLSearchParams({ latitude, longitude });
+      result = await api(`/api/weather/forecast?${params}`);
+    } catch (apiErr) {
+      console.warn('[weather] Server proxy also failed:', apiErr.message);
+    }
+  }
+
+  // 3. Update reactive state & cache
   if (result) {
     const weatherData = {
       ...result,
@@ -125,4 +183,5 @@ export async function getWateringForecast(coords = {}) {
   emit('weather-updated');
   return result;
 }
+
 

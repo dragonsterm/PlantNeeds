@@ -58,7 +58,8 @@ export function showToast({ title, message, source = 'human', duration = 4000 } 
   `;
 
   const iconBg = isAgent ? '#52B788' : '#10B981';
-  const iconSymbol = isAgent ? 'bolt' : 'water_drop';
+  const iconSymbol = isAgent ? 'bolt' : (title.toLowerCase().includes('location') ? 'location_on' : 'water_drop');
+  const badgeLabel = isAgent ? '🤖 WebMCP Agent' : (title.toLowerCase().includes('location') ? '📍 Location Confirmed' : '💧 Care Logged');
 
   toast.innerHTML = `
     <div style="width: 32px; height: 32px; border-radius: 10px; background: ${iconBg}; color: #FFFFFF; display: flex; align-items: center; justify-content: center; shrink-0; box-shadow: 0 4px 10px rgba(82, 183, 136, 0.4);">
@@ -67,15 +68,15 @@ export function showToast({ title, message, source = 'human', duration = 4000 } 
     <div style="flex: 1;">
       <div style="display: flex; align-items: center; gap: 6px;">
         <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; color: ${isAgent ? '#52B788' : (isDark ? '#A7F3D0' : '#154212')}; letter-spacing: 0.5px;">
-          ${isAgent ? '🤖 WebMCP Agent' : '💧 Care Logged'}
+          ${badgeLabel}
         </span>
+        <span style="width: 4px; height: 4px; border-radius: 50%; background: ${isDark ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.2)'};"></span>
+        <span style="font-size: 10px; color: ${isDark ? 'rgba(255,255,255,0.5)' : '#666'};">Just now</span>
       </div>
-      <p style="font-size: 13px; font-weight: 600; margin: 2px 0 0 0; line-height: 1.3;">
-        ${title || message}
-      </p>
+      <h4 style="font-size: 13px; font-weight: 700; margin: 2px 0 0 0; line-height: 1.2;">${title}</h4>
+      ${message ? `<p style="font-size: 11px; margin: 2px 0 0 0; opacity: 0.8; line-height: 1.3;">${message}</p>` : ''}
     </div>
   `;
-
   toastContainer.appendChild(toast);
 
   setTimeout(() => {
