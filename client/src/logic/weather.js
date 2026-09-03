@@ -26,46 +26,45 @@ export async function resolveUserCoordinates(promptPermission = false) {
   const savedLat = localStorage.getItem('plantneeds_weather_lat');
   const savedLon = localStorage.getItem('plantneeds_weather_lon');
 
-  if (savedLat && savedLon && !promptPermission) {
-    return {
-      latitude: parseFloat(savedLat),
-      longitude: parseFloat(savedLon),
-      source: 'stored'
-    };
-  }
-
-  if (typeof navigator !== 'undefined' && 'geolocation' in navigator) {
+  // 1. If explicit promptGps requested, try browser GPS first
+  if (promptPermission && typeof navigator !== 'undefined' && 'geolocation' in navigator) {
     try {
       const pos = await new Promise((resolve, reject) => {
         navigator.geolocation.getCurrentPosition(resolve, reject, {
           enableHighAccuracy: true,
-          timeout: 8000,
-          maximumAge: 10 * 60 * 1000
+          timeout: 10000,
+          maximumAge: 0
         });
       });
-      const lat = pos.coords.latitude;
-      const lon = pos.coords.longitude;
-      localStorage.setItem('plantneeds_weather_lat', lat.toFixed(4));
-      localStorage.setItem('plantneeds_weather_lon', lon.toFixed(4));
-      return { latitude: lat, longitude: lon, source: 'gps' };
+      if (pos && pos.coords && typeof pos.coords.latitude === 'number' && typeof pos.coords.longitude === 'number') {
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
+        localStorage.setItem('plantneeds_weather_lat', lat.toFixed(4));
+        localStorage.setItem('plantneeds_weather_lon', lon.toFixed(4));
+        return { latitude: lat, longitude: lon, source: 'gps' };
+      }
     } catch (err) {
-      console.info('[weather] GPS geolocation denied or timed out, using fallback coordinates');
+      console.warn('[weather] GPS prompt rejected or timed out:', err?.message || err);
     }
   }
 
-  // If previous coords stored, use them
+  // 2. If stored valid coordinates exist, use them
   if (savedLat && savedLon) {
-    return {
-      latitude: parseFloat(savedLat),
-      longitude: parseFloat(savedLon),
-      source: 'stored'
-    };
+    const pLat = parseFloat(savedLat);
+    const pLon = parseFloat(savedLon);
+    if (!isNaN(pLat) && !isNaN(pLon)) {
+      return {
+        latitude: pLat,
+        longitude: pLon,
+        source: 'stored'
+      };
+    }
   }
 
-  // Default coordinate: Seattle, WA (Demo location with rain)
+  // 3. Fallback to Depok, Sleman, DI Yogyakarta (-7.77, 110.39)
   return {
-    latitude: 47.6062,
-    longitude: -122.3321,
+    latitude: -7.77,
+    longitude: 110.39,
     source: 'default'
   };
 }

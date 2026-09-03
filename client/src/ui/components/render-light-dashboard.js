@@ -160,7 +160,9 @@ export function renderLightDashboard(container, { userPlants = [], weatherData =
   });
 
   // Location request in weather banner
-  container.querySelector('#banner-request-location-btn')?.addEventListener('click', async () => {
+  container.querySelector('#banner-request-location-btn')?.addEventListener('click', async (e) => {
+    e?.preventDefault?.();
+    e?.stopPropagation?.();
     const text = container.querySelector('#banner-location-city');
     if (text) text.textContent = 'Locating...';
     try {
@@ -168,7 +170,9 @@ export function renderLightDashboard(container, { userPlants = [], weatherData =
       const forecast = await getWateringForecast(coords);
       window.__plantneeds_weather = forecast;
       showToast({ title: 'Location Updated', message: 'Live weather & rain delay refreshed', source: 'human' });
-    } catch {}
+    } catch (err) {
+      console.warn('[location] button error:', err?.message || err);
+    }
     onUpdate();
   });
 

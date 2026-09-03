@@ -181,11 +181,11 @@ export function mountUi() {
       }
 
       // 2. Fetch live weather from Open-Meteo API
-      const lat = localStorage.getItem('plantneeds_weather_lat') || '-6.73';
-      const lon = localStorage.getItem('plantneeds_weather_lon') || '108.55';
-      const wRes = await getWateringForecast({ latitude: parseFloat(lat), longitude: parseFloat(lon) });
+      const coords = await resolveUserCoordinates(false);
+      const wRes = await getWateringForecast(coords);
       if (wRes && typeof wRes.recent_rain_mm === 'number') {
         liveWeather = wRes;
+        window.__plantneeds_weather = wRes;
       }
       render();
     } catch {
@@ -416,12 +416,17 @@ export function mountUi() {
     });
 
     // Request GPS location on button click in weather banner
-    root.querySelector('#banner-request-location-btn')?.addEventListener('click', async () => {
-      const btn = root.querySelector('#banner-request-location-btn');
+    root.querySelector('#banner-request-location-btn')?.addEventListener('click', async (e) => {
+      e?.preventDefault?.();
+      e?.stopPropagation?.();
       const text = root.querySelector('#banner-location-city');
       if (text) text.textContent = 'Locating...';
-      await syncWeather(true);
-      showToast({ title: 'Location Updated', message: 'Weather and rain delay updated with local data', source: 'human' });
+      try {
+        await syncWeather(true);
+        showToast({ title: 'Location Updated', message: 'Live weather & rain delay refreshed', source: 'human' });
+      } catch (err) {
+        console.warn('[location] button error:', err?.message || err);
+      }
       render();
     });
 
