@@ -27,14 +27,18 @@ export function computePlantSchedule(plants = [], { plant_id = null, days_ahead 
     let nextWateringDate = new Date(today);
 
     if (plant.last_watered) {
-      const lastWateredDate = new Date(plant.last_watered);
-      lastWateredDate.setHours(0, 0, 0, 0);
-      daysSinceWatered = Math.max(0, Math.floor((today - lastWateredDate) / (1000 * 60 * 60 * 24)));
-      nextWateringDate = new Date(lastWateredDate);
-      nextWateringDate.setDate(nextWateringDate.getDate() + freq);
+      // Normalize timestamp format
+      const isoDate = String(plant.last_watered).split('T')[0].trim();
+      const lastWateredDate = new Date(isoDate + 'T00:00:00');
+      if (!isNaN(lastWateredDate.getTime())) {
+        daysSinceWatered = Math.max(0, Math.floor((today - lastWateredDate) / (1000 * 60 * 60 * 24)));
+        nextWateringDate = new Date(lastWateredDate);
+        nextWateringDate.setDate(nextWateringDate.getDate() + freq);
+      }
     }
 
-    const daysRemaining = Math.ceil((nextWateringDate - today) / (1000 * 60 * 60 * 24));
+    const rawRemaining = Math.ceil((nextWateringDate - today) / (1000 * 60 * 60 * 24));
+    const daysRemaining = isNaN(rawRemaining) ? freq : rawRemaining;
     const isOverdue = daysRemaining <= 0;
 
     return {

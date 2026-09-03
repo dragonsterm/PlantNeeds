@@ -38,23 +38,38 @@ export function computePlantStatus(p) {
   const now = new Date();
   const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
   
-  const freq = Number(p.water_frequency_days) || 7;
-  const lastWateredStr = p.last_watered || null;
+  const freq = Math.max(1, Number(p.water_frequency_days) || 7);
+  let lastWateredStr = null;
+  
+  if (p.last_watered) {
+    // Sanitize ISO timestamps (e.g. 2026-09-03T00:00:00.000Z) down to clean YYYY-MM-DD
+    const isoPrefix = String(p.last_watered).split('T')[0].trim();
+    if (/^\d{4}-\d{2}-\d{2}$/.test(isoPrefix)) {
+      lastWateredStr = isoPrefix;
+    }
+  }
 
   let daysSinceWatered = freq;
   if (lastWateredStr) {
     const [y1, m1, d1] = todayStr.split('-').map(Number);
     const [y2, m2, d2] = lastWateredStr.split('-').map(Number);
-    const date1 = new Date(y1, m1 - 1, d1);
-    const date2 = new Date(y2, m2 - 1, d2);
-    daysSinceWatered = Math.max(0, Math.round((date1 - date2) / (1000 * 60 * 60 * 24)));
+    if (!isNaN(y2) && !isNaN(m2) && !isNaN(d2)) {
+      const date1 = new Date(y1, m1 - 1, d1);
+      const date2 = new Date(y2, m2 - 1, d2);
+      const diffDays = Math.round((date1 - date2) / (1000 * 60 * 60 * 24));
+      if (!isNaN(diffDays)) {
+        daysSinceWatered = Math.max(0, diffDays);
+      }
+    }
   }
 
-  const daysRemaining = Math.max(0, freq - daysSinceWatered);
+  const rawRemaining = freq - daysSinceWatered;
+  const daysRemaining = isNaN(rawRemaining) ? freq : Math.max(0, rawRemaining);
   const isOverdue = daysSinceWatered >= freq;
 
   return {
     ...p,
+    water_frequency_days: freq,
     last_watered: lastWateredStr,
     days_since_watered: daysSinceWatered,
     days_remaining: daysRemaining,

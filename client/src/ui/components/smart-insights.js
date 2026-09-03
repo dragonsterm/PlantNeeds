@@ -15,13 +15,14 @@ export function getSmartInsightsHtml({ plants = [], weatherData = null, theme = 
   // Insight 1: Indoor Plant Hydration & Air Condition
   if (indoorPlants.length > 0) {
     const focusPlant = indoorPlants.find(p => p.is_overdue || p.days_remaining <= 1) || indoorPlants[0];
+    const remDays = isNaN(focusPlant.days_remaining) ? (focusPlant.water_frequency_days || 7) : focusPlant.days_remaining;
     item1 = {
       icon: 'water_drop',
       iconColor: isDark ? 'text-status-warning' : 'text-amber-600',
       title: `${focusPlant.name} Hydration`,
       desc: focusPlant.is_overdue
         ? `Soil moisture depleted. Recommended interval is every ${focusPlant.water_frequency_days || 7} days. Water today.`
-        : `Hydration on track. Next watering estimated in ${focusPlant.days_remaining} days.`
+        : `Hydration on track. Next watering estimated in ${remDays} days.`
     };
   } else {
     item1 = {
