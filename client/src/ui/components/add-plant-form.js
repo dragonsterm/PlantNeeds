@@ -5,7 +5,7 @@
  * custom interactive dropdowns, species search with 53 botanical entries,
  * quick-select chips, pot drainage toggle, and seamless dark/light mode parity.
  */
-import plantsDb from '../../data/plants-db.json';
+import plantsDb from '../../data/plants-db.json' with { type: 'json' };
 import { addPlant } from '../../logic/plants.js';
 import { getAppTheme } from '../render.js';
 
