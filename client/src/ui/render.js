@@ -11,12 +11,13 @@ import { renderDarkSchedule } from './components/render-dark-schedule.js';
 import { renderLightDiagnosis } from './components/render-light-diagnosis.js';
 import { renderDarkDiagnosis } from './components/render-dark-diagnosis.js';
 import { renderAddPlantModal } from './components/add-plant-form.js';
-import { renderDiagnosisModal } from './components/diagnosis-panel.js';
 import { renderGrowthJournalModal } from './components/growth-journal-modal.js';
 import { renderSeasonalPlannerModal } from './components/seasonal-planner-modal.js';
 import { showToast } from './components/toast-notification.js';
 import { listPlants, logCareActivity } from '../logic/plants.js';
+import { getWateringForecast } from '../logic/weather.js';
 import { getNavbarHtml, getWeatherBannerHtml } from './components/navbar.js';
+import { getSmartInsightsHtml } from './components/smart-insights.js';
 
 export function getAppTheme() {
   return localStorage.getItem('plantneeds_theme') || 'light';
@@ -121,12 +122,14 @@ export function mountUi() {
   if (!root) return;
 
   let userPlants = getSavedPlants();
+  let liveWeather = null;
   let isFetchingLive = false;
 
   async function syncLivePlants() {
     if (isFetchingLive || !hasToken()) return;
     isFetchingLive = true;
     try {
+      // 1. Fetch plants from DB
       const livePlants = await listPlants();
       if (Array.isArray(livePlants)) {
         userPlants = livePlants.map((p, idx) => ({
@@ -142,8 +145,16 @@ export function mountUi() {
             : 'https://lh3.googleusercontent.com/aida-public/AB6AXuAxW8RBbT4YPXuDPqRLeQZQr-aXgWG48D8hE_oQLERilCYbEBCHF2gjHmR1fXjqucqbGnduvacZ3V3g9I5boK1H0Wtb9UrOfNj05whoLSdKDEHpmh_LZtbGOeTl7TTIe_pI_C1U_1uqhs1yM7MsHa4T4pH6JQHnNX1VaNeigoC04P3z_su3uuKq5TS9-ANEBa3ebnz18U0PhkUAnYdUN1Rmu1yFC4VeIGeD2DNb5FKvVNQnwEcchk8Yig')
         }));
         savePlantsLocally(userPlants);
-        render();
       }
+
+      // 2. Fetch live weather from Open-Meteo API
+      const lat = localStorage.getItem('plantneeds_weather_lat') || '-6.73';
+      const lon = localStorage.getItem('plantneeds_weather_lon') || '108.55';
+      const wRes = await getWateringForecast({ latitude: parseFloat(lat), longitude: parseFloat(lon) });
+      if (wRes && typeof wRes.recent_rain_mm === 'number') {
+        liveWeather = wRes;
+      }
+      render();
     } catch {
       // Offline fallback
     } finally {
@@ -187,9 +198,9 @@ export function mountUi() {
     // 1. Single Route for Care Schedule (#schedule)
     if (isScheduleView) {
       if (currentTheme === 'dark') {
-        renderDarkSchedule(root, { plants: userPlants, onUpdate: () => render() });
+        renderDarkSchedule(root, { plants: userPlants, weatherData: liveWeather, onUpdate: () => render() });
       } else {
-        renderLightSchedule(root, { plants: userPlants, onUpdate: () => render() });
+        renderLightSchedule(root, { plants: userPlants, weatherData: liveWeather, onUpdate: () => render() });
       }
       return;
     }
@@ -206,7 +217,7 @@ export function mountUi() {
 
     // 2. Single Route for My Garden (#dashboard / #garden / "")
     if (currentTheme === 'light') {
-      renderLightDashboard(root, { userPlants, onUpdate: () => render() });
+      renderLightDashboard(root, { userPlants, weatherData: liveWeather, onUpdate: () => render() });
       return;
     }
 
@@ -220,7 +231,7 @@ export function mountUi() {
       <!-- Main Content -->
       <main class="pt-[120px] pb-12 px-container-margin max-w-7xl mx-auto">
         <!-- Top Banner -->
-        ${getWeatherBannerHtml({ theme: 'dark' })}
+        ${getWeatherBannerHtml({ theme: 'dark', plants: userPlants, weatherData: liveWeather })}
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           <!-- Left 2/3: Plant Grid -->
@@ -332,22 +343,7 @@ export function mountUi() {
                 <span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">lightbulb</span>
                 <h3 class="font-headline-lg-mobile text-headline-lg-mobile text-white font-bold" style="font-size: 18px;">Smart Insights</h3>
               </div>
-              <div class="flex flex-col gap-4">
-                <div class="bg-white/5 border border-white/10 p-4 rounded-2xl flex gap-3 shadow-sm">
-                  <span class="material-symbols-outlined text-status-warning mt-0.5" style="font-size: 22px;">water_drop</span>
-                  <div>
-                    <h4 class="font-body-sm font-semibold text-white">Monstera Humidity</h4>
-                    <p class="font-body-sm text-sage-soft text-xs mt-1 leading-relaxed">Indoor heating is drying the air. Mist leaves today to maintain ~60% humidity.</p>
-                  </div>
-                </div>
-                <div class="bg-white/5 border border-white/10 p-4 rounded-2xl flex gap-3 shadow-sm">
-                  <span class="material-symbols-outlined mt-0.5" style="color: #A1D494; font-size: 22px;">water_drop</span>
-                  <div>
-                    <h4 class="font-body-sm font-semibold text-white">Outdoor Watering</h4>
-                    <p class="font-body-sm text-sage-soft text-xs mt-1 leading-relaxed">Sufficient rain recorded. Skip garden watering today to avoid root rot.</p>
-                  </div>
-                </div>
-              </div>
+              ${getSmartInsightsHtml({ plants: userPlants, weatherData: liveWeather, theme: 'dark' })}
             </div>
           </div>
         </div>
@@ -378,13 +374,6 @@ export function mountUi() {
         if (plant) {
           renderGrowthJournalModal(root, { plant, onClose: () => render() });
         }
-      });
-    });
-
-    root.querySelectorAll('a[href="#diagnose"]').forEach(link => {
-      link.addEventListener('click', (e) => {
-        e.preventDefault();
-        openDiagnosisModal();
       });
     });
 

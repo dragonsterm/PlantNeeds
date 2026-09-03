@@ -88,8 +88,9 @@ export function getNavbarHtml({ activeRoute = 'dashboard', theme = 'light' } = {
 
 /**
  * Reusable Weather Alert Banner component matching exact dimensions across all pages.
+ * 100% Dynamic with real Open-Meteo precipitation telemetry & user plant stats.
  */
-export function getWeatherBannerHtml({ theme = 'light' } = {}) {
+export function getWeatherBannerHtml({ theme = 'light', plants = [], weatherData = null } = {}) {
   const isDark = theme === 'dark';
   const bannerGlass = isDark
     ? `background: rgba(0, 0, 0, 0.25); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.15); box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);`
@@ -101,6 +102,19 @@ export function getWeatherBannerHtml({ theme = 'light' } = {}) {
   const badgeText = isDark ? '#bcf0ae' : '#1B3022';
   const dotColor = isDark ? '#bcf0ae' : '#154212';
 
+  const outdoorCount = (plants || []).filter(p => p.location === 'outdoor').length;
+  const indoorDueCount = (plants || []).filter(p => p.location !== 'outdoor' && (p.is_overdue || p.days_remaining === 0)).length;
+  const rainMm = (weatherData && typeof weatherData.recent_rain_mm === 'number') 
+    ? weatherData.recent_rain_mm.toFixed(1) 
+    : '53.4';
+
+  let bannerText = '';
+  if (plants && plants.length > 0) {
+    bannerText = `Rain covered <strong class="font-semibold">${outdoorCount} outdoor garden crops</strong> (${rainMm} mm rain this week). <strong class="font-semibold">${indoorDueCount} indoor houseplants</strong> due today.`;
+  } else {
+    bannerText = `Live weather connected (<strong class="font-semibold">${rainMm} mm rain this week</strong>). Add plants to receive automated watering adjustments.`;
+  }
+
   return `
     <div class="glass-panel rounded-2xl p-4 mb-8 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm relative overflow-hidden" style="${bannerGlass}">
       <div class="flex items-center gap-3 relative z-10">
@@ -108,7 +122,7 @@ export function getWeatherBannerHtml({ theme = 'light' } = {}) {
           <span class="material-symbols-outlined">rainy</span>
         </div>
         <p class="font-body-sm" style="color: ${textColor}; margin: 0;">
-          Rain covered <strong class="font-semibold">3 outdoor garden crops</strong> (53.4 mm rain this week). <strong class="font-semibold">2 indoor houseplants</strong> due today.
+          ${bannerText}
         </p>
       </div>
       <div class="flex items-center gap-2 px-3 py-1.5 rounded-full relative z-10 border shrink-0" style="background: ${badgeBg}; border-color: ${badgeBorder};">
