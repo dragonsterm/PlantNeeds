@@ -86,31 +86,48 @@ export function getNavbarHtml({ activeRoute = 'dashboard', theme = 'light' } = {
 /**
  * Reusable Weather Alert Banner component matching exact dimensions across all pages.
  */
-export function getWeatherBannerHtml({ theme = 'light' } = {}) {
+export function getWeatherBannerHtml({ theme = 'light', weather = null, outdoorCount = 0, indoorDueCount = 0 } = {}) {
   const isDark = theme === 'dark';
   const bannerGlass = isDark
     ? `background: rgba(0, 0, 0, 0.25); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.15); box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);`
-    : `background: rgba(255, 255, 255, 0.55); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.75); box-shadow: 0 10px 30px rgba(27, 48, 34, 0.08);`;
+    : `background: #E9ECE2; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.75); box-shadow: 0 4px 18px rgba(27, 48, 34, 0.06);`;
 
-  const textColor = isDark ? '#FFFFFF' : '#1B3022';
-  const badgeBg = isDark ? 'rgba(188, 240, 174, 0.2)' : 'rgba(188, 240, 174, 0.45)';
-  const badgeBorder = isDark ? 'rgba(188, 240, 174, 0.35)' : 'rgba(45, 90, 39, 0.3)';
-  const badgeText = isDark ? '#bcf0ae' : '#1B3022';
-  const dotColor = isDark ? '#bcf0ae' : '#154212';
+  const textColor = isDark ? '#FFFFFF' : '#22302A';
+  const badgeBg = isDark ? 'rgba(188, 240, 174, 0.2)' : '#CEE8C3';
+  const badgeBorder = isDark ? 'rgba(188, 240, 174, 0.35)' : '#A8D799';
+  const badgeText = isDark ? '#bcf0ae' : '#1B4D24';
+  const dotColor = isDark ? '#bcf0ae' : '#1B4D24';
+  const iconBg = isDark ? 'rgba(74, 144, 226, 0.2)' : '#D4E4F0';
+  const iconColor = isDark ? '#93C5FD' : '#2B6CB0';
+
+  const rainMm = weather?.recent_rain_mm ?? 53.4;
+  const isLive = weather?.data_source === 'live' || weather?.data_source === 'cache';
+  const badgeLabel = isLive ? 'LIVE WEATHER' : 'WEATHER';
 
   return `
-    <div class="glass-panel rounded-2xl p-4 mb-8 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm relative overflow-hidden" style="${bannerGlass}">
-      <div class="flex items-center gap-3 relative z-10">
-        <div class="w-10 h-10 rounded-full bg-status-water/20 flex items-center justify-center text-status-water border border-status-water/30 shrink-0">
-          <span class="material-symbols-outlined">rainy</span>
+    <div id="weather-top-banner" class="rounded-2xl p-3.5 mb-8 flex flex-col sm:flex-row items-center justify-between gap-4 relative overflow-hidden transition-all duration-300" style="${bannerGlass}">
+      <div class="flex items-center gap-3.5 relative z-10">
+        <div class="w-9 h-9 rounded-full flex items-center justify-center shrink-0" style="background: ${iconBg}; color: ${iconColor};">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path>
+            <path d="M16 14v6"></path>
+            <path d="M8 14v6"></path>
+            <path d="M12 16v6"></path>
+          </svg>
         </div>
-        <p class="font-body-sm" style="color: ${textColor}; margin: 0;">
-          Rain covered <strong class="font-semibold">3 outdoor garden crops</strong> (53.4 mm rain this week). <strong class="font-semibold">2 indoor houseplants</strong> due today.
+        <p class="font-body-sm" style="color: ${textColor}; margin: 0; font-size: 14px; line-height: 1.4;">
+          Rain covered <strong style="font-weight: 700;">${outdoorCount} outdoor garden crops</strong> (${rainMm} mm rain this week). <strong style="font-weight: 700;">${indoorDueCount} indoor houseplants</strong> due today.
         </p>
       </div>
-      <div class="flex items-center gap-2 px-3 py-1.5 rounded-full relative z-10 border shrink-0" style="background: ${badgeBg}; border-color: ${badgeBorder};">
-        <span class="w-2 h-2 rounded-full" style="background: ${dotColor};"></span>
-        <span class="font-label-caps text-xs font-bold uppercase tracking-wider" style="color: ${badgeText};">Live Weather</span>
+      <div class="flex items-center gap-3 shrink-0">
+        <button id="banner-request-location-btn" class="px-2.5 py-1 rounded-full text-xs font-semibold cursor-pointer transition hover:opacity-80 flex items-center gap-1" style="background: ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)'}; color: ${textColor}; border: 1px solid ${isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)'};" title="Update or allow current GPS location">
+          <span class="material-symbols-outlined" style="font-size: 14px;">location_on</span>
+          <span id="banner-location-city">Locate</span>
+        </button>
+        <div class="flex items-center gap-1.5 px-3 py-1 rounded-full relative z-10 shrink-0" style="background: ${badgeBg}; border: 1px solid ${badgeBorder};">
+          <span class="w-1.5 h-1.5 rounded-full" style="background: ${dotColor};"></span>
+          <span class="text-[11px] font-bold tracking-wide" style="color: ${badgeText};">${badgeLabel}</span>
+        </div>
       </div>
     </div>
   `;

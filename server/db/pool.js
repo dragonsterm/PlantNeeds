@@ -134,6 +134,7 @@ export async function query(text, params = []) {
   // Convert $1, $2 -> ?, ?
   sql = sql.replace(/\$(\d+)/g, '?');
   sql = sql.replace(/gen_random_uuid\(\)/gi, "lower(hex(randomblob(16)))");
+  sql = sql.replace(/NOW\(\)/gi, "datetime('now')");
 
   const isSelect = /^\s*SELECT/i.test(sql);
   const returningMatch = sql.match(/RETURNING\s+([a-zA-Z0-9_,\s*]+)$/i);

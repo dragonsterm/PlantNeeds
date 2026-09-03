@@ -26,7 +26,7 @@ export async function getWateringForecast(latitude, longitude) {
   
   try {
     const cachedResult = await db.query(
-      'SELECT payload FROM weather_cache WHERE key = $1 AND expires_at > NOW()',
+      "SELECT payload FROM weather_cache WHERE key = $1 AND expires_at > datetime('now')",
       [cachedKey]
     );
     
@@ -59,11 +59,12 @@ export async function getWateringForecast(latitude, longitude) {
     
     // Cache the result
     try {
+      const expiresAtIso = new Date(Date.now() + CACHE_TTL_MS).toISOString();
       await db.query(
         `INSERT INTO weather_cache (key, payload, expires_at)
-         VALUES ($1, $2, NOW() + INTERVAL '30 minutes')
-         ON CONFLICT (key) DO UPDATE SET payload = $2, expires_at = NOW() + INTERVAL '30 minutes'`,
-        [cachedKey, JSON.stringify(processingResult)]
+         VALUES ($1, $2, $3)
+         ON CONFLICT (key) DO UPDATE SET payload = $2, expires_at = $3`,
+        [cachedKey, JSON.stringify(processingResult), expiresAtIso]
       );
     } catch (cacheErr) {
       // Ignore cache errors if table doesn't exist
