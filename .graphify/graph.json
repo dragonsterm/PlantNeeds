@@ -12,6 +12,22 @@
  },
  "nodes": [
   {
+   "id": ".hermes/desktop-attachments/DESIGN-2",
+   "label": "DESIGN-2.md",
+   "file_type": "doc",
+   "source_file": ".hermes/desktop-attachments/DESIGN-2.md",
+   "community": 0,
+   "community_name": "Core documents"
+  },
+  {
+   "id": ".hermes/desktop-attachments/DESIGN",
+   "label": "DESIGN.md",
+   "file_type": "doc",
+   "source_file": ".hermes/desktop-attachments/DESIGN.md",
+   "community": 0,
+   "community_name": "Core documents"
+  },
+  {
    "id": "AGENTS",
    "label": "AGENTS.md",
    "file_type": "doc",
