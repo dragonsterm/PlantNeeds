@@ -8,6 +8,7 @@ import { renderAuthForm } from './components/auth-form.js';
 import { renderLightDashboard } from './components/render-light-dashboard.js';
 import { renderLightSchedule } from './components/render-light-schedule.js';
 import { renderDarkSchedule } from './components/render-dark-schedule.js';
+import { getFooterHtml } from './components/footer.js';
 import { renderLightDiagnosis } from './components/render-light-diagnosis.js';
 import { renderDarkDiagnosis } from './components/render-dark-diagnosis.js';
 import { renderAddPlantModal } from './components/add-plant-form.js';
@@ -391,6 +392,9 @@ export function mountUi() {
           </div>
         </div>
       </main>
+
+      <!-- Universal Footer -->
+      ${getFooterHtml({ theme: 'dark' })}
     `;
 
     root.querySelectorAll('.loc-filter-btn').forEach(btn => {

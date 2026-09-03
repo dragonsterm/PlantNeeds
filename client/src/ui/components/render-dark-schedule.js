@@ -10,6 +10,7 @@ import { renderAddPlantModal } from './add-plant-form.js';
 import { toggleAppTheme, savePlantsLocally, getSavedPlants } from '../render.js';
 import { showToast } from './toast-notification.js';
 import { getNavbarHtml, getWeatherBannerHtml } from './navbar.js';
+import { getFooterHtml } from './footer.js';
 
 export function renderDarkSchedule(container, { plants = [], weatherData = null, onUpdate = () => {} } = {}) {
   // Use saved plants fallback if none passed
@@ -220,6 +221,9 @@ export function renderDarkSchedule(container, { plants = [], weatherData = null,
         </div>
       </div>
     </main>
+
+    <!-- Universal Footer -->
+    ${getFooterHtml({ theme: 'dark' })}
   `;
 
   // Bindings for Theme & Actions
