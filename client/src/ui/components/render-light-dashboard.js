@@ -12,7 +12,7 @@ import { showToast } from './toast-notification.js';
 import { logCareActivity } from '../../logic/plants.js';
 import { getNavbarHtml, getWeatherBannerHtml } from './navbar.js';
 import { getSmartInsightsHtml } from './smart-insights.js';
-import { resolveUserCoordinates, getWateringForecast } from '../../logic/weather.js';
+import { resolveUserCoordinates, getWateringForecast, getFriendlyCityName } from '../../logic/weather.js';
 
 export function renderLightDashboard(container, { userPlants = [], weatherData = null, onUpdate = () => {} } = {}) {
   container.innerHTML = `
@@ -169,9 +169,19 @@ export function renderLightDashboard(container, { userPlants = [], weatherData =
       const coords = await resolveUserCoordinates(true);
       const forecast = await getWateringForecast(coords);
       window.__plantneeds_weather = forecast;
-      showToast({ title: 'Location Updated', message: 'Live weather & rain delay refreshed', source: 'human' });
+      const cityName = getFriendlyCityName(coords.latitude, coords.longitude);
+      showToast({ 
+        title: 'Location Confirmed', 
+        message: `Location set to ${cityName}. Real-time weather and rainfall synced.`, 
+        source: 'human' 
+      });
     } catch (err) {
       console.warn('[location] button error:', err?.message || err);
+      showToast({
+        title: 'Location Unavailable',
+        message: 'Could not access GPS. Using default location.',
+        source: 'human'
+      });
     }
     onUpdate();
   });

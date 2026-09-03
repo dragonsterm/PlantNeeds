@@ -37,7 +37,7 @@ export function renderLightSchedule(container, { plants = [], weatherData = null
 
   const totalRain = typeof w?.recent_rain_mm === 'number'
     ? w.recent_rain_mm
-    : dailyHistory.reduce((acc, d) => acc + (d.rain_mm || 0), 0);
+    : dailyHistory.reduce((acc, d) => acc + (Number(d.rain_mm) || 0), 0);
 
   container.innerHTML = `
     <!-- Background Image with Overlay (Identical to Light Dashboard) -->
@@ -157,23 +157,23 @@ export function renderLightSchedule(container, { plants = [], weatherData = null
             </h3>
             <p class="text-xs mb-4" style="color: #556353;">7-day rainfall history synced live from Open-Meteo API.</p>
 
-            <!-- 7-Day Mini Bar Chart (100% Dynamic from Open-Meteo) -->
-            <div class="flex items-end justify-between h-32 mb-4 px-2 border-b pb-2" style="border-color: rgba(27, 48, 34, 0.12);">
-              ${dailyHistory.map(d => {
-                const val = Number(d.rain_mm) || 0;
-                const barHeight = Math.max(8, Math.min(80, Math.round(val * 4)));
-                const barBg = val >= 5 
-                  ? '#2D6A4F' 
-                  : (val > 0 ? 'rgba(82, 183, 136, 0.65)' : 'rgba(0,0,0,0.08)');
-                return `
-                  <div class="flex flex-col items-center gap-1.5">
-                    <span class="text-[10px] font-mono ${val > 0 ? 'text-[#1B3022] font-semibold' : 'text-gray-400'}">${val.toFixed(1)}</span>
-                    <div class="w-8 rounded-t-md transition-all" style="height: ${barHeight}px; background: ${barBg};"></div>
-                    <span class="text-xs font-mono font-bold" style="color: #1B3022;">${d.day}</span>
-                  </div>
-                `;
-              }).join('')}
-            </div>
+            // 7-Day Mini Bar Chart (100% Dynamic from Open-Meteo)
+                      <div class="flex items-end justify-between h-32 mb-4 px-2 border-b pb-2" style="border-color: rgba(27, 48, 34, 0.12);">
+                        ${dailyHistory.map(d => {
+                          const val = Number(d.rain_mm) || 0;
+                          const barHeight = val > 0 ? Math.max(14, Math.min(86, Math.round(val * 5))) : 4;
+                          const barBg = val >= 5 
+                            ? '#2D6A4F' 
+                            : (val > 0 ? '#52B788' : 'rgba(0,0,0,0.08)');
+                          return `
+                            <div class="flex flex-col items-center gap-1.5" style="flex: 1;">
+                              <span class="text-[10px] font-mono ${val > 0 ? 'text-[#1B3022] font-semibold' : 'text-gray-400'}">${val.toFixed(1)}</span>
+                              <div class="w-7 rounded-t-md transition-all" style="height: ${barHeight}px; background: ${barBg};"></div>
+                              <span class="text-xs font-mono font-bold" style="color: #1B3022;">${d.day}</span>
+                            </div>
+                          `;
+                        }).join('')}
+                      </div>
 
             <!-- Rainfall Summary Box -->
             <div class="rounded-2xl p-4 flex items-center justify-between border shadow-sm" style="background: rgba(255, 255, 255, 0.7); border-color: rgba(27, 48, 34, 0.1);">
