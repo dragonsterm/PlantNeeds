@@ -117,7 +117,16 @@ export function registerAllTools() {
       let lat = input?.latitude;
       let lon = input?.longitude;
 
-      if (typeof lat !== 'number' || typeof lon !== 'number') {
+      // Reject non-numeric inputs if provided
+      if (lat !== undefined && (typeof lat !== 'number' || isNaN(lat))) {
+        return { error: 'Invalid coordinate: latitude must be a number.', code: 'INVALID_COORDINATES' };
+      }
+      if (lon !== undefined && (typeof lon !== 'number' || isNaN(lon))) {
+        return { error: 'Invalid coordinate: longitude must be a number.', code: 'INVALID_COORDINATES' };
+      }
+
+      // If omitted, fallback to user's resolved location
+      if (lat === undefined || lon === undefined) {
         const coords = await weather.resolveUserCoordinates(false);
         lat = coords.latitude;
         lon = coords.longitude;
