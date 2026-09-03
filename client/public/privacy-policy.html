@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - PlantNeeds</title>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            line-height: 1.6;
+            color: #333;
+        }
+        h1 { color: #1a3a1a; border-bottom: 2px solid #A3D94E; padding-bottom: 10px; }
+        h2 { color: #2d5e2d; margin-top: 30px; }
+        p { margin-bottom: 15px; }
+        ul { margin-bottom: 20px; }
+        li { margin-bottom: 8px; }
+        .last-updated { color: #666; font-style: italic; margin-bottom: 30px; }
+        a { color: #A3D94E; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <h1>Privacy Policy</h1>
+    <p class="last-updated">Last Updated: September 2, 2026</p>
+    
+    <h2>1. Introduction</h2>
+    <p>Welcome to PlantNeeds ("we," "our," or "us"). We respect your privacy and are committed to protecting your personal data. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our plant care application.</p>
+    
+    <h2>2. Information We Collect</h2>
+    <h3>2.1 Information You Provide</h3>
+    <ul>
+        <li><strong>Account Information:</strong> When you create an account, we collect your username and a securely hashed password.</li>
+        <li><strong>Plant Data:</strong> Your plant collection including names, species, care preferences, and location (indoor/outdoor).</li>
+        <li><strong>Care Logs:</strong> Records of watering, fertilizing, pruning, and other care activities you or AI agents perform.</li>
+        <li><strong>Growth Journal:</strong> Photos, notes, and measurements documenting your plants' growth milestones.</li>
+    </ul>
+    
+    <h3>2.2 Information Collected Automatically</h3>
+    <ul>
+        <li><strong>Location Data:</strong> For outdoor plants, we use approximate coordinates (latitude/longitude) to fetch weather data from Open-Meteo API. This is only used for rain detection and watering recommendations.</li>
+        <li><strong>Usage Data:</strong> Aggregate analytics on feature usage to improve our services.</li>
+    </ul>
+    
+    <h2>3. How We Use Your Information</h2>
+    <ul>
+        <li>To provide and maintain the PlantNeeds service</li>
+        <li>To send you personalized plant care schedules and reminders</li>
+        <li>To diagnose plant health issues based on symptoms and care history</li>
+        <li>To provide weather-based watering recommendations for outdoor plants</li>
+        <li>To enable AI agent integration via WebMCP tools</li>
+        <li>To improve our services based on aggregated usage patterns</li>
+    </ul>
+    
+    <h2>4. Third-Party Services</h2>
+    <h3>4.1 Open-Meteo API</h3>
+    <p>We use the Open-Meteo weather API (https://open-meteo.com/) to provide rainfall data and weather forecasts. Open-Meteo is a free, keyless service that does not track individual users. Only your geographic coordinates (latitude/longitude) are transmitted—no personal identifiers or plant data are sent to them.</p>
+    
+    <h3>4.2 Database Hosting</h3>
+    <p>Your data is stored in PostgreSQL databases hosted by Render.com, which provides industry-standard security measures including encryption at rest and in transit.</p>
+    
+    <h2>5. Data Security</h2>
+    <ul>
+        <li><strong>Passwords:</strong> All passwords are hashed using bcrypt with a cost factor of 10 before storage. We never store plain-text passwords.</li>
+        <li><strong>Data Encryption:</strong> All data is transmitted over HTTPS using TLS encryption.</li>
+        <li><strong>Authentication:</strong> We use JWT tokens stored in browser memory (never localStorage) for session management. Tokens expire after 1 hour.</li>
+        <li><strong>User Isolation:</strong> All queries are scoped by user ID—users can only access their own data.</li>
+    </ul>
+    
+    <h2>6. Data Retention</h2>
+    <p>We retain your data as long as your account is active. You may delete your account and all associated data at any time through the app settings or by contacting us.</p>
+    
+    <h2>7. Children's Privacy</h2>
+    <p>PlantNeeds is not intended for children under 13 years of age. We do not knowingly collect personal data from children under 13.</p>
+    
+    <h2>8. Your Rights</h2>
+    <ul>
+        <li><strong>Access:</strong> You may view all your data through the PlantNeeds interface.</li>
+        <li><strong>Correction:</strong> You may edit your plant information and care logs at any time.</li>
+        <li><strong>Deletion:</strong> You may delete your account and all associated data at any time.</li>
+        <li><strong>Export:</strong> Upon request, we can provide you with a copy of your data in CSV format.</li>
+    </ul>
+    
+    <h2>9. Changes to This Privacy Policy</h2>
+    <p>We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the "Last Updated" date.</p>
+    
+    <h2>10. Contact Us</h2>
+    <p>If you have any questions about this Privacy Policy, please contact us at: 🌱 PlantNeeds Team<br>Email: plantneeds@example.com</p>
+    
+    <hr style="margin-top: 40px; border: none; border-top: 1px solid #ddd;">
+    <p style="text-align: center; color: #666; font-size: 12px;">
+        This Privacy Policy is part of PlantNeeds, a WebMCP-powered web app built for The WebMCP Challenge hackathon.
+    </p>
+</body>
+</html>

@@ -5,10 +5,11 @@
  */
 import { diagnoseProblem } from '../../logic/diagnose.js';
 import { getNavbarHtml } from './navbar.js';
+import { getFooterHtml } from './footer.js';
 import { getSavedPlants, toggleAppTheme } from '../render.js';
 import { renderAddPlantModal } from './add-plant-form.js';
 import { clearToken } from '../../api/client.js';
-import { clearCache } from '../../state/store.js';
+import { clearCache, on } from '../../state/store.js';
 
 export function renderDarkDiagnosis(container, { onUpdate = () => {} } = {}) {
   const userPlants = getSavedPlants();
@@ -36,7 +37,8 @@ export function renderDarkDiagnosis(container, { onUpdate = () => {} } = {}) {
     try {
       diagnosisResult = await diagnoseProblem({
         plant_id: selectedPlantId,
-        symptoms: selectedSymptoms
+        symptoms: selectedSymptoms,
+        plant: currentPlant
       });
     } catch {
       // Dynamic fallback evaluation
@@ -255,13 +257,16 @@ export function renderDarkDiagnosis(container, { onUpdate = () => {} } = {}) {
               ` : ''}
             ` : ''}
 
-            <p class="text-[11px] text-white/60 text-center max-w-sm mx-auto font-medium leading-relaxed">
+            <p class="text-[11px] text-white/50 text-center max-w-sm mx-auto font-medium leading-relaxed">
               Guidance for common plant care issues — consult a nursery for severe agricultural diseases.
             </p>
           </div>
 
         </div>
       </main>
+
+      <!-- Footer with Legal Links -->
+      ${getFooterHtml({ theme: 'dark' })}
     `;
 
     // Dropdown change listener
@@ -311,6 +316,21 @@ export function renderDarkDiagnosis(container, { onUpdate = () => {} } = {}) {
       onUpdate();
     });
   }
+
+  // Subscribe to live diagnosis events from WebMCP or background
+  const unsubscribe = on('diagnosis-performed', (data) => {
+    if (data) {
+      diagnosisResult = data;
+      hasDiagnosed = true;
+      if (data.plant?.id) {
+        selectedPlantId = data.plant.id;
+      }
+      if (Array.isArray(data.symptoms_analyzed)) {
+        selectedSymptoms = data.symptoms_analyzed;
+      }
+      renderPage();
+    }
+  });
 
   renderPage();
 }
