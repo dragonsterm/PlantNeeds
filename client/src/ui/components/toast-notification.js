@@ -59,7 +59,7 @@ export function showToast({ title, message, source = 'human', duration = 4000 } 
 
   const iconBg = isAgent ? '#52B788' : '#10B981';
   const iconSymbol = isAgent ? 'bolt' : (title.toLowerCase().includes('location') ? 'location_on' : 'water_drop');
-  const badgeLabel = isAgent ? '🤖 WebMCP Agent' : (title.toLowerCase().includes('location') ? '📍 Location Confirmed' : '💧 Care Logged');
+  const badgeLabel = isAgent ? 'WebMCP Agent' : (title.toLowerCase().includes('location') ? 'Location Confirmed' : 'Care Logged');
 
   toast.innerHTML = `
     <div style="width: 32px; height: 32px; border-radius: 10px; background: ${iconBg}; color: #FFFFFF; display: flex; align-items: center; justify-content: center; shrink-0; box-shadow: 0 4px 10px rgba(82, 183, 136, 0.4);">
