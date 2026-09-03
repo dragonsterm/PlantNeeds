@@ -51,10 +51,19 @@ CREATE TABLE IF NOT EXISTS plants (
   water_frequency_days      INT NOT NULL DEFAULT 7,
   water_needs_inches_weekly NUMERIC(4,2),            -- outdoor crops only
   last_watered              DATE,
+  image_url                 TEXT,
   created_at                TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS idx_plants_user     ON plants(user_id);
 CREATE INDEX IF NOT EXISTS idx_plants_location ON plants(location);
+
+-- Idempotent column additions in case plants table already existed
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='plants' AND column_name='image_url') THEN
+    ALTER TABLE plants ADD COLUMN image_url TEXT;
+  END IF;
+END $$;
 
 -- Care log (the plant tracker history) ----------------------------------------
 CREATE TABLE IF NOT EXISTS care_log (

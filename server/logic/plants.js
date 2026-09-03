@@ -17,12 +17,36 @@ export async function addPlant({ name, species, location, light_exposure, pot_ha
   const resolvedDrainage = pot_has_drainage !== undefined ? Boolean(pot_has_drainage) : true;
   
   // Insert plant
-  const result = await db.query(
-    `INSERT INTO plants (name, species, location, light_exposure, pot_has_drainage, acquired_date, water_frequency_days, user_id, image_url)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-     RETURNING id, name, species, location, light_exposure, pot_has_drainage, water_frequency_days, image_url`,
-    [name, species, location, resolvedLight, resolvedDrainage ? 1 : 0, acquired_date || null, water_frequency_days, userId, image_url || null]
-  );
+  let result;
+  try {
+    result = await db.query(
+      `INSERT INTO plants (name, species, location, light_exposure, pot_has_drainage, acquired_date, water_frequency_days, user_id, image_url)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+       RETURNING id, name, species, location, light_exposure, pot_has_drainage, water_frequency_days, image_url`,
+      [name, species, location, resolvedLight, resolvedDrainage ? 1 : 0, acquired_date || null, water_frequency_days, userId, image_url || null]
+    );
+  } catch (insertErr) {
+    if (insertErr.code === '42703' || insertErr.message?.includes('image_url')) {
+      try {
+        await db.query('ALTER TABLE plants ADD COLUMN IF NOT EXISTS image_url TEXT');
+        result = await db.query(
+          `INSERT INTO plants (name, species, location, light_exposure, pot_has_drainage, acquired_date, water_frequency_days, user_id, image_url)
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+           RETURNING id, name, species, location, light_exposure, pot_has_drainage, water_frequency_days, image_url`,
+          [name, species, location, resolvedLight, resolvedDrainage ? 1 : 0, acquired_date || null, water_frequency_days, userId, image_url || null]
+        );
+      } catch {
+        result = await db.query(
+          `INSERT INTO plants (name, species, location, light_exposure, pot_has_drainage, acquired_date, water_frequency_days, user_id)
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+           RETURNING id, name, species, location, light_exposure, pot_has_drainage, water_frequency_days`,
+          [name, species, location, resolvedLight, resolvedDrainage ? 1 : 0, acquired_date || null, water_frequency_days, userId]
+        );
+      }
+    } else {
+      throw insertErr;
+    }
+  }
   
   const plantId = result.rows[0].id;
   
