@@ -175,7 +175,9 @@ function addPlantLocally(body) {
   };
 
   plants.push(newPlant);
-  localStorage.setItem('plantneeds_local_plants', JSON.stringify(plants));
+  if (typeof localStorage !== 'undefined') {
+    localStorage.setItem('plantneeds_local_plants', JSON.stringify(plants));
+  }
   setCache('plants', plants);
   return newPlant;
 }
