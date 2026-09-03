@@ -189,6 +189,7 @@ export function mountUi() {
               : getBotanicalPlantPhoto(p.species || p.name)
           }));
           savePlantsLocally(userPlants);
+          render();
         }
       }
 

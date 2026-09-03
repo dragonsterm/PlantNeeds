@@ -104,7 +104,9 @@ export function decodeGoogleCredential(credential) {
     if (!credential || typeof credential !== 'string') return null;
     const parts = credential.split('.');
     if (parts.length !== 3) return null;
-    const payloadJson = Buffer.from(parts[1], 'base64').toString('utf8');
+    let base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+    while (base64.length % 4) base64 += '=';
+    const payloadJson = Buffer.from(base64, 'base64').toString('utf8');
     return JSON.parse(payloadJson);
   } catch {
     return null;

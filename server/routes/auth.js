@@ -106,11 +106,20 @@ router.get('/google/callback', async (req, res) => {
     }
 
     // Authenticate & isolate the specific Google account in DB
+    const googleEmail = userInfo?.email;
+    const googleSub = userInfo?.sub;
+    const googleName = userInfo?.name || userInfo?.given_name || 'Google Gardener';
+    const avatarUrl = userInfo?.picture || null;
+
+    if (!googleEmail) {
+      return res.redirect(`${frontendUrl}?error=email_not_provided_by_google`);
+    }
+
     const result = await loginWithGoogle({
-      email: userInfo?.email || `google_user_${Date.now()}@gmail.com`,
-      name: userInfo?.name || userInfo?.given_name || 'Google Gardener',
-      googleId: userInfo?.sub || `gid_${Date.now()}`,
-      avatarUrl: userInfo?.picture || null
+      email: googleEmail,
+      name: googleName,
+      googleId: googleSub || `gid_${Buffer.from(googleEmail).toString('hex').slice(0, 16)}`,
+      avatarUrl
     });
 
     res.redirect(`${frontendUrl}?token=${result.token}&username=${encodeURIComponent(result.user.username)}`);
