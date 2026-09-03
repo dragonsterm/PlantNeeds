@@ -60,11 +60,48 @@ export function renderLightDiagnosis(container, { onUpdate = () => {} } = {}) {
   runDiagnosisCalculation();
 
   function renderPage() {
+    if (userPlants.length === 0) {
+      container.innerHTML = `
+        <div class="fixed inset-0 z-[-1] pointer-events-none">
+          <div class="w-full h-full bg-cover bg-center" style="background-image: url('/assets/summer-vibes-bg.jpg');"></div>
+        </div>
+        ${getNavbarHtml({ activeRoute: 'diagnose', theme: 'light' })}
+        <main class="container mx-auto px-6 pt-[140px] pb-12 max-w-xl text-center">
+          <div class="p-12 rounded-[28px] border shadow-sm" style="background-color: rgba(255, 255, 255, 0.65); backdrop-filter: blur(20px); border-color: rgba(255, 255, 255, 0.85);">
+            <span class="material-symbols-outlined text-5xl mb-4 text-[#154212]">stethoscope</span>
+            <h2 class="text-2xl font-bold text-[#1B3022] mb-2" style="font-family: 'Plus Jakarta Sans', sans-serif;">Your Garden is Empty</h2>
+            <p class="text-sm text-[#556353] mb-6">Add a plant to your garden first to run history-aware health checks and root rot evaluations.</p>
+            <button id="diag-empty-add-btn" class="bg-[#154212] text-white px-6 py-3 rounded-full font-semibold text-xs hover:bg-[#1B3022] transition shadow-sm inline-flex items-center gap-2 cursor-pointer">
+              <span class="material-symbols-outlined text-sm">add</span> Add Your First Plant
+            </button>
+          </div>
+        </main>
+      `;
+
+      container.querySelector('#diag-empty-add-btn')?.addEventListener('click', () => {
+        renderAddPlantModal(container, { onSuccess: () => onUpdate() });
+      });
+      container.querySelector('#global-add-plant-btn')?.addEventListener('click', () => {
+        renderAddPlantModal(container, { onSuccess: () => onUpdate() });
+      });
+      container.querySelector('#global-theme-toggle-btn')?.addEventListener('click', () => {
+        toggleAppTheme();
+        onUpdate();
+      });
+      container.querySelector('#global-logout-btn')?.addEventListener('click', () => {
+        clearToken();
+        clearCache();
+        window.location.hash = '';
+        onUpdate();
+      });
+      return;
+    }
+
     const currentPlant = userPlants.find(p => p.id === selectedPlantId) || userPlants[0];
     const topDiag = diagnosisResult?.top_diagnosis || {
       condition: 'Overwatering & Early Root Rot',
       confidence: 92,
-      evidence: `Watered every 4 days vs 10-day recommended schedule for ${currentPlant?.name || 'Monstera'} in a pot without drainage.`,
+      evidence: `Watered every ${currentPlant.days_since_watered || 2} days vs 10-day recommended schedule for ${currentPlant.name} in a pot ${currentPlant.pot_has_drainage ? 'with' : 'without'} drainage.`,
       suggested_fix: 'Hold watering for 12–14 days until top 2 inches dry. Inspect root ball and trim any black mushy roots. Repot into well-draining soil in a pot with drainage holes.'
     };
 
@@ -73,11 +110,9 @@ export function renderLightDiagnosis(container, { onUpdate = () => {} } = {}) {
       { condition: 'Natural Lower Leaf Shedding', confidence: 18 }
     ];
 
-    const fixSteps = [
-      'Hold watering for 12–14 days until top 2 inches dry.',
-      'Inspect root ball and trim any black mushy roots.',
-      'Repot into well-draining soil in a pot with drainage holes.'
-    ];
+    const fixSteps = typeof topDiag.suggested_fix === 'string'
+      ? topDiag.suggested_fix.split(/\.\s+/).filter(Boolean).map(s => s.endsWith('.') ? s : s + '.')
+      : ['Hold watering until top 2 inches dry.', 'Inspect roots for rot.', 'Resume regular cadence.'];
 
     container.innerHTML = `
       <!-- Fixed Summer Vibes Background Layer -->
@@ -119,16 +154,16 @@ export function renderLightDiagnosis(container, { onUpdate = () => {} } = {}) {
               <!-- Telemetry Soft Capsule Chips (Matching Schedule View) -->
               <div class="flex flex-wrap gap-2">
                 <span class="inline-flex items-center px-3 py-1 rounded-full bg-white/70 border border-black/5 text-xs text-[#1B3022] font-medium shadow-xs">
-                  Last Watered: ${currentPlant?.days_since_watered ?? 2}d ago
+                  Last Watered: ${currentPlant.days_since_watered ?? 2}d ago
                 </span>
                 <span class="inline-flex items-center px-3 py-1 rounded-full bg-white/70 border border-black/5 text-xs text-[#1B3022] font-medium shadow-xs">
-                  Watering: Every ${currentPlant?.water_frequency_days || 4}d
+                  Interval: Every ${currentPlant.water_frequency_days || 7}d
                 </span>
                 <span class="inline-flex items-center px-3 py-1 rounded-full bg-white/70 border border-black/5 text-xs text-[#1B3022] font-medium shadow-xs">
                   Recommended: Every 10d
                 </span>
                 <span class="inline-flex items-center px-3 py-1 rounded-full bg-white/70 border border-black/5 text-xs text-[#1B3022] font-medium shadow-xs">
-                  Pot: No Drainage
+                  Pot: ${currentPlant.pot_has_drainage === false ? 'No Drainage' : 'Has Drainage'}
                 </span>
               </div>
             </div>

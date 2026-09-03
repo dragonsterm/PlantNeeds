@@ -1,31 +1,35 @@
 /**
  * client/src/ui/components/render-dark-schedule.js
  * Care Activity Tree & Schedule View (Dark Mode Schedule).
- * 100% Shared Navbar & Weather Banner for exact parity with Dashboard.
+ * 100% Dynamic data binding — Zero hardcoded mock nodes.
  */
 import { logCareActivity, computePlantSchedule } from '../../logic/plants.js';
 import { clearCache, emit } from "../../state/store.js";
 import { clearToken } from '../../api/client.js';
 import { renderAddPlantModal } from './add-plant-form.js';
-import { renderDiagnosisModal } from './diagnosis-panel.js';
 import { toggleAppTheme, savePlantsLocally, getSavedPlants } from '../render.js';
 import { showToast } from './toast-notification.js';
 import { getNavbarHtml, getWeatherBannerHtml } from './navbar.js';
 
 export function renderDarkSchedule(container, { plants = [], onUpdate = () => {} } = {}) {
-  const scheduleItems = computePlantSchedule(plants, { days_ahead: 14 });
+  // Use saved plants fallback if none passed
+  const activePlants = plants.length > 0 ? plants : getSavedPlants();
+  const scheduleItems = computePlantSchedule(activePlants, { days_ahead: 14 });
 
   const dueItems = scheduleItems.filter(i => i.overdue || i.days_remaining === 0);
-  const upcomingItems = scheduleItems.filter(i => !i.overdue && i.days_remaining > 0 && !i.rain_skipped);
+  const upcomingItems = scheduleItems.filter(i => !i.overdue && i.days_remaining > 0);
+
+  // All active tree nodes are derived 100% dynamically from user plants
+  const allNodes = [...dueItems, ...upcomingItems];
 
   container.innerHTML = `
-    <!-- Dark Dashboard Background (Dark Moody Foliage with Raindrops) -->
+    <!-- Dark Dashboard Background -->
     <div class="bg-layer"></div>
 
-    <!-- TopNavBar Dark -->
+    <!-- Top Floating Navbar -->
     ${getNavbarHtml({ activeRoute: 'schedule', theme: 'dark' })}
 
-    <!-- Main Content (Exact offset & grid alignment with Light Dashboard) -->
+    <!-- Main Content -->
     <main class="pt-[120px] pb-12 px-container-margin max-w-7xl mx-auto">
       <!-- Top Weather Banner -->
       ${getWeatherBannerHtml({
@@ -40,126 +44,90 @@ export function renderDarkSchedule(container, { plants = [], onUpdate = () => {}
         <div class="lg:col-span-8 flex flex-col gap-4">
           <div class="flex justify-between items-end mb-1">
             <h1 class="font-headline-xl text-headline-xl text-white drop-shadow-sm" style="font-family: 'Plus Jakarta Sans', sans-serif;">Care Activity Tree &amp; Schedule</h1>
-            <span class="text-xs font-semibold px-3 py-1 rounded-full border border-white/20 text-white/90 bg-white/10 shadow-sm">
-              ${scheduleItems.length} Total Care Nodes
+            <span class="text-xs font-semibold px-3 py-1 rounded-full border shadow-sm bg-white/10 text-white border-white/20">
+              ${allNodes.length} Care ${allNodes.length === 1 ? 'Node' : 'Nodes'} Scheduled
             </span>
           </div>
 
           <!-- Git-Style Visual Activity Tree Container -->
           <div class="relative pl-3 py-2">
-            <!-- Continuous Vertical Connecting Rail Line -->
-            <div style="position: absolute; top: 28px; bottom: 28px; left: 29px; width: 3px; background-color: #52B788; z-index: 0; border-radius: 2px;"></div>
+            <!-- Continuous Vertical Connecting Line -->
+            ${allNodes.length > 1 ? `
+              <div style="position: absolute; top: 28px; bottom: 28px; left: 29px; width: 3px; background-color: #52B788; z-index: 0; border-radius: 2px;"></div>
+            ` : ''}
 
-            <!-- Dynamic Urgent Task Nodes -->
-            ${dueItems.map(item => `
-              <div class="relative z-10 flex gap-6 mb-6 items-start group">
-                <div class="w-12 h-12 rounded-full flex items-center justify-center shrink-0 shadow-lg border-4 border-slate-900 text-white" style="background: #10B981;">
-                  <span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">water_drop</span>
-                </div>
-                <div class="glass-card rounded-3xl p-6 w-full flex flex-col group hover:-translate-y-0.5 transition-transform duration-300" style="background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
-                  <div class="flex justify-between items-start mb-1">
-                    <h3 class="text-xl font-bold tracking-tight text-white" style="font-family: 'Plus Jakarta Sans', sans-serif;">${item.plant_name} — Watering Due (250ml)</h3>
-                    <button class="text-white/50 hover:text-white" style="background: none; border: none; cursor: pointer;"><span class="material-symbols-outlined">more_horiz</span></button>
-                  </div>
-                  <p class="text-xs mb-3 text-white/70">${item.species || 'Houseplant'} • Last watered ${item.days_since_watered >= 0 ? item.days_since_watered + 'd ago' : 'Never'}</p>
-                  
-                  <!-- Tag Badges in One Clean Row -->
-                  <div class="flex flex-wrap items-center gap-2 mb-4">
-                    <span class="px-3 py-0.5 rounded-full text-xs font-semibold bg-white/10 text-white border border-white/15">Indoor Pot</span>
-                    <span class="px-3 py-0.5 rounded-full text-xs font-semibold bg-white/10 text-white border border-white/15">250ml Volume</span>
-                    <span class="px-3 py-0.5 rounded-full text-xs font-semibold bg-white/10 text-white border border-white/15">Interval: ${item.water_frequency_days || 7}d</span>
-                    <span class="px-3 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider border" style="background: rgba(217, 119, 6, 0.25); color: #FBBF24; border-color: rgba(245, 158, 11, 0.4);">
-                      ${item.overdue ? 'Overdue 2d' : 'Due Today'}
-                    </span>
-                  </div>
-
-                  <div>
-                    <button class="dark-sched-water-action-btn text-white px-6 py-2 rounded-full font-semibold text-xs transition-colors inline-flex items-center gap-2 shadow-md hover:bg-primary-container cursor-pointer" data-id="${item.plant_id}" style="background: #154212; border: 1px solid rgba(255,255,255,0.15);">
-                      Water Now <span class="material-symbols-outlined text-xs">arrow_forward</span>
-                    </button>
-                  </div>
-                </div>
+            ${allNodes.length === 0 ? `
+              <div class="glass-card rounded-3xl p-12 text-center flex flex-col items-center justify-center border border-white/10" style="background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(20px); box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+                <span class="material-symbols-outlined text-5xl mb-3 text-primary-fixed">task_alt</span>
+                <h3 class="font-headline-lg text-white font-bold mb-1">All Plants Are Hydrated &amp; Happy</h3>
+                <p class="font-body-sm text-white/70 max-w-sm mb-6">No care tasks are due today. Check back tomorrow or add a new plant to your collection.</p>
+                <button id="dark-sched-empty-add-btn" class="bg-[#154212] text-white px-6 py-2.5 rounded-full font-body-sm font-semibold hover:bg-emerald-900 transition flex items-center gap-2 cursor-pointer shadow-md text-xs border border-white/15">
+                  <span class="material-symbols-outlined text-sm">add</span> Add New Plant
+                </button>
               </div>
-            `).join('')}
-
-            <!-- Node 2: Upcoming Scheduled -->
-            ${upcomingItems.slice(0, 1).map(item => `
-              <div class="relative z-10 flex gap-6 mb-6 items-start group">
-                <div class="w-12 h-12 rounded-full bg-slate-900 flex items-center justify-center shrink-0 shadow-sm border-4" style="border-color: #A7F3D0; color: #10B981;">
-                  <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">eco</span>
-                </div>
-                <div class="glass-card rounded-3xl p-6 w-full flex flex-col group hover:-translate-y-0.5 transition-transform duration-300" style="background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
-                  <div class="flex justify-between items-start mb-1">
-                    <h3 class="text-xl font-bold tracking-tight text-white" style="font-family: 'Plus Jakarta Sans', sans-serif;">${item.plant_name} — Foliage Misting</h3>
-                  </div>
-                  <p class="text-xs mb-3 text-white/70">${item.species} • Hydration on track</p>
-                  
-                  <div class="flex flex-wrap items-center gap-2 mb-4">
-                    <span class="px-3 py-0.5 rounded-full text-xs font-semibold bg-white/10 text-white border border-white/15">Indoor Hanging</span>
-                    <span class="px-3 py-0.5 rounded-full text-xs font-semibold bg-white/10 text-white border border-white/15">Light Mist</span>
-                    <span class="px-3 py-0.5 rounded-full text-xs font-bold border" style="background: rgba(82, 183, 136, 0.25); color: #A7F3D0; border-color: rgba(82, 183, 136, 0.4);">
-                      Due Tomorrow
-                    </span>
-                  </div>
-
-                  <div>
-                    <button class="dark-sched-water-action-btn border border-white/20 px-6 py-2 rounded-full font-semibold text-xs transition-colors inline-flex items-center gap-2 bg-white/10 text-white hover:bg-white/20 cursor-pointer" data-id="${item.plant_id}">
-                      Mark Done
-                    </button>
-                  </div>
-                </div>
-              </div>
-            `).join('')}
-
-            <!-- Node 3: Rain-Shifted Branch -->
-            <div class="relative z-10 flex gap-6 mb-6 items-start group">
-              <div class="w-12 h-12 rounded-full flex items-center justify-center shrink-0 shadow-sm border-4 border-slate-900 text-white" style="background: #06B6D4;">
-                <span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">cloud</span>
-              </div>
-              <div class="glass-card rounded-3xl p-6 w-full flex flex-col group hover:-translate-y-0.5 transition-transform duration-300" style="background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
-                <div class="flex justify-between items-start mb-1">
-                  <h3 class="text-xl font-bold tracking-tight text-white" style="font-family: 'Plus Jakarta Sans', sans-serif;">Garden Tomato &amp; Sweet Basil — Watering Deferred</h3>
-                </div>
-                <p class="text-xs mb-3 text-white/70">Outdoor Raised Bed • Soil moisture replenished by 14mm natural rainfall</p>
+            ` : `
+              <!-- Dynamic Nodes List -->
+              ${allNodes.map(item => {
+                const isOverdue = item.overdue || item.days_remaining === 0;
+                const isOutdoor = item.location === 'outdoor';
+                const isRainDeferred = isOutdoor && item.rain_skipped;
                 
-                <div class="flex flex-wrap items-center gap-2 mb-4">
-                  <span class="px-3 py-0.5 rounded-full text-xs font-semibold bg-white/10 text-white border border-white/15">Outdoor Bed</span>
-                  <span class="px-3 py-0.5 rounded-full text-xs font-semibold border" style="background: rgba(6, 182, 212, 0.15); color: #67E8F9; border-color: rgba(6, 182, 212, 0.35);">Rain Skipped · 14mm natural rain</span>
-                  <span class="px-3 py-0.5 rounded-full text-xs font-bold border" style="background: rgba(6, 182, 212, 0.25); color: #A5F3FC; border-color: rgba(6, 182, 212, 0.45);">
-                    Shifted (+3 Days)
-                  </span>
-                </div>
+                let icon = 'water_drop';
+                let iconBg = '#10B981';
+                let statusBadgeText = isOverdue ? (item.overdue ? `Overdue ${Math.abs(item.days_remaining)}d` : 'Due Today') : `Due in ${item.days_remaining}d`;
+                let statusBadgeBg = isOverdue ? 'rgba(217, 119, 6, 0.25)' : 'rgba(82, 183, 136, 0.25)';
+                let statusBadgeColor = isOverdue ? '#FBBF24' : '#A7F3D0';
 
-                <div>
-                  <a class="text-xs font-semibold underline underline-offset-4 transition-colors cursor-pointer text-cyan-300 hover:text-cyan-200">
-                    Water Anyway (Manual Override)
-                  </a>
-                </div>
-              </div>
-            </div>
+                if (isRainDeferred) {
+                  icon = 'cloud';
+                  iconBg = '#06B6D4';
+                  statusBadgeText = 'Rain Skipped (+3d)';
+                  statusBadgeBg = 'rgba(6, 182, 212, 0.25)';
+                  statusBadgeColor = '#67E8F9';
+                }
 
-            <!-- Node 4: Past Activity Logged by WebMCP Agent -->
-            <div class="relative z-10 flex gap-6 items-start group">
-              <div class="w-12 h-12 rounded-full flex items-center justify-center shrink-0 shadow-sm border-4 border-slate-900 text-white" style="background: #52B788;">
-                <span class="material-symbols-outlined text-white font-bold">check</span>
-              </div>
-              <div class="glass-card rounded-3xl p-5 w-full flex flex-col" style="background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
-                <div class="flex justify-between items-center mb-1">
-                  <h3 class="text-lg font-bold text-white" style="font-family: 'Plus Jakarta Sans', sans-serif;">Boston Fern — Care Logged &amp; Verified</h3>
-                  <span class="text-xs text-white/60 font-medium">Logged 2h ago</span>
-                </div>
-                <div class="flex flex-wrap items-center gap-2 mt-2">
-                  <span class="px-3 py-0.5 rounded-full text-xs font-semibold bg-white/10 text-white border border-white/15">Indoor Hanging</span>
-                  <span class="px-3 py-0.5 rounded-full text-xs font-bold border" style="background: rgba(82, 183, 136, 0.25); color: #A7F3D0; border-color: rgba(82, 183, 136, 0.4);">
-                    via WebMCP Agent
-                  </span>
-                </div>
-              </div>
-            </div>
+                return `
+                  <div class="relative z-10 flex gap-6 mb-6 items-start group">
+                    <div class="w-12 h-12 rounded-full flex items-center justify-center shrink-0 shadow-lg border-4 border-slate-900 text-white" style="background: ${iconBg};">
+                      <span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">${icon}</span>
+                    </div>
+                    <div class="glass-card rounded-3xl p-6 w-full flex flex-col group hover:-translate-y-0.5 transition-transform duration-300" style="background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+                      <div class="flex justify-between items-start mb-1">
+                        <h3 class="text-xl font-bold tracking-tight text-white" style="font-family: 'Plus Jakarta Sans', sans-serif;">
+                          ${item.plant_name} — ${isRainDeferred ? 'Watering Deferred by Rain' : 'Watering Due'}
+                        </h3>
+                      </div>
+                      <p class="text-xs mb-3 text-white/70">
+                        ${item.species || 'Houseplant'} • ${isOutdoor ? 'Outdoor Garden Bed' : 'Indoor Container'} • Last watered ${item.days_since_watered >= 0 ? item.days_since_watered + 'd ago' : 'Never'}
+                      </p>
+                      
+                      <!-- Tag Badges Row -->
+                      <div class="flex flex-wrap items-center gap-2 mb-4">
+                        <span class="px-3 py-0.5 rounded-full text-xs font-semibold bg-white/10 text-white border border-white/15">
+                          ${isOutdoor ? 'Outdoor Bed' : 'Indoor Pot'}
+                        </span>
+                        <span class="px-3 py-0.5 rounded-full text-xs font-semibold bg-white/10 text-white border border-white/15">
+                          Interval: ${item.water_frequency_days || 7}d
+                        </span>
+                        <span class="px-3 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider border" style="background: ${statusBadgeBg}; color: ${statusBadgeColor}; border-color: ${statusBadgeColor}50;">
+                          ${statusBadgeText}
+                        </span>
+                      </div>
+
+                      <div class="flex items-center gap-3">
+                        <button class="dark-sched-water-btn text-white px-6 py-2 rounded-full font-semibold text-xs transition-colors inline-flex items-center gap-2 shadow-md hover:bg-emerald-900 cursor-pointer border border-white/15" data-id="${item.plant_id}" style="background: #154212;">
+                          Water Now <span class="material-symbols-outlined text-xs">arrow_forward</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            `}
           </div>
         </div>
 
-        <!-- Right Column: Metrics (4 cols - Flush Top Alignment with Left Heading) -->
+        <!-- Right Column: Metrics (4 cols) -->
         <div class="lg:col-span-4 flex flex-col gap-6">
           <!-- Card 1: Moisture Chart -->
           <div class="glass-card rounded-3xl p-6" style="background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
@@ -170,84 +138,98 @@ export function renderDarkSchedule(container, { plants = [], onUpdate = () => {}
             <p class="text-xs mb-4 text-white/70">7-day rainfall history synced live from Open-Meteo API.</p>
 
             <!-- 7-Day Mini Bar Chart -->
-            <div class="flex items-end justify-between h-32 mb-4 px-2 border-b border-white/10 pb-2">
+            <div class="flex items-end justify-between h-32 mb-4 px-2 border-b pb-2 border-white/10">
               <div class="flex flex-col items-center gap-1.5">
-                <span class="text-[10px] font-mono text-white/60">14</span>
-                <div class="w-8 rounded-t-md transition-all" style="height: 48px; background: rgba(82, 183, 136, 0.75);"></div>
+                <span class="text-[10px] font-mono text-white/60">14.0</span>
+                <div class="w-8 rounded-t-md transition-all" style="height: 48px; background: rgba(82, 183, 136, 0.65);"></div>
                 <span class="text-xs font-mono font-bold text-white">M</span>
               </div>
               <div class="flex flex-col items-center gap-1.5">
-                <span class="text-[10px] font-mono text-white/60">6</span>
-                <div class="w-8 rounded-t-md transition-all" style="height: 24px; background: rgba(82, 183, 136, 0.5);"></div>
+                <span class="text-[10px] font-mono text-white/60">6.2</span>
+                <div class="w-8 rounded-t-md transition-all" style="height: 24px; background: rgba(82, 183, 136, 0.45);"></div>
                 <span class="text-xs font-mono font-bold text-white">T</span>
               </div>
               <div class="flex flex-col items-center gap-1.5">
-                <span class="text-[10px] font-mono text-white/40">0</span>
-                <div class="w-8 rounded-t-md bg-white/10" style="height: 8px;"></div>
+                <span class="text-[10px] font-mono text-white/40">0.0</span>
+                <div class="w-8 rounded-t-md" style="height: 8px; background: rgba(255,255,255,0.08);"></div>
                 <span class="text-xs font-mono font-bold text-white">W</span>
               </div>
               <div class="flex flex-col items-center gap-1.5">
-                <span class="text-[10px] font-mono text-white/60">18</span>
-                <div class="w-8 rounded-t-md transition-all bg-emerald-400" style="height: 72px;"></div>
+                <span class="text-[10px] font-mono text-white/60">18.2</span>
+                <div class="w-8 rounded-t-md transition-all" style="height: 72px; background: #52B788;"></div>
                 <span class="text-xs font-mono font-bold text-white">T</span>
               </div>
               <div class="flex flex-col items-center gap-1.5">
-                <span class="text-[10px] font-mono text-white/40">0</span>
-                <div class="w-8 rounded-t-md bg-white/10" style="height: 8px;"></div>
+                <span class="text-[10px] font-mono text-white/40">0.0</span>
+                <div class="w-8 rounded-t-md" style="height: 8px; background: rgba(255,255,255,0.08);"></div>
                 <span class="text-xs font-mono font-bold text-white">F</span>
               </div>
               <div class="flex flex-col items-center gap-1.5">
-                <span class="text-[10px] font-mono text-white/60">15</span>
-                <div class="w-8 rounded-t-md transition-all" style="height: 60px; background: rgba(82, 183, 136, 0.85);"></div>
+                <span class="text-[10px] font-mono text-white/60">15.0</span>
+                <div class="w-8 rounded-t-md transition-all" style="height: 60px; background: rgba(82, 183, 136, 0.75);"></div>
                 <span class="text-xs font-mono font-bold text-white">S</span>
               </div>
               <div class="flex flex-col items-center gap-1.5">
-                <span class="text-[10px] font-mono text-white/40">0</span>
-                <div class="w-8 rounded-t-md bg-white/10" style="height: 8px;"></div>
+                <span class="text-[10px] font-mono text-white/40">0.0</span>
+                <div class="w-8 rounded-t-md" style="height: 8px; background: rgba(255,255,255,0.08);"></div>
                 <span class="text-xs font-mono font-bold text-white">S</span>
               </div>
             </div>
 
-            <div class="font-mono text-xs font-bold text-center py-2.5 rounded-xl border border-white/10 bg-white/5 text-primary-fixed">
-              53.4 mm Total Rainfall · Open-Meteo Synced
+            <!-- Rainfall Summary Box -->
+            <div class="rounded-2xl p-4 flex items-center justify-between border shadow-sm bg-white/5 border-white/10">
+              <div>
+                <span class="text-xs font-medium block text-white/60">7-Day Cumulative</span>
+                <span class="text-xl font-bold tracking-tight text-white">53.4 mm</span>
+              </div>
+              <span class="text-xs px-3 py-1 rounded-full font-semibold border bg-emerald-950/60 text-primary-fixed border-primary-fixed/30">
+                +18% vs Normal
+              </span>
             </div>
           </div>
 
-          <!-- Card 2: Agent Actions -->
+          <!-- Card 2: WebMCP Live Agent Status -->
           <div class="glass-card rounded-3xl p-6" style="background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
-            <h3 class="font-bold mb-4 flex items-center gap-2 text-base text-white">
-              <span class="material-symbols-outlined text-white">history</span>
-              Recent Agent Actions (WebMCP)
-            </h3>
-            <ul class="space-y-3">
-              <li class="flex gap-3 items-start border-b border-white/10 pb-3">
-                <div class="w-7 h-7 rounded-full flex items-center justify-center shrink-0 bg-white/10 text-white">
-                  <span class="material-symbols-outlined text-sm">sync</span>
-                </div>
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-bold flex items-center gap-2 text-base text-white">
+                <span class="material-symbols-outlined text-primary-fixed">smart_toy</span>
+                WebMCP Autonomous Sync
+              </h3>
+              <span class="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-emerald-950 text-primary-fixed border border-primary-fixed/30">
+                Active
+              </span>
+            </div>
+            
+            <p class="text-xs leading-relaxed mb-4 text-white/70">
+              The 7 page-exposed WebMCP tools allow AI agents in ChatGPT and Chrome to inspect schedules, defer watering, and log care autonomously.
+            </p>
+
+            <div class="space-y-3">
+              <div class="p-3 rounded-2xl bg-white/5 border border-white/10 flex items-start gap-3">
+                <span class="material-symbols-outlined text-sm text-primary-fixed mt-0.5">check_circle</span>
                 <div>
-                  <p class="text-xs font-semibold text-white">Checked Open-Meteo precipitation</p>
-                  <p class="text-[11px] text-white/60">10m ago · Tool: get_watering_forecast</p>
+                  <div class="text-xs font-bold text-white">Tool #2: get_care_schedule</div>
+                  <div class="text-[11px] text-white/60">Single source of truth between agent and UI view.</div>
                 </div>
-              </li>
-              <li class="flex gap-3 items-start">
-                <div class="w-7 h-7 rounded-full flex items-center justify-center shrink-0 bg-white/10 text-white">
-                  <span class="material-symbols-outlined text-sm">bolt</span>
-                </div>
+              </div>
+              <div class="p-3 rounded-2xl bg-white/5 border border-white/10 flex items-start gap-3">
+                <span class="material-symbols-outlined text-sm text-primary-fixed mt-0.5">check_circle</span>
                 <div>
-                  <p class="text-xs font-semibold text-white">Updated intervals via get_care_schedule</p>
-                  <p class="text-[11px] text-white/60">1h ago · Single source of truth</p>
+                  <div class="text-xs font-bold text-white">Tool #3: get_watering_forecast</div>
+                  <div class="text-[11px] text-white/60">Live Open-Meteo telemetry for rain delay evaluations.</div>
                 </div>
-              </li>
-            </ul>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </main>
   `;
 
-  // Bindings
+  // Bindings for Theme & Actions
   container.querySelector('#global-theme-toggle-btn')?.addEventListener('click', () => {
     toggleAppTheme();
+    onUpdate();
   });
 
   container.querySelector('#global-logout-btn')?.addEventListener('click', () => {
@@ -260,32 +242,39 @@ export function renderDarkSchedule(container, { plants = [], onUpdate = () => {}
     renderAddPlantModal(container, { onClose: () => onUpdate() });
   });
 
+  container.querySelector('#dark-sched-empty-add-btn')?.addEventListener('click', () => {
+    renderAddPlantModal(container, { onClose: () => onUpdate() });
+  });
+
   container.querySelectorAll('.dark-sched-water-btn').forEach(btn => {
     btn.addEventListener('click', async () => {
       const id = btn.getAttribute('data-id');
       btn.textContent = 'Watering...';
       btn.disabled = true;
 
-      const currentPlants = getSavedPlants();
-      const plant = currentPlants.find(p => p.id === id);
-      if (plant) {
-        plant.last_watered = new Date().toISOString().split('T')[0];
-        plant.days_remaining = plant.water_frequency_days || 7;
-        plant.status_label = 'Healthy';
-        plant.is_overdue = false;
-        plant.badge_bg = 'bg-primary-fixed';
-        plant.ring_color = 'text-primary-fixed';
-        plant.ring_dashoffset = '60';
-        savePlantsLocally(currentPlants);
-      }
-
       try {
-        await logCareActivity({ plant_id: id, activity: 'watered', source: 'human' });
-      } catch {
-        /* saved locally */
+        const todayStr = new Date().toISOString().split('T')[0];
+        await logCareActivity(id, { activity: 'watered', date: todayStr });
+
+        const currentPlants = getSavedPlants();
+        const plant = currentPlants.find(p => p.id === id);
+        if (plant) {
+          plant.last_watered = todayStr;
+          savePlantsLocally(currentPlants);
+        }
+
+        showToast({
+          title: "Care Activity Logged",
+          message: `${plant ? plant.name : 'Plant'} was watered. Schedule updated.`,
+          type: "success"
+        });
+
+        onUpdate();
+      } catch (err) {
+        showToast({ title: "Watering Failed", message: err.message, type: "error" });
+        btn.textContent = 'Water Now';
+        btn.disabled = false;
       }
-      showToast({ title: `${plant?.name || 'Plant'} Watered`, message: 'Schedule updated to 7 days ahead', source: 'human' });
-      onUpdate();
     });
   });
 }
