@@ -15,7 +15,7 @@ import { renderGrowthJournalModal } from './components/growth-journal-modal.js';
 import { renderSeasonalPlannerModal } from './components/seasonal-planner-modal.js';
 import { showToast } from './components/toast-notification.js';
 import { listPlants, logCareActivity } from '../logic/plants.js';
-import { getWateringForecast, getCachedWeather, resolveUserCoordinates } from '../logic/weather.js';
+import { getWateringForecast, getCachedWeather, resolveUserCoordinates, getFriendlyCityName } from '../logic/weather.js';
 import { getNavbarHtml, getWeatherBannerHtml } from './components/navbar.js';
 import { getSmartInsightsHtml } from './components/smart-insights.js';
 
@@ -422,10 +422,24 @@ export function mountUi() {
       const text = root.querySelector('#banner-location-city');
       if (text) text.textContent = 'Locating...';
       try {
-        await syncWeather(true);
-        showToast({ title: 'Location Updated', message: 'Live weather & rain delay refreshed', source: 'human' });
+        const coords = await resolveUserCoordinates(true);
+        const forecast = await getWateringForecast(coords);
+        window.__plantneeds_weather = forecast;
+        liveWeather = forecast;
+        
+        const friendlyName = getFriendlyCityName(coords.latitude, coords.longitude);
+        showToast({ 
+          title: 'Location Confirmed', 
+          message: `Location set to ${friendlyName}. Real-time weather and rainfall synced.`, 
+          source: 'human' 
+        });
       } catch (err) {
         console.warn('[location] button error:', err?.message || err);
+        showToast({
+          title: 'Location Unavailable',
+          message: 'Could not access GPS. Using default city location.',
+          source: 'human'
+        });
       }
       render();
     });

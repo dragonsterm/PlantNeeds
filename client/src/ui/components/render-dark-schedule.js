@@ -156,22 +156,22 @@ export function renderDarkSchedule(container, { plants = [], weatherData = null,
             <p class="text-xs mb-4 text-white/70">7-day rainfall history synced live from Open-Meteo API.</p>
 
             <!-- 7-Day Mini Bar Chart (100% Dynamic from Open-Meteo) -->
-            <div class="flex items-end justify-between h-32 mb-4 px-2 border-b pb-2 border-white/10">
-              ${dailyHistory.map(d => {
-                const val = Number(d.rain_mm) || 0;
-                const barHeight = Math.max(8, Math.min(80, Math.round(val * 4)));
-                const barBg = val >= 5 
-                  ? '#52B788' 
-                  : (val > 0 ? 'rgba(82, 183, 136, 0.65)' : 'rgba(255,255,255,0.08)');
-                return `
-                  <div class="flex flex-col items-center gap-1.5">
-                    <span class="text-[10px] font-mono ${val > 0 ? 'text-primary-fixed font-semibold' : 'text-white/40'}">${val.toFixed(1)}</span>
-                    <div class="w-8 rounded-t-md transition-all" style="height: ${barHeight}px; background: ${barBg};"></div>
-                    <span class="text-xs font-mono font-bold text-white">${d.day}</span>
-                  </div>
-                `;
-              }).join('')}
-            </div>
+                      <div class="flex items-end justify-between h-32 mb-4 px-2 border-b pb-2" style="border-color: rgba(255, 255, 255, 0.12);">
+                        ${dailyHistory.map(d => {
+                          const val = Number(d.rain_mm) || 0;
+                          const barHeight = val > 0 ? Math.max(14, Math.min(84, Math.round(val * 5))) : 4;
+                          const barBg = val >= 5 
+                            ? '#2D6A4F' 
+                            : (val > 0 ? '#52B788' : 'rgba(255,255,255,0.08)');
+                          return `
+                            <div class="flex flex-col items-center gap-1.5" style="flex: 1;">
+                              <span class="text-[10px] font-mono ${val > 0 ? 'text-white font-semibold' : 'text-stone-500'}">${val.toFixed(1)}</span>
+                              <div class="w-7 rounded-t-md transition-all" style="height: ${barHeight}px; background: ${barBg};"></div>
+                              <span class="text-xs font-mono font-bold" style="color: #FFFFFF;">${d.day}</span>
+                            </div>
+                          `;
+                        }).join('')}
+                      </div>
 
             <!-- Rainfall Summary Box -->
             <div class="rounded-2xl p-4 flex items-center justify-between border shadow-sm bg-white/5 border-white/10">
