@@ -93,6 +93,62 @@ function generateUUID() {
   });
 }
 
+export function getBotanicalPlantPhoto(speciesOrName = '') {
+  const s = String(speciesOrName).toLowerCase();
+  if (s.includes('monstera') || s.includes('swiss cheese') || s.includes('deliciosa')) {
+    return 'https://images.unsplash.com/photo-1614594975525-e45190c55d0b?w=600&auto=format&fit=crop&q=80';
+  }
+  if (s.includes('pothos') || s.includes('epipremnum') || s.includes('devil') || s.includes('sirih')) {
+    return 'https://images.unsplash.com/photo-1596724803714-38b4ef262295?w=600&auto=format&fit=crop&q=80';
+  }
+  if (s.includes('snake') || s.includes('sansevieria') || s.includes('mertua')) {
+    return 'https://images.unsplash.com/photo-1593482892290-f54927ae1bf6?w=600&auto=format&fit=crop&q=80';
+  }
+  if (s.includes('basil') || s.includes('kemangi') || s.includes('ocimum')) {
+    return 'https://images.unsplash.com/photo-1618164436241-4473940d1f5c?w=600&auto=format&fit=crop&q=80';
+  }
+  if (s.includes('fiddle') || s.includes('ficus') || s.includes('lyrata')) {
+    return 'https://images.unsplash.com/photo-1545241047-6083a3684587?w=600&auto=format&fit=crop&q=80';
+  }
+  if (s.includes('peace') || s.includes('lily') || s.includes('spathiphyllum')) {
+    return 'https://images.unsplash.com/photo-1593691509543-c55fb32e7355?w=600&auto=format&fit=crop&q=80';
+  }
+  if (s.includes('aloe') || s.includes('buaya')) {
+    return 'https://images.unsplash.com/photo-1567689265664-1c48de61db0b?w=600&auto=format&fit=crop&q=80';
+  }
+  if (s.includes('tomato') || s.includes('tomat') || s.includes('lycopersicum')) {
+    return 'https://images.unsplash.com/photo-1592841200221-a6898f307baa?w=600&auto=format&fit=crop&q=80';
+  }
+  if (s.includes('lavender')) {
+    return 'https://images.unsplash.com/photo-1528183429752-a97d0bf99b5a?w=600&auto=format&fit=crop&q=80';
+  }
+  if (s.includes('rosemary')) {
+    return 'https://images.unsplash.com/photo-1515542622106-78bda8ba0e5b?w=600&auto=format&fit=crop&q=80';
+  }
+  if (s.includes('pepper') || s.includes('chili') || s.includes('cabai') || s.includes('cabe') || s.includes('capsicum')) {
+    return 'https://images.unsplash.com/photo-1588252303782-cb80119abd6d?w=600&auto=format&fit=crop&q=80';
+  }
+  if (s.includes('succulent') || s.includes('cactus') || s.includes('kaktus')) {
+    return 'https://images.unsplash.com/photo-1459411552884-841db9b3cc2a?w=600&auto=format&fit=crop&q=80';
+  }
+  if (s.includes('fern') || s.includes('pakis')) {
+    return 'https://images.unsplash.com/photo-1598880940371-c756e015fea1?w=600&auto=format&fit=crop&q=80';
+  }
+  if (s.includes('calathea')) {
+    return 'https://images.unsplash.com/photo-1616046229478-9901c5536a45?w=600&auto=format&fit=crop&q=80';
+  }
+  if (s.includes('zz') || s.includes('zamioculcas')) {
+    return 'https://images.unsplash.com/photo-1632207691143-643e2a9a9361?w=600&auto=format&fit=crop&q=80';
+  }
+  if (s.includes('mint') || s.includes('peppermint')) {
+    return 'https://images.unsplash.com/photo-1628556270448-4d4e4148e1b1?w=600&auto=format&fit=crop&q=80';
+  }
+  if (s.includes('spider') || s.includes('chlorophytum')) {
+    return 'https://images.unsplash.com/photo-1572688484437-25826eb66e7b?w=600&auto=format&fit=crop&q=80';
+  }
+  return 'https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=600&auto=format&fit=crop&q=80';
+}
+
 /** Helper to add a plant to local storage */
 function addPlantLocally(body) {
   const saved = typeof localStorage !== 'undefined' ? localStorage.getItem('plantneeds_local_plants') : null;
@@ -100,6 +156,10 @@ function addPlantLocally(body) {
   try {
     if (saved) plants = JSON.parse(saved);
   } catch {}
+
+  const photo = (body.image_url && !body.image_url.includes('lh3.googleusercontent.com/aida-public'))
+    ? body.image_url
+    : getBotanicalPlantPhoto(body.species || body.name);
 
   const newPlant = {
     id: body.id || generateUUID(),
@@ -111,13 +171,11 @@ function addPlantLocally(body) {
     water_frequency_days: Number(body.water_frequency_days) || 7,
     last_watered: body.last_watered || new Date().toISOString().split('T')[0],
     subtitle: `${body.species || 'Houseplant'} • ${body.location === 'outdoor' ? 'Outdoor Bed' : 'Indoor'}`,
-    image_url: body.image_url || 'https://lh3.googleusercontent.com/aida-public/AB6AXuAhEkaeKyuoBmmFgEVi4XkgE5zr14wDdg-UMmpjk-ne84t6WCC6gvm6rfVlReiJSqhNRfJdfEAsxG2ghiWQLKN7zfvRGZ-XpKcO4ey8BdjqxooUrkZcD_FF2_CVerxj42LG9oElK1zM_Lzgpn937KCuEi5sJIn_p8jaxgE-B-5QpywJ25ocmygtN0A3AQgknTrweb_F6gCgJp0zj88WQ2pFawAiIKDMEegkTmjs-U2EDgAMfDSzQuXuQw'
+    image_url: photo
   };
 
   plants.push(newPlant);
-  if (typeof localStorage !== 'undefined') {
-    localStorage.setItem('plantneeds_local_plants', JSON.stringify(plants));
-  }
+  localStorage.setItem('plantneeds_local_plants', JSON.stringify(plants));
   setCache('plants', plants);
   return newPlant;
 }

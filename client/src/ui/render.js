@@ -16,7 +16,7 @@ import { renderGrowthJournalModal } from './components/growth-journal-modal.js';
 import { renderSeasonalPlannerModal } from './components/seasonal-planner-modal.js';
 import { renderSettingsModal } from './components/settings-modal.js';
 import { showToast } from './components/toast-notification.js';
-import { listPlants, logCareActivity, deletePlant } from '../logic/plants.js';
+import { listPlants, logCareActivity, deletePlant, getBotanicalPlantPhoto } from '../logic/plants.js';
 import { getWateringForecast, getCachedWeather, resolveUserCoordinates, getFriendlyCityName } from '../logic/weather.js';
 import { getNavbarHtml, getWeatherBannerHtml } from './components/navbar.js';
 import { getSmartInsightsHtml } from './components/smart-insights.js';
@@ -176,7 +176,7 @@ export function mountUi() {
         // 1. Fetch plants from DB if authenticated
         const livePlants = await listPlants();
         if (Array.isArray(livePlants)) {
-          userPlants = livePlants.map((p, idx) => ({
+          userPlants = livePlants.map((p) => ({
             id: p.id,
             name: p.name,
             species: p.species || 'Houseplant',
@@ -184,9 +184,9 @@ export function mountUi() {
             water_frequency_days: p.water_frequency_days || 7,
             last_watered: p.last_watered || null,
             subtitle: `${p.species || 'Houseplant'} • ${p.location === 'outdoor' ? 'Outdoor Bed' : 'Indoor'}`,
-            image_url: p.image_url || (idx % 2 === 0 
-              ? 'https://lh3.googleusercontent.com/aida-public/AB6AXuAhEkaeKyuoBmmFgEVi4XkgE5zr14wDdg-UMmpjk-ne84t6WCC6gvm6rfVlReiJSqhNRfJdfEAsxG2ghiWQLKN7zfvRGZ-XpKcO4ey8BdjqxooUrkZcD_FF2_CVerxj42LG9oElK1zM_Lzgpn937KCuEi5sJIn_p8jaxgE-B-5QpywJ25ocmygtN0A3AQgknTrweb_F6gCgJp0zj88WQ2pFawAiIKDMEegkTmjs-U2EDgAMfDSzQuXuQw'
-              : 'https://lh3.googleusercontent.com/aida-public/AB6AXuAxW8RBbT4YPXuDPqRLeQZQr-aXgWG48D8hE_oQLERilCYbEBCHF2gjHmR1fXjqucqbGnduvacZ3V3g9I5boK1H0Wtb9UrOfNj05whoLSdKDEHpmh_LZtbGOeTl7TTIe_pI_C1U_1uqhs1yM7MsHa4T4pH6JQHnNX1VaNeigoC04P3z_su3uuKq5TS9-ANEBa3ebnz18U0PhkUAnYdUN1Rmu1yFC4VeIGeD2DNb5FKvVNQnwEcchk8Yig')
+            image_url: (p.image_url && !p.image_url.includes('lh3.googleusercontent.com/aida-public'))
+              ? p.image_url
+              : getBotanicalPlantPhoto(p.species || p.name)
           }));
           savePlantsLocally(userPlants);
         }

@@ -502,9 +502,23 @@ export function renderAddPlantModal(container, { onClose = () => {}, onSuccess =
     });
   });
 
-  // Autocomplete Species Search
+  let hasCustomPhoto = false;
+  let currentPlantPhoto = getPhotoForSpecies('monstera');
+  const photoPreview = modalOverlay.querySelector('#form-plant-photo-preview');
+  const photoCaption = modalOverlay.querySelector('#form-plant-photo-caption');
+  const customPhotoInput = modalOverlay.querySelector('#form-custom-photo-file');
+
+  // Autocomplete Species Search & Dynamic Photo Live Update
   speciesInput?.addEventListener('input', (e) => {
     const q = e.target.value.toLowerCase().trim();
+
+    // Auto-update botanical photo preview while typing if no custom photo uploaded
+    if (!hasCustomPhoto && q) {
+      currentPlantPhoto = getPhotoForSpecies(q);
+      if (photoPreview) photoPreview.src = currentPlantPhoto;
+      if (photoCaption) photoCaption.textContent = `Botanical photo for ${q}`;
+    }
+
     if (!q) {
       suggestionsBox.style.display = 'none';
       if (matchCheck) matchCheck.style.display = 'none';
@@ -558,16 +572,12 @@ export function renderAddPlantModal(container, { onClose = () => {}, onSuccess =
     suggestionsBox.style.display = 'block';
   });
 
-  let currentPlantPhoto = getPhotoForSpecies('monstera');
-  const photoPreview = modalOverlay.querySelector('#form-plant-photo-preview');
-  const photoCaption = modalOverlay.querySelector('#form-plant-photo-caption');
-  const customPhotoInput = modalOverlay.querySelector('#form-custom-photo-file');
-
   customPhotoInput?.addEventListener('change', (e) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
+        hasCustomPhoto = true;
         currentPlantPhoto = reader.result;
         if (photoPreview) photoPreview.src = currentPlantPhoto;
         if (photoCaption) photoCaption.textContent = 'Custom user photo attached';

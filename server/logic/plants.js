@@ -7,7 +7,7 @@ import { db } from '../db/pool.js';
 import speciesData from '../data/plants-db.json' with { type: 'json' };
 
 /** addPlant(input, userId) → resolves species, inserts plant, returns {plant, care_tips}. Day 4. */
-export async function addPlant({ name, species, location, light_exposure, pot_has_drainage, acquired_date }, userId) {
+export async function addPlant({ name, species, location, light_exposure, pot_has_drainage, acquired_date, image_url }, userId) {
   // Resolve species profile (match or custom fallback)
   const profile = getSpeciesProfile(species);
   
@@ -16,10 +16,10 @@ export async function addPlant({ name, species, location, light_exposure, pot_ha
   
   // Insert plant
   const result = await db.query(
-    `INSERT INTO plants (name, species, location, light_exposure, pot_has_drainage, acquired_date, water_frequency_days, user_id)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+    `INSERT INTO plants (name, species, location, light_exposure, pot_has_drainage, acquired_date, water_frequency_days, user_id, image_url)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
      RETURNING id`,
-    [name, species, location, light_exposure || null, pot_has_drainage, acquired_date || null, water_frequency_days, userId]
+    [name, species, location, light_exposure || null, pot_has_drainage, acquired_date || null, water_frequency_days, userId, image_url || null]
   );
   
   const plantId = result.rows[0].id;
