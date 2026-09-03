@@ -256,7 +256,9 @@ export function mountUi() {
         ${getWeatherBannerHtml({
           theme: 'dark',
           plants: userPlants,
-          weather: window.__plantneeds_weather || liveWeather || null
+          weather: window.__plantneeds_weather || liveWeather || null,
+          outdoorCount: userPlants.filter(p => p.location === 'outdoor').length,
+          indoorDueCount: userPlants.filter(p => p.location !== 'outdoor' && (p.is_overdue || p.days_remaining === 0)).length
         })}
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">

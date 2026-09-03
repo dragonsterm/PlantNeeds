@@ -54,7 +54,9 @@ export function renderLightSchedule(container, { plants = [], weatherData = null
       ${getWeatherBannerHtml({
         theme: 'light',
         plants: activePlants,
-        weather: window.__plantneeds_weather || weatherData || null
+        weather: window.__plantneeds_weather || weatherData || null,
+        outdoorCount: activePlants.filter(p => p.location === 'outdoor').length,
+        indoorDueCount: dueItems.filter(i => i.location !== 'outdoor').length
       })}
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">

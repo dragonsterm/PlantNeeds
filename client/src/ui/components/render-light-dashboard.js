@@ -30,7 +30,9 @@ export function renderLightDashboard(container, { userPlants = [], weatherData =
       ${getWeatherBannerHtml({
         theme: 'light',
         plants: userPlants,
-        weather: window.__plantneeds_weather || weatherData || null
+        weather: window.__plantneeds_weather || weatherData || null,
+        outdoorCount: userPlants.filter(p => p.location === 'outdoor').length,
+        indoorDueCount: userPlants.filter(p => p.location !== 'outdoor' && (p.is_overdue || p.days_remaining === 0)).length
       })}
 
       <!-- Main Layout: Grid + Sidebar -->

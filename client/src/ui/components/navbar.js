@@ -105,24 +105,24 @@ export function getWeatherBannerHtml({ theme = 'light', plants = [], weather = n
   const iconColor = isDark ? '#93C5FD' : '#2B6CB0';
 
   const w = weather || weatherData || window.__plantneeds_weather || null;
-  const rainMm = (w && typeof w.recent_rain_mm === 'number') ? w.recent_rain_mm.toFixed(1) : '0.0';
+  const rainMm = (w && typeof w.recent_rain_mm === 'number') ? w.recent_rain_mm : 0;
   const isLive = w?.data_source === 'live' || w?.data_source === 'cache';
   const badgeLabel = isLive ? 'LIVE WEATHER' : 'WEATHER';
 
-  const finalOutdoorCount = plants && plants.length > 0 
-    ? plants.filter(p => p.location === 'outdoor').length 
-    : outdoorCount;
+  const derivedOutdoorCount = plants && plants.length > 0
+    ? plants.filter(p => p.location === 'outdoor').length
+    : 0;
+  const finalOutdoorCount = typeof outdoorCount === 'number' ? outdoorCount : derivedOutdoorCount;
 
-  const finalIndoorDueCount = plants && plants.length > 0
+  const derivedIndoorDueCount = plants && plants.length > 0
     ? plants.filter(p => p.location !== 'outdoor' && (p.is_overdue || p.days_remaining === 0)).length
-    : indoorDueCount;
+    : 0;
+  const finalIndoorDueCount = typeof indoorDueCount === 'number' ? indoorDueCount : derivedIndoorDueCount;
 
-  let bannerText = '';
-  if (plants && plants.length > 0) {
-    bannerText = `Rain covered <strong style="font-weight: 700;">${finalOutdoorCount} outdoor garden crops</strong> (${rainMm} mm rain this week). <strong style="font-weight: 700;">${finalIndoorDueCount} indoor houseplants</strong> due today.`;
-  } else {
-    bannerText = `Live weather connected (<strong style="font-weight: 700;">${rainMm} mm rain this week</strong>). Add plants to receive automated watering adjustments.`;
-  }
+  const hasPlantContext = finalOutdoorCount > 0 || finalIndoorDueCount > 0 || (plants && plants.length > 0);
+  const bannerText = hasPlantContext
+    ? `Rain covered <strong style="font-weight: 700;">${finalOutdoorCount} outdoor garden crops</strong> (${rainMm.toFixed(1)} mm rain this week). <strong style="font-weight: 700;">${finalIndoorDueCount} indoor houseplants</strong> due today.`
+    : `Live weather connected (<strong style="font-weight: 700;">${rainMm.toFixed(1)} mm rain this week</strong>). Add plants to receive automated watering adjustments.`;
 
   return `
     <div id="weather-top-banner" class="rounded-2xl p-3.5 mb-8 flex flex-col sm:flex-row items-center justify-between gap-4 relative overflow-hidden transition-all duration-300" style="${bannerGlass}">
