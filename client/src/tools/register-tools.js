@@ -281,8 +281,20 @@ export function registerAllTools() {
       if (!input || !input.plant_id || !input.milestone) {
         return { error: 'Missing required fields: plant_id and milestone are required.' };
       }
+
+      let plantName = input.plant_name;
+      try {
+        const saved = localStorage.getItem('plantneeds_local_plants');
+        if (saved) {
+          const plants = JSON.parse(saved);
+          const found = plants.find(p => String(p.id) === String(input.plant_id));
+          if (found?.name) plantName = found.name;
+        }
+      } catch {}
+
       return planner.logGrowth({
         ...input,
+        plant_name: plantName,
         source: 'agent'
       });
     }

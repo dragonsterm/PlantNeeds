@@ -220,7 +220,22 @@ export function normalizeDiagnosisResult(raw) {
 export async function diagnoseProblem({ plant_id, symptoms, plant = null }) {
   let result = null;
   try {
-    result = await api('/api/diagnose', { method: 'POST', body: { plant_id, symptoms } });
+    result = await api('/api/diagnose', { 
+      method: 'POST', 
+      body: { 
+        plant_id, 
+        symptoms,
+        plant: plant ? {
+          name: plant.name,
+          species: plant.species,
+          location: plant.location,
+          light_exposure: plant.light_exposure,
+          pot_has_drainage: plant.pot_has_drainage,
+          water_frequency_days: plant.water_frequency_days,
+          last_watered: plant.last_watered
+        } : null
+      } 
+    });
   } catch (err) {
     console.warn('[diagnose] API call failed, falling back to client evaluation:', err?.message || err);
     result = evaluateDiagnosisLocally({ plant, symptoms });

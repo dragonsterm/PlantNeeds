@@ -45,7 +45,7 @@ export async function logGrowth(plantId, userId, { milestone, height_cm = null, 
     } catch {}
   }
 
-  const plantName = plant ? plant.name : 'Plant';
+  const plantName = plant ? plant.name : (notes?.includes('plant_name:') ? notes.split('plant_name:')[1]?.trim() : 'Garden Plant');
   const logDate = date || new Date().toISOString().split('T')[0];
   const logSource = source === 'agent' ? 'agent' : 'human';
   const numericHeight = height_cm != null ? Number(height_cm) : null;

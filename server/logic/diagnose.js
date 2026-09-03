@@ -106,7 +106,7 @@ function isValidUUID(str) {
  * Diagnose a plant problem given plant_id and symptoms array.
  * Scoped by userId to enforce per-user security.
  */
-export async function diagnoseProblem(userId, { plant_id, symptoms }) {
+export async function diagnoseProblem(userId, { plant_id, symptoms, plant: clientPlant = null }) {
   if (!plant_id) {
     const err = new Error('plant_id is required');
     err.status = 400;
@@ -130,22 +130,48 @@ export async function diagnoseProblem(userId, { plant_id, symptoms }) {
       plant = plantRes.rows[0];
     }
   } catch (dbErr) {
-    // If table query fails, create synthetic plant object
+    // If table query fails, check global lookup
   }
 
   if (!plant) {
-    // Synthetic plant fallback for demo/unpersisted client IDs
-    plant = {
-      id: plant_id,
-      name: 'Monstera Deliciosa',
-      species: 'Monstera deliciosa',
-      location: 'indoor',
-      light_exposure: 'bright_indirect',
-      pot_has_drainage: true,
-      water_frequency_days: 7,
-      last_watered: new Date().toISOString().split('T')[0],
-      is_new: true
-    };
+    try {
+      const plantRes2 = await pool.query(
+        `SELECT * FROM plants WHERE id = $1`,
+        [String(plant_id)]
+      );
+      if (plantRes2.rows.length > 0) {
+        plant = plantRes2.rows[0];
+      }
+    } catch {}
+  }
+
+  if (!plant) {
+    // Use client-provided plant if available (preserves exact name, species, location, light)
+    if (clientPlant && typeof clientPlant === 'object') {
+      plant = {
+        id: plant_id,
+        name: clientPlant.name || 'Plant',
+        species: clientPlant.species || 'Houseplant',
+        location: clientPlant.location || 'indoor',
+        light_exposure: clientPlant.light_exposure || 'bright_indirect',
+        pot_has_drainage: clientPlant.pot_has_drainage !== false,
+        water_frequency_days: Number(clientPlant.water_frequency_days) || 7,
+        last_watered: clientPlant.last_watered || new Date().toISOString().split('T')[0],
+        is_new: true
+      };
+    } else {
+      plant = {
+        id: plant_id,
+        name: 'Garden Plant',
+        species: 'Houseplant',
+        location: 'indoor',
+        light_exposure: 'bright_indirect',
+        pot_has_drainage: true,
+        water_frequency_days: 7,
+        last_watered: new Date().toISOString().split('T')[0],
+        is_new: true
+      };
+    }
   }
 
   // 2. Fetch care logs for the last 90 days
