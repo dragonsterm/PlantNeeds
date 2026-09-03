@@ -9,6 +9,33 @@ import plantsDb from '../../data/plants-db.json' with { type: 'json' };
 import { addPlant } from '../../logic/plants.js';
 import { getAppTheme } from '../render.js';
 
+const SPECIES_PHOTOS = {
+  monstera: 'https://images.unsplash.com/photo-1614594975525-e45190c55d0b?w=600&auto=format&fit=crop&q=80',
+  pothos: 'https://images.unsplash.com/photo-1596724803714-38b4ef262295?w=600&auto=format&fit=crop&q=80',
+  snake: 'https://images.unsplash.com/photo-1593482892290-f54927ae1bf6?w=600&auto=format&fit=crop&q=80',
+  basil: 'https://images.unsplash.com/photo-1618164436241-4473940d1f5c?w=600&auto=format&fit=crop&q=80',
+  fiddle: 'https://images.unsplash.com/photo-1545241047-6083a3684587?w=600&auto=format&fit=crop&q=80',
+  peace: 'https://images.unsplash.com/photo-1593691509543-c55fb32e7355?w=600&auto=format&fit=crop&q=80',
+  aloe: 'https://images.unsplash.com/photo-1567689265664-1c48de61db0b?w=600&auto=format&fit=crop&q=80',
+  tomato: 'https://images.unsplash.com/photo-1592841200221-a6898f307baa?w=600&auto=format&fit=crop&q=80',
+  lavender: 'https://images.unsplash.com/photo-1528183429752-a97d0bf99b5a?w=600&auto=format&fit=crop&q=80',
+  rosemary: 'https://images.unsplash.com/photo-1515542622106-78bda8ba0e5b?w=600&auto=format&fit=crop&q=80',
+  pepper: 'https://images.unsplash.com/photo-1588252303782-cb80119abd6d?w=600&auto=format&fit=crop&q=80',
+  chili: 'https://images.unsplash.com/photo-1588252303782-cb80119abd6d?w=600&auto=format&fit=crop&q=80',
+  succulent: 'https://images.unsplash.com/photo-1459411552884-841db9b3cc2a?w=600&auto=format&fit=crop&q=80',
+  fern: 'https://images.unsplash.com/photo-1598880940371-c756e015fea1?w=600&auto=format&fit=crop&q=80',
+  calathea: 'https://images.unsplash.com/photo-1616046229478-9901c5536a45?w=600&auto=format&fit=crop&q=80',
+  zz: 'https://images.unsplash.com/photo-1632207691143-643e2a9a9361?w=600&auto=format&fit=crop&q=80'
+};
+
+function getPhotoForSpecies(name = '') {
+  const lower = name.toLowerCase();
+  for (const [k, url] of Object.entries(SPECIES_PHOTOS)) {
+    if (lower.includes(k)) return url;
+  }
+  return 'https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=600&auto=format&fit=crop&q=80';
+}
+
 export function renderAddPlantModal(container, { onClose = () => {}, onSuccess = () => {} } = {}) {
   const existing = document.getElementById('add-plant-modal-overlay');
   if (existing) existing.remove();
@@ -254,6 +281,25 @@ export function renderAddPlantModal(container, { onClose = () => {}, onSuccess =
           </label>
         </div>
 
+        <!-- Field 5: Botanical Photo Preview & Custom Upload -->
+        <div style="padding: 12px 14px; border-radius: 16px; background: ${cardFieldBg}; border: 1px solid ${cardFieldBorder}; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 48px; height: 48px; border-radius: 12px; overflow: hidden; border: 1px solid ${isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)'}; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
+              <img id="form-plant-photo-preview" src="${getPhotoForSpecies('monstera')}" alt="Plant Preview" style="width: 100%; height: 100%; object-fit: cover;" />
+            </div>
+            <div>
+              <span style="font-size: 12px; font-weight: 700; color: ${textColor}; display: block;">Botanical Portrait</span>
+              <span id="form-plant-photo-caption" style="font-size: 11px; color: ${subtextColor};">Auto-matched from botanical database</span>
+            </div>
+          </div>
+          <div>
+            <label for="form-custom-photo-file" style="padding: 6px 12px; border-radius: 9999px; font-size: 11px; font-weight: 600; cursor: pointer; background: ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(26,58,34,0.08)'}; color: ${isDark ? '#E1E8E0' : '#1A3A22'}; border: 1px solid ${inputBorder}; display: inline-block;">
+              Upload Photo
+            </label>
+            <input type="file" id="form-custom-photo-file" accept="image/*" style="display: none;" />
+          </div>
+        </div>
+
         <!-- Footer Actions -->
         <div style="padding-top: 10px; display: flex; align-items: center; justify-content: flex-end; gap: 12px; border-top: 1px solid ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(26,58,34,0.08)'};">
           <button type="button" id="cancel-modal-btn" style="padding: 10px 18px; border-radius: 9999px; font-size: 12px; font-weight: 600; color: ${labelColor}; background: none; border: none; cursor: pointer; transition: color 0.15s;">
@@ -406,6 +452,12 @@ export function renderAddPlantModal(container, { onClose = () => {}, onSuccess =
 
   function selectSpecies(speciesName, scientificName, type = 'indoor', waterFreq = 7) {
     speciesInput.value = speciesName;
+
+    // Update botanical photo preview automatically
+    currentPlantPhoto = getPhotoForSpecies(speciesName);
+    if (photoPreview) photoPreview.src = currentPlantPhoto;
+    if (photoCaption) photoCaption.textContent = `Matched botanical profile for ${speciesName}`;
+
     if (matchCheck) matchCheck.style.display = 'flex';
     if (matchCard) {
       matchCard.style.display = 'flex';
@@ -506,6 +558,24 @@ export function renderAddPlantModal(container, { onClose = () => {}, onSuccess =
     suggestionsBox.style.display = 'block';
   });
 
+  let currentPlantPhoto = getPhotoForSpecies('monstera');
+  const photoPreview = modalOverlay.querySelector('#form-plant-photo-preview');
+  const photoCaption = modalOverlay.querySelector('#form-plant-photo-caption');
+  const customPhotoInput = modalOverlay.querySelector('#form-custom-photo-file');
+
+  customPhotoInput?.addEventListener('change', (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        currentPlantPhoto = reader.result;
+        if (photoPreview) photoPreview.src = currentPlantPhoto;
+        if (photoCaption) photoCaption.textContent = 'Custom user photo attached';
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
   // Submit Handler
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -527,7 +597,8 @@ export function renderAddPlantModal(container, { onClose = () => {}, onSuccess =
         species,
         location,
         light_exposure,
-        pot_has_drainage
+        pot_has_drainage,
+        image_url: currentPlantPhoto
       });
       onSuccess();
       cleanup();

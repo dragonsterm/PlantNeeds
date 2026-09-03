@@ -31,7 +31,22 @@ export function registerAllTools() {
 
   const reg = (toolDef) => {
     try {
-      document.modelContext.registerTool(toolDef);
+      const originalExecute = toolDef.execute;
+      const securedTool = {
+        ...toolDef,
+        execute: async (input) => {
+          // Check if user disabled WebMCP remote sync in Gardener Settings
+          if (typeof localStorage !== 'undefined' && localStorage.getItem('plantneeds_pref_webmcp_sync') === 'false') {
+            return {
+              error: 'WebMCP remote sync has been disabled by the gardener in Settings.',
+              code: 'SYNC_DISABLED'
+            };
+          }
+          return originalExecute(input);
+        }
+      };
+
+      document.modelContext.registerTool(securedTool);
       console.info(`[webmcp] registered tool: ${toolDef.name}`);
     } catch (err) {
       console.error(`[webmcp] failed to register tool ${toolDef.name}:`, err);

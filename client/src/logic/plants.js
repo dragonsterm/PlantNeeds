@@ -41,6 +41,10 @@ export function computePlantSchedule(plants = [], { plant_id = null, days_ahead 
     const daysRemaining = isNaN(rawRemaining) ? freq : rawRemaining;
     const isOverdue = daysRemaining <= 0;
 
+    const isRainDelayEnabled = typeof localStorage === 'undefined' || localStorage.getItem('plantneeds_pref_rain_delay') !== 'false';
+    const isOutdoor = (plant.location || 'indoor') === 'outdoor';
+    const isRainSkipped = isRainDelayEnabled && isOutdoor && Boolean(plant.rain_skipped);
+
     return {
       plant_id: plant.id,
       plant_name: plant.name || 'Unnamed Plant',
@@ -51,7 +55,7 @@ export function computePlantSchedule(plants = [], { plant_id = null, days_ahead 
       days_since_watered: daysSinceWatered,
       overdue: isOverdue,
       status: isOverdue ? 'overdue' : (daysRemaining === 0 ? 'due_today' : 'upcoming'),
-      rain_skipped: Boolean(plant.rain_skipped)
+      rain_skipped: isRainSkipped
     };
   });
 
@@ -143,8 +147,39 @@ export async function addPlant(body) {
   };
 }
 
+/** deletePlant(id) → DELETE /api/plants/:id → emits plant-deleted + plants-changed. */
+export async function deletePlant(plantId) {
+  try {
+    await api(`/api/plants/${plantId}`, { method: 'DELETE' });
+  } catch (err) {
+    console.warn('[plants] Backend delete failed, removing locally:', err.message);
+  }
+
+  const saved = localStorage.getItem('plantneeds_local_plants');
+  if (saved) {
+    try {
+      const plants = JSON.parse(saved);
+      const filtered = plants.filter(p => String(p.id) !== String(plantId));
+      localStorage.setItem('plantneeds_local_plants', JSON.stringify(filtered));
+    } catch {}
+  }
+
+  emit('plant-deleted', { id: plantId });
+  emit('plants-changed');
+  return { success: true };
+}
+
 /** logCareActivity(input) → POST /api/plants/:id/care → emits care-logged + plants-changed. Day 4. */
-export async function logCareActivity({ plant_id, ...body }) {
+export async function logCareActivity(inputOrId, maybeBody = {}) {
+  let plant_id, body;
+  if (typeof inputOrId === 'object' && inputOrId !== null) {
+    plant_id = inputOrId.plant_id;
+    body = { ...inputOrId };
+  } else {
+    plant_id = inputOrId;
+    body = { plant_id, ...maybeBody };
+  }
+
   try {
     const result = await api(`/api/plants/${plant_id}/care`, { method: 'POST', body });
     emit('care-logged', { plant_id, ...body });

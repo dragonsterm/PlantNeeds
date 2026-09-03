@@ -359,6 +359,13 @@ export async function renderSettingsModal(container, { onUpdate = () => {} } = {
     emit('auth-changed');
   });
 
+  modal.querySelector('#theme-select-light-btn')?.addEventListener('click', () => {
+    setAppTheme('light');
+    modal.remove();
+    renderSettingsModal(container, { onUpdate });
+    onUpdate();
+  });
+
   modal.querySelector('#theme-select-dark-btn')?.addEventListener('click', () => {
     setAppTheme('dark');
     modal.remove();

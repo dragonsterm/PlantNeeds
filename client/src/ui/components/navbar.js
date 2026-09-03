@@ -76,18 +76,13 @@ export function getNavbarHtml({ activeRoute = 'dashboard', theme = 'light' } = {
           </div>
 
           <!-- Trailing Actions -->
-          <div class="flex items-center gap-4">
+          <div class="flex items-center gap-3 sm:gap-4">
             <button id="global-add-plant-btn" class="text-white px-5 py-2 rounded-full font-body-sm font-semibold hover:opacity-90 transition-opacity flex items-center gap-2 shadow-sm border border-transparent cursor-pointer" style="background: ${addBtnBg};">
               <span class="material-symbols-outlined text-sm">add</span> Add Plant
             </button>
-            <div class="flex items-center gap-2">
-              <button id="global-notif-btn" class="p-2 rounded-full hover:opacity-80 transition-opacity" style="background: ${notifBtnBg}; border: none; cursor: pointer; color: ${notifIconColor};" title="Activity & Notifications">
-                <span class="material-symbols-outlined">notifications</span>
-              </button>
-              <button id="navbar-user-avatar-btn" class="w-10 h-10 rounded-full overflow-hidden border-2 shadow-sm ml-1 cursor-pointer transition-all hover:scale-105 active:scale-95 ${avatarBorder} flex items-center justify-center p-0" style="background: ${isDark ? 'rgba(188, 240, 174, 0.15)' : '#E5ECE4'};" title="Gardener Profile & Settings">
-                ${avatarInner}
-              </button>
-            </div>
+            <button id="navbar-user-avatar-btn" class="w-10 h-10 rounded-full overflow-hidden border-2 shadow-sm ml-1 cursor-pointer transition-all hover:scale-105 active:scale-95 ${avatarBorder} flex items-center justify-center p-0" style="background: ${isDark ? 'rgba(188, 240, 174, 0.15)' : '#E5ECE4'};" title="Gardener Profile & Settings">
+              ${avatarInner}
+            </button>
           </div>
         </div>
       </nav>
