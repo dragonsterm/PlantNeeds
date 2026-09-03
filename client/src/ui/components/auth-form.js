@@ -14,6 +14,10 @@ export function renderAuthForm(container, { initialMode = 'login' } = {}) {
   let showPassword = false;
   let showConfirmPassword = false;
 
+  // Track field values across view toggles/re-renders
+  let currentUsername = '';
+  let currentFullName = '';
+
   // Forgot password two-step state
   let forgotStep = 1; // 1: input username, 2: set new password
   let verifiedUsername = '';
@@ -76,7 +80,7 @@ export function renderAuthForm(container, { initialMode = 'login' } = {}) {
                   <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                     <span class="material-symbols-outlined text-outline" style="color: #72796e; font-size: 20px;">person</span>
                   </div>
-                  <input class="glass-input block w-full pl-11 pr-4 py-3 rounded-xl font-body-md text-body-md text-on-surface placeholder:text-outline/70 focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all shadow-inner" style="background: rgba(255, 255, 255, 0.6); border: 1px solid rgba(255, 255, 255, 0.5); color: #191c18;" id="auth-fullname" name="fullname" placeholder="Full Name (optional)" type="text">
+                  <input class="glass-input block w-full pl-11 pr-4 py-3 rounded-xl font-body-md text-body-md text-on-surface placeholder:text-outline/70 focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all shadow-inner" style="background: rgba(255, 255, 255, 0.6); border: 1px solid rgba(255, 255, 255, 0.5); color: #191c18;" id="auth-fullname" name="fullname" placeholder="Full Name (optional)" type="text" value="${escapeHtml(currentFullName)}">
                 </div>
               ` : ''}
 
@@ -85,7 +89,7 @@ export function renderAuthForm(container, { initialMode = 'login' } = {}) {
                   <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                     <span class="material-symbols-outlined text-outline" style="color: #72796e; font-size: 20px;">mail</span>
                   </div>
-                  <input class="glass-input block w-full pl-11 pr-4 py-3 rounded-xl font-body-md text-body-md text-on-surface placeholder:text-outline/70 focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all shadow-inner" style="background: rgba(255, 255, 255, 0.6); border: 1px solid rgba(255, 255, 255, 0.5); color: #191c18;" id="auth-username" name="username" placeholder="${mode === 'forgot' ? 'Username or Email' : 'Username or Email'}" type="text" value="${escapeHtml(verifiedUsername)}">
+                  <input class="glass-input block w-full pl-11 pr-4 py-3 rounded-xl font-body-md text-body-md text-on-surface placeholder:text-outline/70 focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all shadow-inner" style="background: rgba(255, 255, 255, 0.6); border: 1px solid rgba(255, 255, 255, 0.5); color: #191c18;" id="auth-username" name="username" placeholder="${mode === 'forgot' ? 'Username or Email' : 'Username or Email'}" type="text" value="${escapeHtml(mode === 'forgot' ? verifiedUsername || currentUsername : currentUsername)}">
                 </div>
               ` : ''}
 
@@ -201,17 +205,38 @@ export function renderAuthForm(container, { initialMode = 'login' } = {}) {
     const togglePwBtn = container.querySelector('#toggle-password-btn');
     const toggleConfirmPwBtn = container.querySelector('#toggle-confirm-password-btn');
 
-    togglePwBtn?.addEventListener('click', () => {
-      showPassword = !showPassword;
-      update();
+    togglePwBtn?.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const pwInput = container.querySelector('#auth-password');
+      const icon = togglePwBtn.querySelector('.material-symbols-outlined');
+      if (pwInput && icon) {
+        const isNowText = pwInput.type === 'password';
+        pwInput.type = isNowText ? 'text' : 'password';
+        icon.textContent = isNowText ? 'visibility_off' : 'visibility';
+        togglePwBtn.title = isNowText ? 'Hide password' : 'Show password';
+      }
     });
 
-    toggleConfirmPwBtn?.addEventListener('click', () => {
-      showConfirmPassword = !showConfirmPassword;
-      update();
+    toggleConfirmPwBtn?.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const confirmInput = container.querySelector('#auth-confirm-password');
+      const icon = toggleConfirmPwBtn.querySelector('.material-symbols-outlined');
+      if (confirmInput && icon) {
+        const isNowText = confirmInput.type === 'password';
+        confirmInput.type = isNowText ? 'text' : 'password';
+        icon.textContent = isNowText ? 'visibility_off' : 'visibility';
+        toggleConfirmPwBtn.title = isNowText ? 'Hide password' : 'Show password';
+      }
     });
 
     toggleBtn?.addEventListener('click', () => {
+      const uField = container.querySelector('#auth-username');
+      if (uField) currentUsername = uField.value;
+      const fnField = container.querySelector('#auth-fullname');
+      if (fnField) currentFullName = fnField.value;
+
       mode = mode === 'login' ? 'register' : 'login';
       errorMessage = '';
       successMessage = '';
@@ -219,11 +244,14 @@ export function renderAuthForm(container, { initialMode = 'login' } = {}) {
     });
 
     forgotBtn?.addEventListener('click', () => {
+      const uField = container.querySelector('#auth-username');
+      if (uField) currentUsername = uField.value;
+
       mode = 'forgot';
       forgotStep = 1;
       errorMessage = '';
       successMessage = '';
-      verifiedUsername = '';
+      verifiedUsername = currentUsername;
       update();
     });
 
