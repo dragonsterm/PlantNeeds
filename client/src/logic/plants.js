@@ -77,16 +77,28 @@ export async function listPlants(filter = {}) {
   }
 }
 
+/** Helper to generate standard UUID v4 for plants (compatible with Postgres & WebMCP) */
+function generateUUID() {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
+
 /** Helper to add a plant to local storage */
 function addPlantLocally(body) {
-  const saved = localStorage.getItem('plantneeds_local_plants');
+  const saved = typeof localStorage !== 'undefined' ? localStorage.getItem('plantneeds_local_plants') : null;
   let plants = [];
   try {
     if (saved) plants = JSON.parse(saved);
   } catch {}
 
   const newPlant = {
-    id: body.id || ('p-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 6)),
+    id: body.id || generateUUID(),
     name: body.name,
     species: body.species || 'Houseplant',
     location: body.location || 'indoor',
@@ -99,7 +111,10 @@ function addPlantLocally(body) {
   };
 
   plants.push(newPlant);
-  localStorage.setItem('plantneeds_local_plants', JSON.stringify(plants));
+  if (typeof localStorage !== 'undefined') {
+    localStorage.setItem('plantneeds_local_plants', JSON.stringify(plants));
+  }
+  setCache('plants', plants);
   return newPlant;
 }
 
@@ -120,7 +135,12 @@ export async function addPlant(body) {
   const localPlant = addPlantLocally(body);
   emit('plant-added', localPlant);
   emit('plants-changed');
-  return { success: true, plant: localPlant, care_tips: ['Water when top inch of soil is dry', 'Ensure adequate light'] };
+  return { 
+    success: true, 
+    plant: localPlant,
+    id: localPlant.id,
+    care_tips: ['Water when top inch of soil is dry', 'Ensure adequate light'] 
+  };
 }
 
 /** logCareActivity(input) → POST /api/plants/:id/care → emits care-logged + plants-changed. Day 4. */
@@ -150,9 +170,18 @@ export async function logCareActivity({ plant_id, ...body }) {
 
 /** getCareSchedule(opts?) → Single Source of Truth for Schedule UI & WebMCP tool */
 export async function getCareSchedule({ plant_id, days_ahead = 7 } = {}) {
-  const livePlants = getCache('plants') || [];
+  // Read latest plants from cache or localStorage first
+  let livePlants = getCache('plants');
+  if (!livePlants || !livePlants.length) {
+    const saved = localStorage.getItem('plantneeds_local_plants');
+    if (saved) {
+      try {
+        livePlants = JSON.parse(saved);
+      } catch {}
+    }
+  }
 
-  if (livePlants.length > 0) {
+  if (livePlants && livePlants.length > 0) {
     return computePlantSchedule(livePlants, { plant_id, days_ahead });
   }
 
@@ -161,11 +190,11 @@ export async function getCareSchedule({ plant_id, days_ahead = 7 } = {}) {
     if (plant_id) params.set('plant_id', plant_id);
     if (days_ahead != null) params.set('days_ahead', days_ahead);
     const result = await api(`/api/plants/schedule?${params}`);
-    if (result && Array.isArray(result.schedule)) {
+    if (result && Array.isArray(result.schedule) && result.schedule.length > 0) {
       return result.schedule;
     }
-    return computePlantSchedule(livePlants, { plant_id, days_ahead });
+    return computePlantSchedule(livePlants || [], { plant_id, days_ahead });
   } catch (err) {
-    return computePlantSchedule(livePlants, { plant_id, days_ahead });
+    return computePlantSchedule(livePlants || [], { plant_id, days_ahead });
   }
 }

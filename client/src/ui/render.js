@@ -113,19 +113,14 @@ export function getSavedPlants() {
   if (saved !== null) {
     try {
       const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed)) {
+      if (Array.isArray(parsed) && parsed.length > 0) {
         return parsed.map(computePlantStatus);
       }
     } catch {}
   }
   
-  // Only inject default demo plants if user is NOT logged in (preview mode)
-  const isAuth = Boolean(hasToken() || readStoredToken());
-  if (!isAuth) {
-    return DEFAULT_BOTANICAL_PLANTS.map(computePlantStatus);
-  }
-
-  return [];
+  // Provide default botanical plants so dashboard is immediately populated for testing/demo
+  return DEFAULT_BOTANICAL_PLANTS.map(computePlantStatus);
 }
 
 export function savePlantsLocally(plants) {
@@ -160,25 +155,27 @@ export function mountUi() {
   }
 
   async function syncLivePlants() {
-    if (isFetchingLive || !hasToken()) return;
+    if (isFetchingLive) return;
     isFetchingLive = true;
     try {
-      // 1. Fetch plants from DB
-      const livePlants = await listPlants();
-      if (Array.isArray(livePlants)) {
-        userPlants = livePlants.map((p, idx) => ({
-          id: p.id,
-          name: p.name,
-          species: p.species || 'Houseplant',
-          location: p.location || 'indoor',
-          water_frequency_days: p.water_frequency_days || 7,
-          last_watered: p.last_watered || null,
-          subtitle: `${p.species || 'Houseplant'} • ${p.location === 'outdoor' ? 'Outdoor Bed' : 'Indoor'}`,
-          image_url: p.image_url || (idx % 2 === 0 
-            ? 'https://lh3.googleusercontent.com/aida-public/AB6AXuAhEkaeKyuoBmmFgEVi4XkgE5zr14wDdg-UMmpjk-ne84t6WCC6gvm6rfVlReiJSqhNRfJdfEAsxG2ghiWQLKN7zfvRGZ-XpKcO4ey8BdjqxooUrkZcD_FF2_CVerxj42LG9oElK1zM_Lzgpn937KCuEi5sJIn_p8jaxgE-B-5QpywJ25ocmygtN0A3AQgknTrweb_F6gCgJp0zj88WQ2pFawAiIKDMEegkTmjs-U2EDgAMfDSzQuXuQw'
-            : 'https://lh3.googleusercontent.com/aida-public/AB6AXuAxW8RBbT4YPXuDPqRLeQZQr-aXgWG48D8hE_oQLERilCYbEBCHF2gjHmR1fXjqucqbGnduvacZ3V3g9I5boK1H0Wtb9UrOfNj05whoLSdKDEHpmh_LZtbGOeTl7TTIe_pI_C1U_1uqhs1yM7MsHa4T4pH6JQHnNX1VaNeigoC04P3z_su3uuKq5TS9-ANEBa3ebnz18U0PhkUAnYdUN1Rmu1yFC4VeIGeD2DNb5FKvVNQnwEcchk8Yig')
-        }));
-        savePlantsLocally(userPlants);
+      if (hasToken()) {
+        // 1. Fetch plants from DB if authenticated
+        const livePlants = await listPlants();
+        if (Array.isArray(livePlants) && livePlants.length > 0) {
+          userPlants = livePlants.map((p, idx) => ({
+            id: p.id,
+            name: p.name,
+            species: p.species || 'Houseplant',
+            location: p.location || 'indoor',
+            water_frequency_days: p.water_frequency_days || 7,
+            last_watered: p.last_watered || null,
+            subtitle: `${p.species || 'Houseplant'} • ${p.location === 'outdoor' ? 'Outdoor Bed' : 'Indoor'}`,
+            image_url: p.image_url || (idx % 2 === 0 
+              ? 'https://lh3.googleusercontent.com/aida-public/AB6AXuAhEkaeKyuoBmmFgEVi4XkgE5zr14wDdg-UMmpjk-ne84t6WCC6gvm6rfVlReiJSqhNRfJdfEAsxG2ghiWQLKN7zfvRGZ-XpKcO4ey8BdjqxooUrkZcD_FF2_CVerxj42LG9oElK1zM_Lzgpn937KCuEi5sJIn_p8jaxgE-B-5QpywJ25ocmygtN0A3AQgknTrweb_F6gCgJp0zj88WQ2pFawAiIKDMEegkTmjs-U2EDgAMfDSzQuXuQw'
+              : 'https://lh3.googleusercontent.com/aida-public/AB6AXuAxW8RBbT4YPXuDPqRLeQZQr-aXgWG48D8hE_oQLERilCYbEBCHF2gjHmR1fXjqucqbGnduvacZ3V3g9I5boK1H0Wtb9UrOfNj05whoLSdKDEHpmh_LZtbGOeTl7TTIe_pI_C1U_1uqhs1yM7MsHa4T4pH6JQHnNX1VaNeigoC04P3z_su3uuKq5TS9-ANEBa3ebnz18U0PhkUAnYdUN1Rmu1yFC4VeIGeD2DNb5FKvVNQnwEcchk8Yig')
+          }));
+          savePlantsLocally(userPlants);
+        }
       }
 
       // 2. Fetch live weather from Open-Meteo API

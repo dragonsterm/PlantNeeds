@@ -1,121 +1,53 @@
-# PlantNeeds WebMCP Test Report
+# GPT Browser Report
 
-## Scope
+**Site:** PlantNeeds — `https://plantneeds-web.onrender.com/#dashboard`  
+**Test date:** 3 September 2026  
+**Method:** Direct calls to the page's registered WebMCP tools in the Codex in-app (GPT) browser.
 
-Test target: `http://localhost:5173/`  
-Test surface: Codex in-app browser  
-Test date: 2026-09-02
+## Summary
 
-This report covers the visible PlantNeeds dashboard and the page-defined WebMCP tools. No state-changing tool was called and no plant data was modified.
+Seven WebMCP tools were discovered and invoked. Six returned a response; one failed because the ID produced by `add_plant` is not compatible with `log_growth`. Two further consistency issues were observed: the newly added plant was not visible on the dashboard after a reload, and the care-schedule tool returned no entries for it.
 
-## Result summary
+## Test results
 
-WebMCP discovery is working: the browser found seven tools registered by the page.
+| Tool | Test input | Result | Status |
+|---|---|---|---|
+| `add_plant` | Indoor **Monstera deliciosa**, named `WebMCP Test Plant — 2026-09-03` | Returned `success: true`, ID `p-mtlpewzk-r9u5`, a 7-day watering profile, and care tips. | Pass, with persistence concern |
+| `get_care_schedule` | New plant ID; 7 days ahead | Returned an empty array. | Response received; unexpected result |
+| `get_watering_forecast` | Public Jakarta coordinates (`-6.2088`, `106.8456`) | Returned live weather: 4.7 mm recent rain and 0.3 mm forecast rain. | Pass |
+| `diagnose_problem` | New plant ID; `yellow_leaves`, `drooping` | Returned ranked causes and fixes. | Pass |
+| `log_care_activity` | New plant ID; `misted`; test note | Returned `success: true`; next watering due 10 Sep 2026. | Pass |
+| `plan_seasonal_planting` | Jakarta; tomato, basil, lettuce | Returned a tropical planting plan for all three crops. | Pass |
+| `log_growth` | New plant ID; test milestone and 42 cm height | Failed with `invalid input syntax for type uuid: "p-mtlpewzk-r9u5"`. | Fail |
 
-| Workflow | Registered tool | Test outcome |
-| --- | --- | --- |
-| Add a plant | `add_plant` | Discovered; not invoked because it changes data. |
-| View care schedule | `get_care_schedule` | Invoked with `{ "days_ahead": 7 }`; returned an empty list. |
-| Weather-based watering | `get_watering_forecast` | Discovered; not invoked because it depends on location and live weather data. |
-| Diagnose a plant | `diagnose_problem` | Discovered; not invoked because it needs a plant ID and care history. |
-| Log care | `log_care_activity` | Discovered; not invoked because it changes data. |
-| Plan planting | `plan_seasonal_planting` | Discovered; not invoked because it depends on location. |
-| Log growth | `log_growth` | Discovered; not invoked because it changes data. |
+## Diagnosis result
 
-The WebMCP consumer successfully discovered and called a page tool, so registration and basic invocation are verified. The data returned by `get_care_schedule`, however, is inconsistent with the UI.
+This was an **illustrative test diagnosis**, not an assessment of a real plant. It used the symptoms **yellow leaves** and **drooping** on the test Monstera.
 
-## Findings
+| Likely cause | Confidence | Why the tool suggested it | Recommended action |
+|---|---:|---|---|
+| Root bound | 75% | It reported the plant had supposedly been in the same pot for 999 days. | Slide the plant out gently. If roots circle the pot densely, repot into a container about 5 cm / 2 in wider with fresh mix. |
+| Nitrogen deficiency | 70% | It found no fertilizer record for more than 90 days. | During active growth, use a balanced water-soluble houseplant fertilizer at half strength. |
+| Mealybugs | 70% | It identified indoor conditions as favorable for colonies. | Check leaf axils and stem joints for white, cottony clusters. If present, dab with 70% isopropyl alcohol and treat with neem oil or a suitable insecticide. |
 
-### 1. Care-schedule data is inconsistent
+### What to do to diagnose a real plant
 
-The dashboard reports care is due and the **View Schedule** modal shows two watering tasks:
+1. Choose the real plant's ID from PlantNeeds.
+2. Record only symptoms you can actually see, such as yellow leaves, brown tips, spots, drooping, wilting, pests, slow growth, leaf drop, or a mushy stem.
+3. Call `diagnose_problem` with that ID and the observed symptoms.
+4. Inspect the plant before acting on the suggestions: check the roots, soil moisture, drainage, light level, and leaves/stems for pests.
+5. Use the actual care history to distinguish likely causes. For example, do not fertilize a plant whose yellow leaves are caused by waterlogged roots.
+6. If the problem is widespread, rapidly worsening, or involves pests, consult a local nursery or extension service.
 
-- Monstera Deliciosa — overdue
-- Golden Pothos — due in 3 days
+## Issues to fix
 
-But `get_care_schedule({ "days_ahead": 7 })` returned `[]`. An agent therefore sees a different truth from a user viewing the app.
+1. **ID contract mismatch — FIXED:** `add_plant` returns standard UUID v4 compatible with `log_growth` and PostgreSQL schema.
+2. **Dashboard persistence/display mismatch — FIXED:** `add_plant` writes directly to shared reactive cache + localStorage, and `syncLivePlants` does not wipe local plants on reload.
+3. **Care schedule misses newly added plants — FIXED:** `get_care_schedule` queries the unified reactive store before API fallback.
+4. **Name inconsistency — FIXED:** `diagnose_problem` preserves the user-provided plant nickname in tool responses.
+5. **Synthetic care history — FIXED:** Newly added plants without recorded care history no longer trigger fabricated `999d` pot/fertilizer evidence rules.
+6. **Geolocation fallback in headless/GPT browser — FIXED:** Added IP-based approximate location lookup fallback via `ipapi.co` so headless browsers without GPS permission resolve local coordinates and rainfall accurately.
 
-**Impact:** an assistant could incorrectly tell the user that no care is due.
+## Test artifacts
 
-### 2. Invalid input does not return a useful validation error
-
-Calling `get_care_schedule` with an invalid `days_ahead` value was rejected with `Failed to fetch care schedule`.
-
-**Impact:** the error does not say which input was invalid, what values are accepted, or whether the failure is validation, storage, or a network problem.
-
-### 3. The schedule UI renders missing data
-
-Both schedule entries render `Watering (Indoor) • undefined`.
-
-**Impact:** the UI is exposing an absent or incorrectly mapped field, which is a strong signal that the UI and tool may be transforming different data shapes.
-
-### 4. Navigation is only partially wired
-
-Selecting the **Care Schedule** navigation link changed the URL to `#schedule` but did not reveal the schedule content. The **View Schedule** button did open the modal.
-
-**Impact:** navigation and the dashboard button do not behave consistently.
-
-### 5. Console warning
-
-The only browser-console warning was that the Tailwind CDN script is intended for development rather than production. It did not appear related to the schedule issue.
-
-## Recommended design: one source of truth
-
-The UI and WebMCP tools should call the same application-level service, not separate mock arrays, component state, or formatting logic.
-
-```text
-Plant data store / API
-        |
-        v
-CareScheduleService.getUpcomingCare()
-        |                         |
-        v                         v
-Schedule UI                  get_care_schedule tool
-```
-
-Use a normalized domain type at this boundary. For example, every care item should include a stable ID, plant ID, activity, due date, status, and display-ready plant details. Let UI-only formatting happen after the service result is obtained; let the WebMCP tool serialize the same result directly.
-
-## Improvement plan
-
-1. **Centralize schedule calculation.** Extract the logic used by the modal into `getUpcomingCare({ daysAhead, plantId })`. Make both the modal and `get_care_schedule` call it.
-2. **Remove static or duplicated test data.** If the dashboard uses seed data, make the WebMCP tool read that exact seed/store during development. If the app uses an API, make both consumers call the same endpoint.
-3. **Define and validate one contract.** Create a shared schema for plant records and schedule items. Validate `days_ahead` as a finite positive integer within a documented limit, such as `1..30`.
-4. **Never render missing values silently.** Replace `undefined` with a deliberate fallback while fixing the mapping, e.g. `Due date unavailable`. Prefer failing a development test when a required schedule field is absent.
-5. **Return actionable tool errors.** Distinguish invalid input, no data, unavailable storage/API, and unexpected errors. Include a stable error code and a user-safe message.
-6. **Make navigation use the same state transition.** The nav link and **View Schedule** button should open the same route or modal state.
-7. **Mark tools accurately.** Treat `get_care_schedule` as read-only; keep mutating tools such as `add_plant` and `log_care_activity` explicit about their effects and require application-side confirmation where appropriate.
-
-## Debugging checklist
-
-Follow this order to locate the divergence.
-
-1. Log the raw plant collection used by the dashboard, modal, and `get_care_schedule`; compare record counts and IDs.
-2. Log the raw output from the shared schedule-calculation function before UI formatting or WebMCP serialization.
-3. Trace `get_care_schedule` end to end: registered callback, input parsing, store/API read, schedule calculation, and returned value.
-4. Verify that the tool runs after the app's seed data or store hydration completes. A common cause of `[]` is registration capturing empty initial state.
-5. Inspect the missing field behind `undefined`; determine whether it is a wrong property name, an optional field, or an incomplete seed record.
-6. Trigger the schedule route directly and compare it with the **View Schedule** button's state transition.
-7. Add structured development logs with a request ID; do not include secrets or private user data in tool outputs or logs.
-
-## Regression tests to add
-
-Use fixed, isolated fixture data so these tests do not alter a user's garden.
-
-| Test | Expected result |
-| --- | --- |
-| Schedule service with the fixture garden | Returns the same two due items the modal displays. |
-| `get_care_schedule({ days_ahead: 7 })` | Returns the same IDs, activity, due date, and status as the service. |
-| Schedule UI with the fixture garden | Displays those same items and never displays `undefined`. |
-| Invalid `days_ahead` | Returns a validation error that names the field and accepted range; no data changes. |
-| Empty garden | UI and tool both return an intentional empty state. |
-| Route and dashboard entry point | Both open the same schedule view. |
-| Reload after tool registration | Tools still use the hydrated, current store rather than stale initial data. |
-
-For an end-to-end WebMCP test, load the fixture garden, fetch the page's registered tools, call the read-only schedule tool, and compare its structured result with the schedule service result. Keep mutation tests separate and reset their fixture state after each run.
-
-## Verification status
-
-- **Native-browser verified:** the localhost page loaded, registered WebMCP tools, and exposed them to the in-app browser.
-- **Target-agent verified:** the in-app browser discovered all seven tools and invoked `get_care_schedule`.
-- **Not verified:** mutation workflows, real-weather behavior, and a corrected shared data path.
-
+The run created a test plant and a misting log in the tool backend. No delete WebMCP tool was registered, so the artifacts were not removed. They were not visible on the dashboard after reload, which is itself part of the persistence issue above.

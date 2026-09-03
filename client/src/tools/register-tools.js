@@ -143,10 +143,27 @@ export function registerAllTools() {
       if (!input || !input.plant_id || !Array.isArray(input.symptoms) || input.symptoms.length === 0) {
         return { error: 'Missing required fields: plant_id and symptoms array (non-empty) are required.' };
       }
-      return diagnose.diagnoseProblem({
+      
+      // Look up current plant name from cache or local storage if available to preserve nickname
+      let localPlant = null;
+      try {
+        const saved = localStorage.getItem('plantneeds_local_plants');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          localPlant = parsed.find(p => String(p.id) === String(input.plant_id));
+        }
+      } catch {}
+
+      const res = await diagnose.diagnoseProblem({
         plant_id: input.plant_id,
-        symptoms: input.symptoms
+        symptoms: input.symptoms,
+        plant: localPlant
       });
+
+      if (localPlant && res?.plant) {
+        res.plant.name = localPlant.name || res.plant.name;
+      }
+      return res;
     }
   });
 

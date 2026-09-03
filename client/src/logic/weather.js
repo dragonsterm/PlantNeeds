@@ -88,10 +88,32 @@ export async function resolveUserCoordinates(promptPermission = false) {
     }
   }
 
-  // 3. Fallback to New York City (40.7128, -74.0060)
+  // 3. Fallback to IP-based approximate geolocation (works in headless/GPT browsers without GPS permission)
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 3500);
+    const ipRes = await fetch('https://ipapi.co/json/', { signal: controller.signal });
+    clearTimeout(timeoutId);
+    if (ipRes.ok) {
+      const ipData = await ipRes.json();
+      if (typeof ipData.latitude === 'number' && typeof ipData.longitude === 'number') {
+        localStorage.setItem('plantneeds_weather_lat', ipData.latitude.toFixed(4));
+        localStorage.setItem('plantneeds_weather_lon', ipData.longitude.toFixed(4));
+        return {
+          latitude: ipData.latitude,
+          longitude: ipData.longitude,
+          source: 'ip'
+        };
+      }
+    }
+  } catch (ipErr) {
+    console.warn('[weather] IP-based geolocation fallback failed:', ipErr?.message || ipErr);
+  }
+
+  // 4. Default fallback: Jakarta (hackathon context)
   return {
-    latitude: 40.7128,
-    longitude: -74.0060,
+    latitude: -6.2088,
+    longitude: 106.8456,
     source: 'default'
   };
 }

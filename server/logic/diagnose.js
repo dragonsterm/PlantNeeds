@@ -136,7 +136,8 @@ export async function diagnoseProblem(userId, { plant_id, symptoms }) {
       light_exposure: 'bright_indirect',
       pot_has_drainage: true,
       water_frequency_days: 7,
-      last_watered: new Date().toISOString().split('T')[0]
+      last_watered: new Date().toISOString().split('T')[0],
+      is_new: true
     };
   }
 
@@ -157,6 +158,7 @@ export async function diagnoseProblem(userId, { plant_id, symptoms }) {
   // Compute care history metrics
   const now = new Date();
   const waterLogs = careLogs.filter(l => l.activity === 'watered');
+  const hasHistory = careLogs.length > 0;
   
   let avgWaterGap = null;
   if (waterLogs.length >= 2) {
@@ -175,21 +177,17 @@ export async function diagnoseProblem(userId, { plant_id, symptoms }) {
 
   const daysSinceWatered = plant.last_watered
     ? Math.max(0, Math.round((now - new Date(plant.last_watered)) / (1000 * 60 * 60 * 24)))
-    : null;
-
-  const fertilizeLogs = careLogs.filter(l => l.activity === 'fertilized');
-  const lastFertilized = fertilizeLogs.length > 0 ? fertilizeLogs[fertilizeLogs.length - 1].date : null;
-  const daysSinceFertilized = lastFertilized
-    ? Math.max(0, Math.round((now - new Date(lastFertilized)) / (1000 * 60 * 60 * 24)))
-    : 999;
+    : (hasHistory ? 1 : null);
 
   const repotLogs = careLogs.filter(l => l.activity === 'repotted');
-  const lastRepotted = repotLogs.length > 0 ? repotLogs[repotLogs.length - 1].date : null;
-  const daysSinceRepotted = lastRepotted
-    ? Math.max(0, Math.round((now - new Date(lastRepotted)) / (1000 * 60 * 60 * 24)))
-    : (plant.acquired_date
-        ? Math.max(0, Math.round((now - new Date(plant.acquired_date)) / (1000 * 60 * 60 * 24)))
-        : 999);
+  const daysSinceRepotted = repotLogs.length > 0
+    ? Math.max(0, Math.round((now - new Date(repotLogs[repotLogs.length - 1].date)) / (1000 * 60 * 60 * 24)))
+    : (hasHistory ? 999 : null);
+
+  const fertLogs = careLogs.filter(l => l.activity === 'fertilized');
+  const daysSinceFertilized = fertLogs.length > 0
+    ? Math.max(0, Math.round((now - new Date(fertLogs[fertLogs.length - 1].date)) / (1000 * 60 * 60 * 24)))
+    : (hasHistory ? 999 : null);
 
   const matched = await matchSpecies(plant.species);
   const speciesInfo = matched?.profile || FALLBACK_PROFILE;
