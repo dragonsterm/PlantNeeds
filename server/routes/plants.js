@@ -195,8 +195,8 @@ router.post('/:id/care', async (req, res) => {
 /** POST /api/plants/:id/growth - Log growth milestone (T-16) */
 router.post('/:id/growth', async (req, res) => {
   try {
-    const { milestone, height_cm, notes, date, source } = req.body || {};
-    const result = await logGrowth(req.params.id, req.userId, { milestone, height_cm, notes, date, source });
+    const { milestone, height_cm, notes, date, source, plant_name } = req.body || {};
+    const result = await logGrowth(req.params.id, req.userId, { milestone, height_cm, notes, date, source, plant_name });
     res.status(200).json(result);
   } catch (err) {
     res.status(err.status || 500).json({ error: err.message || 'Failed to log growth milestone' });

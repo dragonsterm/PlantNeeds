@@ -191,6 +191,9 @@ export function registerAllTools() {
 
       if (localPlant && res?.plant) {
         res.plant.name = localPlant.name || res.plant.name;
+        res.plant.species = localPlant.species || res.plant.species;
+        if (localPlant.light_exposure) res.plant.light_exposure = localPlant.light_exposure;
+        if (localPlant.pot_has_drainage !== undefined) res.plant.pot_has_drainage = localPlant.pot_has_drainage;
       }
       return res;
     }

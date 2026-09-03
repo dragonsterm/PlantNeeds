@@ -14,7 +14,7 @@ import { loadPlantsDb } from '../db/seed.js';
  * @param {{ milestone: string, height_cm?: number, notes?: string, date?: string, source?: 'human'|'agent' }} input
  * @returns {Promise<{ success: boolean, total_milestones: number, timeline: Array }>}
  */
-export async function logGrowth(plantId, userId, { milestone, height_cm = null, notes = null, date = null, source = 'human' } = {}) {
+export async function logGrowth(plantId, userId, { milestone, height_cm = null, notes = null, date = null, source = 'human', plant_name = null } = {}) {
   if (!milestone || typeof milestone !== 'string') {
     throw Object.assign(new Error('Milestone description is required'), { status: 400 });
   }
@@ -45,7 +45,7 @@ export async function logGrowth(plantId, userId, { milestone, height_cm = null, 
     } catch {}
   }
 
-  const plantName = plant ? plant.name : (notes?.includes('plant_name:') ? notes.split('plant_name:')[1]?.trim() : 'Garden Plant');
+  const resolvedPlantName = plant?.name || plant_name || (notes?.includes('plant_name:') ? notes.split('plant_name:')[1]?.trim() : 'Garden Plant');
   const logDate = date || new Date().toISOString().split('T')[0];
   const logSource = source === 'agent' ? 'agent' : 'human';
   const numericHeight = height_cm != null ? Number(height_cm) : null;
@@ -89,7 +89,7 @@ export async function logGrowth(plantId, userId, { milestone, height_cm = null, 
   return {
     success: true,
     plant_id: plantId,
-    plant_name: plantName,
+    plant_name: resolvedPlantName,
     total_milestones: historyRows.length,
     timeline: historyRows
   };

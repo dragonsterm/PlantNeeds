@@ -185,10 +185,22 @@ export async function addPlant(body) {
   try {
     const result = await api('/api/plants', { method: 'POST', body });
     if (result && result.plant) {
-      addPlantLocally(result.plant);
-      emit('plant-added', result.plant);
+      const mergedPlant = {
+        ...body,
+        ...result.plant,
+        light_exposure: result.plant.light_exposure || body.light_exposure || 'bright_indirect',
+        pot_has_drainage: result.plant.pot_has_drainage !== undefined ? Boolean(result.plant.pot_has_drainage) : (body.pot_has_drainage !== false)
+      };
+      addPlantLocally(mergedPlant);
+      emit('plant-added', mergedPlant);
       emit('plants-changed');
-      return result;
+      return {
+        ...result,
+        plant: mergedPlant,
+        id: mergedPlant.id,
+        light_exposure: mergedPlant.light_exposure,
+        pot_has_drainage: mergedPlant.pot_has_drainage
+      };
     }
   } catch (err) {
     console.warn('[plants] Backend add failed, saving to local storage:', err.message);
@@ -201,6 +213,8 @@ export async function addPlant(body) {
     success: true, 
     plant: localPlant,
     id: localPlant.id,
+    light_exposure: localPlant.light_exposure,
+    pot_has_drainage: localPlant.pot_has_drainage,
     care_tips: ['Water when top inch of soil is dry', 'Ensure adequate light'] 
   };
 }
