@@ -135,15 +135,19 @@ export async function loginWithGoogle({ credential, email, name, googleId, avata
     }
   }
 
-  // Fallback defaults if mock or direct click
+  // Fail explicitly if neither email nor credential provides identity
   if (!googleEmail) {
-    googleEmail = 'gardener@gmail.com';
-  }
-  if (!googleSub) {
-    googleSub = 'g_' + Buffer.from(googleEmail).toString('hex').slice(0, 16);
+    const err = new Error('Google email or credential is required for authentication');
+    err.status = 400;
+    throw err;
   }
 
-  const baseUsername = (googleName || googleEmail.split('@')[0])
+  if (!googleSub) {
+    googleSub = 'g_' + Buffer.from(googleEmail.toLowerCase().trim()).toString('hex').slice(0, 24);
+  }
+
+  const normalizedEmail = googleEmail.toLowerCase().trim();
+  const baseUsername = (googleName || normalizedEmail.split('@')[0])
     .replace(/[^a-zA-Z0-9_]/g, '_')
     .slice(0, 24);
 
@@ -151,7 +155,7 @@ export async function loginWithGoogle({ credential, email, name, googleId, avata
     // 1. Check if user already exists by google_id or email
     const existing = await query(
       'SELECT id, username, email, avatar_url, provider FROM users WHERE google_id = $1 OR email = $2',
-      [googleSub, googleEmail]
+      [googleSub, normalizedEmail]
     );
 
     if (existing.rows && existing.rows.length > 0) {
@@ -183,7 +187,7 @@ export async function loginWithGoogle({ credential, email, name, googleId, avata
       `INSERT INTO users (username, email, google_id, avatar_url, provider)
        VALUES ($1, $2, $3, $4, 'google')
        RETURNING id, username, email, avatar_url, provider`,
-      [chosenUsername, googleEmail, googleSub, picture || null]
+      [chosenUsername, normalizedEmail, googleSub, picture || null]
     );
 
     const user = rows[0];
@@ -191,12 +195,12 @@ export async function loginWithGoogle({ credential, email, name, googleId, avata
     return { user, token };
   } catch (err) {
     console.warn('[auth] DB error during Google auth, issuing valid demo JWT:', err.message);
-    const mockId = 'g-' + Buffer.from(googleEmail).toString('hex').slice(0, 16);
+    const mockId = 'g-' + Buffer.from(normalizedEmail).toString('hex').slice(0, 16);
     return {
       user: {
         id: mockId,
         username: baseUsername,
-        email: googleEmail,
+        email: normalizedEmail,
         avatar_url: picture || null,
         provider: 'google'
       },
