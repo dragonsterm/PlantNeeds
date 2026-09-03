@@ -113,13 +113,19 @@ export function getSavedPlants() {
   if (saved !== null) {
     try {
       const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed) && parsed.length > 0) {
+      if (Array.isArray(parsed)) {
         return parsed.map(computePlantStatus);
       }
     } catch {}
   }
   
-  // Provide default botanical plants so dashboard is immediately populated for testing/demo
+  // Return empty list by default if user is authenticated (empty garden)
+  const isAuth = Boolean(hasToken() || readStoredToken());
+  if (isAuth) {
+    return [];
+  }
+
+  // Only show demo plants for unauthenticated preview mode
   return DEFAULT_BOTANICAL_PLANTS.map(computePlantStatus);
 }
 
@@ -161,7 +167,7 @@ export function mountUi() {
       if (hasToken()) {
         // 1. Fetch plants from DB if authenticated
         const livePlants = await listPlants();
-        if (Array.isArray(livePlants) && livePlants.length > 0) {
+        if (Array.isArray(livePlants)) {
           userPlants = livePlants.map((p, idx) => ({
             id: p.id,
             name: p.name,
