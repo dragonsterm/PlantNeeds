@@ -12,6 +12,7 @@ import { showToast } from './toast-notification.js';
 import { logCareActivity } from '../../logic/plants.js';
 import { getNavbarHtml, getWeatherBannerHtml } from './navbar.js';
 import { getSmartInsightsHtml } from './smart-insights.js';
+import { getFooterHtml } from './footer.js';
 import { resolveUserCoordinates, getWateringForecast, getFriendlyCityName } from '../../logic/weather.js';
 
 export function renderLightDashboard(container, { userPlants = [], weatherData = null, onUpdate = () => {} } = {}) {
@@ -152,6 +153,9 @@ export function renderLightDashboard(container, { userPlants = [], weatherData =
         </div>
       </div>
     </main>
+
+    <!-- Universal Footer -->
+    ${getFooterHtml({ theme: 'light' })}
   `;
 
   // Bindings for Light Dashboard

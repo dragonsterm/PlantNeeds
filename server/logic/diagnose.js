@@ -113,11 +113,10 @@ export async function diagnoseProblem(userId, { plant_id, symptoms }) {
 
   // 1. Fetch plant with ownership check (handle non-UUID test IDs gracefully)
   let plant = null;
-  const isUUID = isValidUUID(plant_id) && isValidUUID(userId);
 
   try {
     const plantRes = await pool.query(
-      `SELECT * FROM plants WHERE id::text = $1 AND user_id::text = $2`,
+      `SELECT * FROM plants WHERE id = $1 AND user_id = $2`,
       [String(plant_id), String(userId)]
     );
     if (plantRes.rows.length > 0) {
@@ -146,7 +145,7 @@ export async function diagnoseProblem(userId, { plant_id, symptoms }) {
   try {
     const careRes = await pool.query(
       `SELECT activity, date FROM care_log
-       WHERE plant_id::text = $1 AND date >= CURRENT_DATE - INTERVAL '90 days'
+       WHERE plant_id = $1
        ORDER BY date ASC`,
       [String(plant_id)]
     );
