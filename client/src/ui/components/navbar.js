@@ -113,6 +113,10 @@ export function getWeatherBannerHtml({ theme = 'light', plants = [], weather = n
   const isLive = w?.data_source === 'live' || w?.data_source === 'cache';
   const badgeLabel = isLive ? 'LIVE WEATHER' : 'WEATHER';
 
+  const savedLat = typeof localStorage !== 'undefined' ? localStorage.getItem('plantneeds_weather_lat') : null;
+  const savedLon = typeof localStorage !== 'undefined' ? localStorage.getItem('plantneeds_weather_lon') : null;
+  const coordsLabel = (savedLat && savedLon) ? `${savedLat}, ${savedLon}` : 'Locate';
+
   const derivedOutdoorCount = plants && plants.length > 0
     ? plants.filter(p => p.location === 'outdoor').length
     : 0;
@@ -146,7 +150,7 @@ export function getWeatherBannerHtml({ theme = 'light', plants = [], weather = n
       <div class="flex items-center gap-3 shrink-0">
         <button id="banner-request-location-btn" class="px-2.5 py-1 rounded-full text-xs font-semibold cursor-pointer transition hover:opacity-80 flex items-center gap-1" style="background: ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)'}; color: ${textColor}; border: 1px solid ${isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)'};" title="Update or allow current GPS location">
           <span class="material-symbols-outlined" style="font-size: 14px;">location_on</span>
-          <span id="banner-location-city">Locate</span>
+          <span id="banner-location-city">${coordsLabel}</span>
         </button>
         <div class="flex items-center gap-2 px-3 py-1.5 rounded-full border shrink-0" style="background: ${badgeBg}; border-color: ${badgeBorder};">
           <span class="w-2 h-2 rounded-full" style="background: ${dotColor};"></span>

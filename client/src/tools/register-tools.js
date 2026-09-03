@@ -102,25 +102,30 @@ export function registerAllTools() {
     }
   });
 
-  // Tool 3 — get_watering_forecast (flagship)
+  // 3. Tool 3 — get_watering_forecast (flagship)
   reg({
     name: 'get_watering_forecast',
-    description: 'Get weather-adjusted watering recommendations using real local rainfall data (past 7 days + 7-day forecast). Outdoor plants are checked against actual precipitation — tells the user which outdoor plants they can SKIP because rain already watered them. Indoor plants are excluded from rain logic. Use whenever the user asks whether they need to water given the weather.',
+    description: 'Get weather-adjusted watering recommendations using real local rainfall data (past 7 days + 7-day forecast). Outdoor plants are checked against actual precipitation — tells the user which outdoor plants they can SKIP because rain already watered them. Indoor plants are excluded from rain logic. If latitude and longitude are omitted, uses the user\'s current resolved location automatically.',
     inputSchema: {
       type: 'object',
       properties: {
-        latitude: { type: 'number', description: 'Latitude coordinate of the location' },
-        longitude: { type: 'number', description: 'Longitude coordinate of the location' }
-      },
-      required: ['latitude', 'longitude']
-    },
-    execute: async (input) => {
-      if (!input || typeof input.latitude !== 'number' || typeof input.longitude !== 'number') {
-        return { error: 'Missing required coordinates: latitude and longitude must be numbers.' };
+        latitude: { type: 'number', description: 'Optional latitude coordinate. Omit to use the user\'s current resolved location.' },
+        longitude: { type: 'number', description: 'Optional longitude coordinate. Omit to use the user\'s current resolved location.' }
       }
+    },
+    execute: async (input = {}) => {
+      let lat = input?.latitude;
+      let lon = input?.longitude;
+
+      if (typeof lat !== 'number' || typeof lon !== 'number') {
+        const coords = await weather.resolveUserCoordinates(false);
+        lat = coords.latitude;
+        lon = coords.longitude;
+      }
+
       return weather.getWateringForecast({
-        latitude: input.latitude,
-        longitude: input.longitude
+        latitude: lat,
+        longitude: lon
       });
     }
   });
@@ -214,27 +219,36 @@ export function registerAllTools() {
   // Tool 6 — plan_seasonal_planting
   reg({
     name: 'plan_seasonal_planting',
-    description: 'Build a planting calendar for outdoor crops/vegetables based on location — when to start indoors, transplant, and expected days to harvest, with companion-planting hints. Use when the user asks when/what to plant for the season.',
+    description: 'Build a planting calendar for outdoor crops/vegetables based on location — when to start indoors, transplant, and expected days to harvest, with companion-planting hints. If latitude and longitude are omitted, uses the user\'s current resolved location automatically.',
     inputSchema: {
       type: 'object',
       properties: {
-        latitude: { type: 'number', description: 'Latitude coordinate' },
-        longitude: { type: 'number', description: 'Longitude coordinate' },
+        latitude: { type: 'number', description: 'Optional latitude coordinate' },
+        longitude: { type: 'number', description: 'Optional longitude coordinate' },
         crops: {
           type: 'array',
           items: { type: 'string' },
           description: 'List of crop names to plan'
         }
       },
-      required: ['latitude', 'longitude', 'crops']
+      required: ['crops']
     },
     execute: async (input) => {
-      if (!input || typeof input.latitude !== 'number' || typeof input.longitude !== 'number' || !Array.isArray(input.crops)) {
-        return { error: 'Missing required fields: latitude, longitude, and crops array are required.' };
+      if (!input || !Array.isArray(input.crops) || input.crops.length === 0) {
+        return { error: 'Missing required field: crops array is required.' };
       }
+      let lat = input.latitude;
+      let lon = input.longitude;
+
+      if (typeof lat !== 'number' || typeof lon !== 'number') {
+        const coords = await weather.resolveUserCoordinates(false);
+        lat = coords.latitude;
+        lon = coords.longitude;
+      }
+
       return planner.planSeasonalPlanting({
-        latitude: input.latitude,
-        longitude: input.longitude,
+        latitude: lat,
+        longitude: lon,
         crops: input.crops
       });
     }

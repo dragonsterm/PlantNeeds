@@ -19,6 +19,13 @@ function evaluateClause(clause, ctx) {
     return false;
   }
 
+  // Prevent NaN or non-number comparisons from triggering false rules
+  if (op === '<=' || op === '>=' || op === '<' || op === '>') {
+    if (typeof leftVal !== 'number' || typeof rightVal !== 'number' || isNaN(leftVal) || isNaN(rightVal)) {
+      return false;
+    }
+  }
+
   switch (op) {
     case '===':
     case '==':
@@ -98,8 +105,8 @@ export function evaluateDiagnosisLocally({ plant, symptoms = [] }) {
     avgWaterGap,
     recommendedGap,
     daysSinceWatered,
-    daysSinceFertilized: 999,
-    daysSinceRepotted: 999,
+    daysSinceFertilized: null,
+    daysSinceRepotted: null,
     drainage: currentPlant.pot_has_drainage !== false,
     light: currentPlant.light_exposure || 'bright_indirect',
     recommendedLight,

@@ -159,9 +159,8 @@ export function mountUi() {
       const coords = await resolveUserCoordinates(promptGps);
       const forecast = await getWateringForecast(coords);
       window.__plantneeds_weather = forecast;
-      const city = coords.source === 'gps' ? 'Local GPS' : (coords.source === 'stored' ? 'Saved' : 'Auto');
       const labelEl = document.getElementById('banner-location-city');
-      if (labelEl) labelEl.textContent = city;
+      if (labelEl) labelEl.textContent = `${coords.latitude.toFixed(2)}, ${coords.longitude.toFixed(2)}`;
     } catch (err) {
       console.warn('[weather] Sync weather warning:', err.message);
     } finally {
@@ -195,6 +194,10 @@ export function mountUi() {
 
       // 2. Fetch live weather from Open-Meteo API
       const coords = await resolveUserCoordinates(false);
+      if (typeof document !== 'undefined') {
+        document.documentElement.dataset.userLatitude = coords.latitude.toString();
+        document.documentElement.dataset.userLongitude = coords.longitude.toString();
+      }
       const wRes = await getWateringForecast(coords);
       if (wRes && typeof wRes.recent_rain_mm === 'number') {
         liveWeather = wRes;

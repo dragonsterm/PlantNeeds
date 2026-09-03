@@ -38,8 +38,8 @@ export function getCachedWeather() {
 
 /** Get user's active or detected coordinates, requesting permission if needed. */
 export async function resolveUserCoordinates(promptPermission = false) {
-  const savedLat = localStorage.getItem('plantneeds_weather_lat');
-  const savedLon = localStorage.getItem('plantneeds_weather_lon');
+  const savedLat = typeof localStorage !== 'undefined' ? localStorage.getItem('plantneeds_weather_lat') : null;
+  const savedLon = typeof localStorage !== 'undefined' ? localStorage.getItem('plantneeds_weather_lon') : null;
 
   // 1. If explicit prompt requested, trigger browser GPS
   if (promptPermission && typeof navigator !== 'undefined' && 'geolocation' in navigator) {
@@ -54,8 +54,10 @@ export async function resolveUserCoordinates(promptPermission = false) {
       if (pos && pos.coords && typeof pos.coords.latitude === 'number' && typeof pos.coords.longitude === 'number') {
         const lat = pos.coords.latitude;
         const lon = pos.coords.longitude;
-        localStorage.setItem('plantneeds_weather_lat', lat.toFixed(4));
-        localStorage.setItem('plantneeds_weather_lon', lon.toFixed(4));
+        if (typeof localStorage !== 'undefined') {
+          localStorage.setItem('plantneeds_weather_lat', lat.toFixed(4));
+          localStorage.setItem('plantneeds_weather_lon', lon.toFixed(4));
+        }
         return { latitude: lat, longitude: lon, source: 'gps' };
       }
     } catch (err) {
@@ -85,8 +87,10 @@ export async function resolveUserCoordinates(promptPermission = false) {
     if (ipRes.ok) {
       const ipData = await ipRes.json();
       if (typeof ipData.latitude === 'number' && typeof ipData.longitude === 'number') {
-        localStorage.setItem('plantneeds_weather_lat', ipData.latitude.toFixed(4));
-        localStorage.setItem('plantneeds_weather_lon', ipData.longitude.toFixed(4));
+        if (typeof localStorage !== 'undefined') {
+          localStorage.setItem('plantneeds_weather_lat', ipData.latitude.toFixed(4));
+          localStorage.setItem('plantneeds_weather_lon', ipData.longitude.toFixed(4));
+        }
         return {
           latitude: ipData.latitude,
           longitude: ipData.longitude,

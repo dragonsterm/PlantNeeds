@@ -43,6 +43,13 @@ function evaluateClause(clause, ctx) {
     return false;
   }
 
+  // Prevent NaN or non-number comparisons from triggering false rules
+  if (op === '<=' || op === '>=' || op === '<' || op === '>') {
+    if (typeof leftVal !== 'number' || typeof rightVal !== 'number' || isNaN(leftVal) || isNaN(rightVal)) {
+      return false;
+    }
+  }
+
   switch (op) {
     case '===':
     case '==':
