@@ -14,6 +14,7 @@ import { renderDarkDiagnosis } from './components/render-dark-diagnosis.js';
 import { renderAddPlantModal } from './components/add-plant-form.js';
 import { renderGrowthJournalModal } from './components/growth-journal-modal.js';
 import { renderSeasonalPlannerModal } from './components/seasonal-planner-modal.js';
+import { renderSettingsModal } from './components/settings-modal.js';
 import { showToast } from './components/toast-notification.js';
 import { listPlants, logCareActivity } from '../logic/plants.js';
 import { getWateringForecast, getCachedWeather, resolveUserCoordinates, getFriendlyCityName } from '../logic/weather.js';
@@ -508,6 +509,16 @@ export function mountUi() {
   on('weather-updated', () => render());
   window.addEventListener('hashchange', () => render());
   window.addEventListener('theme-changed', () => render());
+
+  // Global delegation for avatar click anywhere in the app
+  document.addEventListener('click', (e) => {
+    const avatarBtn = e.target.closest('#navbar-user-avatar-btn');
+    if (avatarBtn) {
+      e.preventDefault();
+      e.stopPropagation();
+      renderSettingsModal(document.body, { onUpdate: () => render() });
+    }
+  });
 
   render();
 }

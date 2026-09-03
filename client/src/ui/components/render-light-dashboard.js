@@ -8,6 +8,7 @@ import { getAppTheme, toggleAppTheme, getSavedPlants, savePlantsLocally } from '
 import { renderAddPlantModal } from './add-plant-form.js';
 import { renderGrowthJournalModal } from './growth-journal-modal.js';
 import { renderSeasonalPlannerModal } from './seasonal-planner-modal.js';
+import { renderSettingsModal } from './settings-modal.js';
 import { showToast } from './toast-notification.js';
 import { logCareActivity } from '../../logic/plants.js';
 import { getNavbarHtml, getWeatherBannerHtml } from './navbar.js';

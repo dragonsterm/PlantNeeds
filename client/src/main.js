@@ -15,9 +15,24 @@ async function handleOAuthParams() {
   // Check URL search query (e.g. ?token=... from backend redirect)
   const urlParams = new URLSearchParams(window.location.search);
   const queryToken = urlParams.get('token');
+  const queryUsername = urlParams.get('username');
+
   if (queryToken) {
     setToken(queryToken);
+    if (queryUsername) localStorage.setItem('plantneeds_username', decodeURIComponent(queryUsername));
     history.replaceState(null, '', window.location.pathname + window.location.hash);
+    
+    // Fetch real profile from server
+    try {
+      const meRes = await api('/api/auth/me');
+      if (meRes && meRes.user) {
+        if (meRes.user.username) localStorage.setItem('plantneeds_username', meRes.user.username);
+        if (meRes.user.email) localStorage.setItem('plantneeds_email', meRes.user.email);
+        if (meRes.user.avatar_url) localStorage.setItem('plantneeds_avatar', meRes.user.avatar_url);
+        if (meRes.user.provider) localStorage.setItem('plantneeds_provider', meRes.user.provider);
+      }
+    } catch {}
+    
     emit('auth-changed');
     return;
   }
@@ -36,27 +51,42 @@ async function handleOAuthParams() {
         method: 'POST',
         body: {
           credential: idToken,
-          accessToken,
-          email: 'mahardhika2505@gmail.com',
-          name: 'Mahardhika Putra',
-          googleId: 'google-oauth-user-id'
+          accessToken
         }
       });
 
       if (result && result.token) {
         setToken(result.token);
+        if (result.user) {
+          if (result.user.username) localStorage.setItem('plantneeds_username', result.user.username);
+          if (result.user.email) localStorage.setItem('plantneeds_email', result.user.email);
+          if (result.user.avatar_url) localStorage.setItem('plantneeds_avatar', result.user.avatar_url);
+          if (result.user.provider) localStorage.setItem('plantneeds_provider', result.user.provider);
+        }
         emit('auth-changed');
       }
     } catch (err) {
-      console.warn('[auth] OAuth hash callback verification fallback:', err.message);
-      setToken('demo-token');
-      emit('auth-changed');
+      console.warn('[auth] OAuth hash verification warning:', err.message);
     }
   }
 }
 
+async function refreshUserProfile() {
+  try {
+    const meRes = await api('/api/auth/me');
+    if (meRes && meRes.user) {
+      if (meRes.user.username) localStorage.setItem('plantneeds_username', meRes.user.username);
+      if (meRes.user.email) localStorage.setItem('plantneeds_email', meRes.user.email);
+      if (meRes.user.avatar_url) localStorage.setItem('plantneeds_avatar', meRes.user.avatar_url);
+      if (meRes.user.provider) localStorage.setItem('plantneeds_provider', meRes.user.provider);
+      emit('auth-changed');
+    }
+  } catch {}
+}
+
 async function boot() {
   await handleOAuthParams();
+  refreshUserProfile();
   mountUi();
   registerAllTools();
   initToastSubscriptions();

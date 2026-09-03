@@ -29,6 +29,21 @@ export function getNavbarHtml({ activeRoute = 'dashboard', theme = 'light' } = {
   const avatarBorder = isDark ? 'border-white/50' : 'border-[#1B3022]/20';
   const signOutColor = isDark ? 'rgba(255, 255, 255, 0.6)' : '#556353';
 
+  const userAvatar = typeof localStorage !== 'undefined' ? localStorage.getItem('plantneeds_avatar') : null;
+  const username = typeof localStorage !== 'undefined' ? (localStorage.getItem('plantneeds_username') || 'Gardener') : 'Gardener';
+  const initial = (username || 'G').trim().charAt(0).toUpperCase();
+
+  const isValidAvatar = Boolean(
+    userAvatar && 
+    typeof userAvatar === 'string' && 
+    (userAvatar.startsWith('http') || userAvatar.startsWith('data:image/')) && 
+    !userAvatar.includes('stitch-placeholder')
+  );
+
+  const avatarInner = isValidAvatar
+    ? `<img class="w-full h-full object-cover" alt="${username}" src="${userAvatar}" />`
+    : `<span class="font-bold text-xs" style="color: ${isDark ? '#bcf0ae' : '#154212'};">${initial}</span>`;
+
   return `
     <div class="fixed top-4 left-4 right-4 z-50 max-w-7xl mx-auto">
       <nav class="glass-panel rounded-full px-6 py-2.5 shadow-sm transition-all duration-300" style="${navGlassStyle}">
@@ -58,9 +73,6 @@ export function getNavbarHtml({ activeRoute = 'dashboard', theme = 'light' } = {
               <span class="${isDiagnoseActive ? 'font-bold' : 'font-medium'}">Diagnosis</span>
               ${isDiagnoseActive ? `<span class="absolute bottom-0 left-3 right-3 h-[2px] rounded-full" style="background-color: ${activeColor};"></span>` : ''}
             </a>
-
-            <!-- Theme Switcher -->
-            ${themeToggleHtml}
           </div>
 
           <!-- Trailing Actions -->
@@ -69,14 +81,11 @@ export function getNavbarHtml({ activeRoute = 'dashboard', theme = 'light' } = {
               <span class="material-symbols-outlined text-sm">add</span> Add Plant
             </button>
             <div class="flex items-center gap-2">
-              <button class="p-2 rounded-full hover:opacity-80 transition-opacity" style="background: ${notifBtnBg}; border: none; cursor: pointer; color: ${notifIconColor};">
+              <button id="global-notif-btn" class="p-2 rounded-full hover:opacity-80 transition-opacity" style="background: ${notifBtnBg}; border: none; cursor: pointer; color: ${notifIconColor};" title="Activity & Notifications">
                 <span class="material-symbols-outlined">notifications</span>
               </button>
-              <div class="w-10 h-10 rounded-full overflow-hidden border-2 shadow-sm ml-2 cursor-pointer transition-colors ${avatarBorder}">
-                <img class="w-full h-full object-cover" alt="User Avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmX1gzteICusJWAL6o8TBIgj2aEee9UDdvGv6jrJbIKNbZAazY-YqO-IzcOOAN3rTeV7Y-YQ7bLoaXpDW90AIvceHzpVtw_OMpR58pkcZTULK5kL9f5uSdUShAUdorMz1oqpQMUPVUaakMa80pIX8-4nXAjqdeOfMMgRmDTVq2VvPSR-Chyq383zmwaJpVEaEOzhXDp8H7OeeF2QHULS_0Zk6zCCEmoBVeWXE-pzMI2x5Dpphl2Bp_sw"/>
-              </div>
-              <button id="global-logout-btn" title="Sign Out" class="text-xs underline hover:opacity-100 ml-2" style="color: ${signOutColor}; background: none; border: none; cursor: pointer;">
-                Sign Out
+              <button id="navbar-user-avatar-btn" class="w-10 h-10 rounded-full overflow-hidden border-2 shadow-sm ml-1 cursor-pointer transition-all hover:scale-105 active:scale-95 ${avatarBorder} flex items-center justify-center p-0" style="background: ${isDark ? 'rgba(188, 240, 174, 0.15)' : '#E5ECE4'};" title="Gardener Profile & Settings">
+                ${avatarInner}
               </button>
             </div>
           </div>

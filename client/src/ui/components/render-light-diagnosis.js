@@ -8,6 +8,7 @@ import { getNavbarHtml } from './navbar.js';
 import { getFooterHtml } from './footer.js';
 import { getSavedPlants, toggleAppTheme } from '../render.js';
 import { renderAddPlantModal } from './add-plant-form.js';
+import { renderSettingsModal } from './settings-modal.js';
 import { clearToken } from '../../api/client.js';
 import { clearCache, on } from '../../state/store.js';
 
@@ -82,6 +83,8 @@ export function renderLightDiagnosis(container, { onUpdate = () => {} } = {}) {
             </button>
           </div>
         </main>
+        <!-- Universal Footer -->
+        ${getFooterHtml({ theme: 'light' })}
       `;
 
       container.querySelector('#diag-empty-add-btn')?.addEventListener('click', () => {

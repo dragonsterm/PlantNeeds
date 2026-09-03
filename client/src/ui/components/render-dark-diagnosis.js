@@ -8,6 +8,7 @@ import { getNavbarHtml } from './navbar.js';
 import { getFooterHtml } from './footer.js';
 import { getSavedPlants, toggleAppTheme } from '../render.js';
 import { renderAddPlantModal } from './add-plant-form.js';
+import { renderSettingsModal } from './settings-modal.js';
 import { clearToken } from '../../api/client.js';
 import { clearCache, on } from '../../state/store.js';
 
@@ -80,6 +81,8 @@ export function renderDarkDiagnosis(container, { onUpdate = () => {} } = {}) {
             </button>
           </div>
         </main>
+        <!-- Universal Footer -->
+        ${getFooterHtml({ theme: 'dark' })}
       `;
 
       container.querySelector('#dark-diag-empty-add-btn')?.addEventListener('click', () => {

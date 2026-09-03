@@ -5,7 +5,7 @@
  */
 import { Router } from 'express';
 import { requireAuth } from '../middleware/auth.js';
-import { registerUser, loginUser, getCurrentUser, loginWithGoogle, deleteUserAccount } from '../logic/auth.js';
+import { registerUser, loginUser, getCurrentUser, loginWithGoogle, deleteUserAccount, updateUserProfile } from '../logic/auth.js';
 
 const router = Router();
 
@@ -125,6 +125,17 @@ router.get('/google/callback', async (req, res) => {
 router.get('/me', requireAuth, async (req, res) => {
   try {
     const result = await getCurrentUser(req.userId);
+    res.status(200).json(result);
+  } catch (err) {
+    res.status(err.status ?? 500).json({ error: err.message });
+  }
+});
+
+// PUT /api/auth/me — update current user profile (avatar, username)
+router.put('/me', requireAuth, async (req, res) => {
+  try {
+    const { avatar_url, username } = req.body ?? {};
+    const result = await updateUserProfile(req.userId, { avatar_url, username });
     res.status(200).json(result);
   } catch (err) {
     res.status(err.status ?? 500).json({ error: err.message });

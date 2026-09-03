@@ -6,30 +6,18 @@ import { emit, setCache, getCache } from '../state/store.js';
 
 const WEATHER_CACHE_KEY = 'plantneeds_weather_data';
 
-/** Reverse-geocoded friendly city name detector */
+/** Reverse-geocoded friendly city name detector for global hackathon */
 export function getFriendlyCityName(lat, lon) {
-  if (typeof lat !== 'number' || typeof lon !== 'number') return 'Your Location';
-  // Indonesia: Yogyakarta / Sleman / Depok DIY
-  if (lat >= -8.2 && lat <= -7.4 && lon >= 110.1 && lon <= 110.8) {
-    if (lat >= -7.85 && lat <= -7.70 && lon >= 110.35 && lon <= 110.45) return 'Depok, Sleman (DI Yogyakarta)';
-    return 'Yogyakarta, Indonesia';
-  }
-  // Indonesia: Jakarta & Depok West Java
-  if (lat >= -6.5 && lat <= -6.1 && lon >= 106.6 && lon <= 107.0) {
-    if (lat <= -6.35) return 'Depok, West Java';
-    return 'Jakarta, Indonesia';
-  }
-  // New York City
+  if (typeof lat !== 'number' || typeof lon !== 'number') return 'Local Garden';
+  // Global hubs
   if (lat >= 40.4 && lat <= 41.0 && lon >= -74.3 && lon <= -73.6) return 'New York City, NY';
-  // Seattle
   if (lat >= 47.4 && lat <= 47.8 && lon >= -122.5 && lon <= -122.1) return 'Seattle, WA';
-  // Los Angeles
+  if (lat >= 37.6 && lat <= 37.9 && lon >= -122.6 && lon <= -122.3) return 'San Francisco, CA';
   if (lat >= 33.7 && lat <= 34.3 && lon >= -118.6 && lon <= -118.1) return 'Los Angeles, CA';
-  // London
   if (lat >= 51.3 && lat <= 51.7 && lon >= -0.5 && lon <= 0.3) return 'London, UK';
-  // Tokyo
   if (lat >= 35.5 && lat <= 35.8 && lon >= 139.5 && lon <= 140.0) return 'Tokyo, Japan';
 
+  // Standard global coordinates format
   return `${lat.toFixed(2)}°, ${lon.toFixed(2)}°`;
 }
 
