@@ -134,19 +134,38 @@ export function renderLightDiagnosis(container, { onUpdate = () => {} } = {}) {
               <p class="text-sm text-[#556353] font-medium">Cross-referencing observed symptoms with actual watering history and pot drainage.</p>
             </div>
 
-            <!-- Patient Selection Card -->
+            <!-- Patient Selection Card with Frosted Custom Dropdown -->
             <div class="p-6 rounded-[24px]" style="background-color: rgba(255, 255, 255, 0.65); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.85); box-shadow: 0 4px 24px rgba(27, 48, 34, 0.08);">
               <div class="text-[11px] font-bold tracking-wider text-[#556353] mb-4 uppercase">Select Plant</div>
               <div class="flex items-center gap-4 mb-5">
                 <div class="w-14 h-14 rounded-2xl overflow-hidden shrink-0 border border-white/80 shadow-sm">
                   <img alt="${currentPlant.name}" class="w-full h-full object-cover" src="${currentPlant.image_url}" />
                 </div>
-                <div class="flex-1">
-                  <select id="diag-plant-select" class="font-bold text-[19px] text-[#1B3022] bg-transparent border-0 focus:ring-0 cursor-pointer outline-none p-0 pr-6" style="font-family: 'Plus Jakarta Sans', sans-serif;">
-                    ${userPlants.map(p => `
-                      <option value="${p.id}" ${p.id === selectedPlantId ? 'selected' : ''}>${p.name}</option>
-                    `).join('')}
-                  </select>
+                <div class="flex-1 relative">
+                  <!-- Custom Dropdown Trigger Button -->
+                  <div id="diag-plant-trigger" tabindex="0" role="button" aria-haspopup="listbox" class="w-full flex items-center justify-between cursor-pointer py-1 select-none transition-all group">
+                    <span id="diag-plant-trigger-text" class="font-bold text-[19px] text-[#1B3022] group-hover:text-emerald-950 transition-colors" style="font-family: 'Plus Jakarta Sans', sans-serif;">
+                      ${currentPlant.name}
+                    </span>
+                    <span id="diag-plant-arrow" class="material-symbols-outlined text-[20px] text-[#556353] group-hover:text-[#1B3022] transition-transform duration-200">expand_more</span>
+                  </div>
+
+                  <!-- Custom Frosted Glassmorphic Dropdown Menu -->
+                  <div id="diag-plant-menu" role="listbox" style="position: absolute; top: calc(100% + 8px); left: 0; min-width: 260px; max-width: 320px; z-index: 60; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.95); border-radius: 16px; padding: 6px; display: none; box-shadow: 0 16px 40px rgba(27, 48, 34, 0.16);">
+                    ${userPlants.map(p => {
+                      const isSelected = p.id === selectedPlantId;
+                      return `
+                        <div class="diag-plant-option px-3 py-2 rounded-xl cursor-pointer flex items-center justify-between transition-colors ${isSelected ? 'bg-[#154212]/10 text-[#1B3022] font-bold' : 'text-[#42493e] hover:bg-black/5 font-medium'}" data-id="${p.id}" role="option">
+                          <div class="flex items-center gap-2.5 min-w-0">
+                            <span class="w-2 h-2 rounded-full shrink-0 ${isSelected ? 'bg-[#154212]' : 'bg-transparent'}"></span>
+                            <div class="truncate text-sm">${p.name}</div>
+                          </div>
+                          ${isSelected ? `<span class="material-symbols-outlined text-[16px] text-[#154212] shrink-0">check</span>` : ''}
+                        </div>
+                      `;
+                    }).join('')}
+                  </div>
+
                   <p class="text-xs text-[#556353] mt-0.5 font-medium">${currentPlant.species || 'Houseplant'} · ${currentPlant.location === 'outdoor' ? 'Outdoor Bed' : 'Indoor'}</p>
                 </div>
               </div>
@@ -274,13 +293,46 @@ export function renderLightDiagnosis(container, { onUpdate = () => {} } = {}) {
       ${getFooterHtml({ theme: 'light' })}
     `;
 
-    // Dropdown change listener
-    container.querySelector('#diag-plant-select')?.addEventListener('change', (e) => {
-      selectedPlantId = e.target.value;
-      hasDiagnosed = false;
-      diagnosisResult = null;
-      renderPage();
+    // Custom Dropdown Trigger & Selection listener
+    const plantTrigger = container.querySelector('#diag-plant-trigger');
+    const plantMenu = container.querySelector('#diag-plant-menu');
+    const plantArrow = container.querySelector('#diag-plant-arrow');
+
+    plantTrigger?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = plantMenu && plantMenu.style.display !== 'none';
+      if (plantMenu) {
+        plantMenu.style.display = isOpen ? 'none' : 'block';
+      }
+      if (plantArrow) {
+        plantArrow.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+      }
     });
+
+    container.querySelectorAll('.diag-plant-option').forEach(option => {
+      option.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = option.getAttribute('data-id');
+        if (id && id !== selectedPlantId) {
+          selectedPlantId = id;
+          hasDiagnosed = false;
+          diagnosisResult = null;
+          renderPage();
+        } else if (plantMenu) {
+          plantMenu.style.display = 'none';
+          if (plantArrow) plantArrow.style.transform = 'rotate(0deg)';
+        }
+      });
+    });
+
+    // Close menu when clicking outside
+    const handleOutsideClick = (e) => {
+      if (plantMenu && !plantTrigger?.contains(e.target) && !plantMenu.contains(e.target)) {
+        plantMenu.style.display = 'none';
+        if (plantArrow) plantArrow.style.transform = 'rotate(0deg)';
+      }
+    };
+    document.addEventListener('click', handleOutsideClick, { once: true });
 
     // Symptoms multi-select listener
     container.querySelectorAll('.symptom-chip-btn').forEach(btn => {
