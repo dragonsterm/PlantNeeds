@@ -20,8 +20,8 @@ export function getFooterHtml({ theme = 'light' } = {}) {
     <footer class="mt-16 pb-12">
       <div class="container mx-auto px-6 max-w-7xl">
         <div class="p-6 sm:p-7 rounded-[28px] flex flex-col sm:flex-row items-center justify-between gap-5 text-xs transition-colors duration-300" style="${glassStyle} color: ${textColor}; font-family: 'Plus Jakarta Sans', sans-serif;">
-          <div class="flex items-center gap-2.5">
-            <span class="material-symbols-outlined text-lg" style="color: ${iconColor};">potted_plant</span>
+          <div class="flex items-center gap-3">
+            <img src="/assets/plantneeds-leaf-drop-logo.png" alt="PlantNeeds Logo" style="height: 28px; width: auto; object-fit: contain;" />
             <span class="font-bold tracking-tight text-sm" style="color: ${brandColor};">PlantNeeds</span>
             <span class="opacity-70 text-xs hidden md:inline">— Intelligent botanical care &amp; diagnosis</span>
           </div>
