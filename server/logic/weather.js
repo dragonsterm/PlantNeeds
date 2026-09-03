@@ -80,9 +80,11 @@ export async function getWateringForecast(latitude, longitude) {
     
     // Return fallback if no cache available
     if (!cached) {
+      const dayNames = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
       return {
         recent_rain_mm: 0,
         forecast_rain_mm: 0,
+        daily_history: dayNames.map(d => ({ date: '', day: d, rain_mm: 0 })),
         recommendations: [],
         data_source: 'unavailable',
         error: error.message
@@ -111,9 +113,22 @@ function processWeatherForecast(data) {
   const recentRainMm = precipitation.slice(0, 7).reduce((sum, val) => sum + (val || 0), 0);
   const forecastRainMm = precipitation.slice(7, 14).reduce((sum, val) => sum + (val || 0), 0);
   
+  const dailyHistory = times.slice(0, 7).map((t, idx) => {
+    const val = Number(precipitation[idx]) || 0;
+    const dateObj = new Date(t);
+    const dayNames = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+    const dayLetter = dayNames[dateObj.getUTCDay()] || 'D';
+    return {
+      date: t,
+      day: dayLetter,
+      rain_mm: Math.round(val * 10) / 10
+    };
+  });
+
   return {
     recent_rain_mm: Math.round(recentRainMm * 100) / 100,
     forecast_rain_mm: Math.round(forecastRainMm * 100) / 100,
+    daily_history: dailyHistory,
     recommendations: [],
     data_source: 'live'
   };

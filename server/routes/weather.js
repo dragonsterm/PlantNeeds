@@ -63,6 +63,7 @@ router.get('/forecast', async (req, res) => {
     res.json({
       recent_rain_mm: forecastData.recent_rain_mm,
       forecast_rain_mm: forecastData.forecast_rain_mm,
+      daily_history: forecastData.daily_history || [],
       recommendations,
       data_source: forecastData.data_source || 'live'
     });
