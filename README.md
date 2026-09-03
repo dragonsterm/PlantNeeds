@@ -221,7 +221,7 @@ Traditional plant apps require users to manually check weather and guess schedul
 Built by:
 
 - **[Jauza Ilham Mahardhika Putra](https://github.com/dragonsterm)** — Full-stack development, WebMCP integration, weather engine
-- **[Badar Rahman]** — Full-stack development, diagnosis engine, UI design
+- **[Badar Rahman](https://github.com/DarRahman)** — Full-stack development, diagnosis engine, UI design
 
 Platform: [Render](https://render.com/) (Static Site + Web Service + Postgres)  
 Challenge: [The WebMCP Challenge](https://webmcp.devpost.com/)
