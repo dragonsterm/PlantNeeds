@@ -103,7 +103,7 @@ export function renderAddPlantModal(container, { onClose = () => {}, onSuccess =
             <span style="font-size: 11px; color: ${isDark ? 'rgba(255,255,255,0.4)' : '#6B7280'}; font-weight: 500;">Required</span>
           </div>
           <div style="position: relative;">
-            <input id="plant-nickname" type="text" required placeholder="e.g. Kitchen Fern, Living Room Fiddle" value="Kitchen Fern" style="width: 100%; box-sizing: border-box; padding: 10px 14px; border-radius: 14px; border: 1px solid ${inputBorder}; background: ${inputBg}; color: ${textColor}; font-size: 14px; font-weight: 500; outline: none; transition: all 0.2s;" />
+            <input id="plant-nickname" type="text" required placeholder="e.g. Kitchen Fern, Living Room Fiddle" value="" style="width: 100%; box-sizing: border-box; padding: 10px 14px; border-radius: 14px; border: 1px solid ${inputBorder}; background: ${inputBg}; color: ${textColor}; font-size: 14px; font-weight: 500; outline: none; transition: all 0.2s;" />
           </div>
         </div>
 
@@ -122,8 +122,8 @@ export function renderAddPlantModal(container, { onClose = () => {}, onSuccess =
                 <path d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" stroke-linecap="round" stroke-linejoin="round"></path>
               </svg>
             </span>
-            <input id="plant-species-input" type="text" required placeholder="Search botanical species or common name..." autocomplete="off" value="Monstera Deliciosa" style="width: 100%; box-sizing: border-box; padding: 10px 36px 10px 38px; border-radius: 14px; border: 1px solid ${inputBorder}; background: ${inputBg}; color: ${textColor}; font-size: 14px; font-weight: 500; outline: none; transition: all 0.2s;" />
-            <span id="species-match-check" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: ${isDark ? '#4ade80' : '#15803d'}; display: flex; align-items: center; pointer-events: none;">
+            <input id="plant-species-input" type="text" required placeholder="Search botanical species or common name..." autocomplete="off" value="" style="width: 100%; box-sizing: border-box; padding: 10px 36px 10px 38px; border-radius: 14px; border: 1px solid ${inputBorder}; background: ${inputBg}; color: ${textColor}; font-size: 14px; font-weight: 500; outline: none; transition: all 0.2s;" />
+            <span id="species-match-check" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: ${isDark ? '#4ade80' : '#15803d'}; display: none; align-items: center; pointer-events: none;">
               <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                 <path d="M4.5 12.75l6 6 9-13.5" stroke-linecap="round" stroke-linejoin="round"></path>
               </svg>
@@ -136,7 +136,7 @@ export function renderAddPlantModal(container, { onClose = () => {}, onSuccess =
           <!-- Frosted Live Suggestions Tags -->
           <div style="margin-top: 4px; display: flex; align-items: center; gap: 6px; overflow-x: auto; padding-bottom: 2px;">
             <span style="font-size: 11px; color: ${isDark ? 'rgba(255,255,255,0.4)' : '#6B7280'}; font-weight: 500; shrink-0;">Popular:</span>
-            <button type="button" class="popular-chip active" data-species="Monstera Deliciosa" style="padding: 2px 10px; border-radius: 9999px; font-size: 11px; font-weight: 500; background: ${isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(26, 58, 34, 0.1)'}; color: ${isDark ? '#FFFFFF' : '#1A3A22'}; border: 1px solid ${isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(26, 58, 34, 0.16)'}; cursor: pointer; white-space: nowrap; transition: all 0.15s;">
+            <button type="button" class="popular-chip" data-species="Monstera Deliciosa" style="padding: 2px 10px; border-radius: 9999px; font-size: 11px; font-weight: 500; background: ${isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(255, 255, 255, 0.6)'}; color: ${isDark ? '#E1E8E0' : labelColor}; border: 1px solid ${isDark ? 'rgba(255, 255, 255, 0.12)' : inputBorder}; cursor: pointer; white-space: nowrap; transition: all 0.15s;">
               Monstera Deliciosa
             </button>
             <button type="button" class="popular-chip" data-species="Golden Pothos" style="padding: 2px 10px; border-radius: 9999px; font-size: 11px; font-weight: 500; background: ${isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(255, 255, 255, 0.6)'}; color: ${isDark ? '#E1E8E0' : labelColor}; border: 1px solid ${isDark ? 'rgba(255, 255, 255, 0.12)' : inputBorder}; cursor: pointer; white-space: nowrap; transition: all 0.15s;">
@@ -151,10 +151,10 @@ export function renderAddPlantModal(container, { onClose = () => {}, onSuccess =
           </div>
 
           <!-- Matched Scientific Profile Feedback Card -->
-          <div id="species-match-card" style="margin-top: 6px; display: flex; align-items: center; justify-content: space-between; padding: 6px 12px; border-radius: 12px; background: ${matchCardBg}; border: 1px solid ${matchCardBorder}; font-size: 11px; color: ${matchCardTextColor};">
+          <div id="species-match-card" style="margin-top: 6px; display: none; align-items: center; justify-content: space-between; padding: 6px 12px; border-radius: 12px; background: ${matchCardBg}; border: 1px solid ${matchCardBorder}; font-size: 11px; color: ${matchCardTextColor};">
             <span style="display: flex; align-items: center; gap: 6px; font-weight: 500;">
               <span style="width: 6px; height: 6px; border-radius: 50%; background: #34d399; display: inline-block;"></span>
-              <span id="match-card-text">Matched: <em id="match-card-species" style="font-style: italic; font-weight: 600; color: ${textColor};">Monstera Deliciosa</em> · Indoor · 7-day default cycle</span>
+              <span id="match-card-text">Matched: <em id="match-card-species" style="font-style: italic; font-weight: 600; color: ${textColor};"></em> · Indoor · 7-day default cycle</span>
             </span>
             <span style="color: ${isDark ? 'rgba(255,255,255,0.4)' : '#6B7280'}; font-size: 10px; font-weight: 500;">Optimal Care</span>
           </div>
@@ -389,8 +389,19 @@ export function renderAddPlantModal(container, { onClose = () => {}, onSuccess =
 
   closeBtn?.addEventListener('click', cleanup);
   cancelBtn?.addEventListener('click', cleanup);
-  modalOverlay.addEventListener('click', (e) => {
-    if (e.target === modalOverlay) cleanup();
+
+  // Close when clicking directly on overlay backdrop, but NOT when selecting or dragging text from inside the form
+  let isPointerDownOnOverlay = false;
+
+  modalOverlay.addEventListener('mousedown', (e) => {
+    isPointerDownOnOverlay = (e.target === modalOverlay);
+  });
+
+  modalOverlay.addEventListener('mouseup', (e) => {
+    if (isPointerDownOnOverlay && e.target === modalOverlay) {
+      cleanup();
+    }
+    isPointerDownOnOverlay = false;
   });
 
   function selectSpecies(speciesName, scientificName, type = 'indoor', waterFreq = 7) {
