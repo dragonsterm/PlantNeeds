@@ -7,6 +7,7 @@ import { logCareActivity, computePlantSchedule } from '../../logic/plants.js';
 import { clearCache, emit } from "../../state/store.js";
 import { clearToken } from '../../api/client.js';
 import { renderAddPlantModal } from './add-plant-form.js';
+import { renderSettingsModal } from './settings-modal.js';
 import { toggleAppTheme, savePlantsLocally, getSavedPlants } from '../render.js';
 import { showToast } from './toast-notification.js';
 import { getNavbarHtml, getWeatherBannerHtml } from './navbar.js';

@@ -29,6 +29,21 @@ export function getNavbarHtml({ activeRoute = 'dashboard', theme = 'light' } = {
   const avatarBorder = isDark ? 'border-white/50' : 'border-[#1B3022]/20';
   const signOutColor = isDark ? 'rgba(255, 255, 255, 0.6)' : '#556353';
 
+  const userAvatar = typeof localStorage !== 'undefined' ? localStorage.getItem('plantneeds_avatar') : null;
+  const username = typeof localStorage !== 'undefined' ? (localStorage.getItem('plantneeds_username') || 'Gardener') : 'Gardener';
+  const initial = (username || 'G').trim().charAt(0).toUpperCase();
+
+  const isValidAvatar = Boolean(
+    userAvatar && 
+    typeof userAvatar === 'string' && 
+    (userAvatar.startsWith('http') || userAvatar.startsWith('data:image/')) && 
+    !userAvatar.includes('stitch-placeholder')
+  );
+
+  const avatarInner = isValidAvatar
+    ? `<img class="w-full h-full object-cover" alt="${username}" src="${userAvatar}" />`
+    : `<span class="font-bold text-xs" style="color: ${isDark ? '#bcf0ae' : '#154212'};">${initial}</span>`;
+
   return `
     <div class="fixed top-4 left-4 right-4 z-50 max-w-7xl mx-auto">
       <nav class="glass-panel rounded-full px-6 py-2.5 shadow-sm transition-all duration-300" style="${navGlassStyle}">
@@ -58,27 +73,16 @@ export function getNavbarHtml({ activeRoute = 'dashboard', theme = 'light' } = {
               <span class="${isDiagnoseActive ? 'font-bold' : 'font-medium'}">Diagnosis</span>
               ${isDiagnoseActive ? `<span class="absolute bottom-0 left-3 right-3 h-[2px] rounded-full" style="background-color: ${activeColor};"></span>` : ''}
             </a>
-
-            <!-- Theme Switcher -->
-            ${themeToggleHtml}
           </div>
 
           <!-- Trailing Actions -->
-          <div class="flex items-center gap-4">
+          <div class="flex items-center gap-3 sm:gap-4">
             <button id="global-add-plant-btn" class="text-white px-5 py-2 rounded-full font-body-sm font-semibold hover:opacity-90 transition-opacity flex items-center gap-2 shadow-sm border border-transparent cursor-pointer" style="background: ${addBtnBg};">
               <span class="material-symbols-outlined text-sm">add</span> Add Plant
             </button>
-            <div class="flex items-center gap-2">
-              <button class="p-2 rounded-full hover:opacity-80 transition-opacity" style="background: ${notifBtnBg}; border: none; cursor: pointer; color: ${notifIconColor};">
-                <span class="material-symbols-outlined">notifications</span>
-              </button>
-              <div class="w-10 h-10 rounded-full overflow-hidden border-2 shadow-sm ml-2 cursor-pointer transition-colors ${avatarBorder}">
-                <img class="w-full h-full object-cover" alt="User Avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmX1gzteICusJWAL6o8TBIgj2aEee9UDdvGv6jrJbIKNbZAazY-YqO-IzcOOAN3rTeV7Y-YQ7bLoaXpDW90AIvceHzpVtw_OMpR58pkcZTULK5kL9f5uSdUShAUdorMz1oqpQMUPVUaakMa80pIX8-4nXAjqdeOfMMgRmDTVq2VvPSR-Chyq383zmwaJpVEaEOzhXDp8H7OeeF2QHULS_0Zk6zCCEmoBVeWXE-pzMI2x5Dpphl2Bp_sw"/>
-              </div>
-              <button id="global-logout-btn" title="Sign Out" class="text-xs underline hover:opacity-100 ml-2" style="color: ${signOutColor}; background: none; border: none; cursor: pointer;">
-                Sign Out
-              </button>
-            </div>
+            <button id="navbar-user-avatar-btn" class="w-10 h-10 rounded-full overflow-hidden border-2 shadow-sm ml-1 cursor-pointer transition-all hover:scale-105 active:scale-95 ${avatarBorder} flex items-center justify-center p-0" style="background: ${isDark ? 'rgba(188, 240, 174, 0.15)' : '#E5ECE4'};" title="Gardener Profile & Settings">
+              ${avatarInner}
+            </button>
           </div>
         </div>
       </nav>
@@ -108,6 +112,10 @@ export function getWeatherBannerHtml({ theme = 'light', plants = [], weather = n
   const rainMm = (w && typeof w.recent_rain_mm === 'number') ? w.recent_rain_mm : 0;
   const isLive = w?.data_source === 'live' || w?.data_source === 'cache';
   const badgeLabel = isLive ? 'LIVE WEATHER' : 'WEATHER';
+
+  const savedLat = typeof localStorage !== 'undefined' ? localStorage.getItem('plantneeds_weather_lat') : null;
+  const savedLon = typeof localStorage !== 'undefined' ? localStorage.getItem('plantneeds_weather_lon') : null;
+  const coordsLabel = (savedLat && savedLon) ? `${savedLat}, ${savedLon}` : 'Locate';
 
   const derivedOutdoorCount = plants && plants.length > 0
     ? plants.filter(p => p.location === 'outdoor').length
@@ -142,7 +150,7 @@ export function getWeatherBannerHtml({ theme = 'light', plants = [], weather = n
       <div class="flex items-center gap-3 shrink-0">
         <button id="banner-request-location-btn" class="px-2.5 py-1 rounded-full text-xs font-semibold cursor-pointer transition hover:opacity-80 flex items-center gap-1" style="background: ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)'}; color: ${textColor}; border: 1px solid ${isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)'};" title="Update or allow current GPS location">
           <span class="material-symbols-outlined" style="font-size: 14px;">location_on</span>
-          <span id="banner-location-city">Locate</span>
+          <span id="banner-location-city">${coordsLabel}</span>
         </button>
         <div class="flex items-center gap-2 px-3 py-1.5 rounded-full border shrink-0" style="background: ${badgeBg}; border-color: ${badgeBorder};">
           <span class="w-2 h-2 rounded-full" style="background: ${dotColor};"></span>

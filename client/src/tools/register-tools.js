@@ -31,7 +31,22 @@ export function registerAllTools() {
 
   const reg = (toolDef) => {
     try {
-      document.modelContext.registerTool(toolDef);
+      const originalExecute = toolDef.execute;
+      const securedTool = {
+        ...toolDef,
+        execute: async (input) => {
+          // Check if user disabled WebMCP remote sync in Gardener Settings
+          if (typeof localStorage !== 'undefined' && localStorage.getItem('plantneeds_pref_webmcp_sync') === 'false') {
+            return {
+              error: 'WebMCP remote sync has been disabled by the gardener in Settings.',
+              code: 'SYNC_DISABLED'
+            };
+          }
+          return originalExecute(input);
+        }
+      };
+
+      document.modelContext.registerTool(securedTool);
       console.info(`[webmcp] registered tool: ${toolDef.name}`);
     } catch (err) {
       console.error(`[webmcp] failed to register tool ${toolDef.name}:`, err);
@@ -87,25 +102,39 @@ export function registerAllTools() {
     }
   });
 
-  // Tool 3 — get_watering_forecast (flagship)
+  // 3. Tool 3 — get_watering_forecast (flagship)
   reg({
     name: 'get_watering_forecast',
-    description: 'Get weather-adjusted watering recommendations using real local rainfall data (past 7 days + 7-day forecast). Outdoor plants are checked against actual precipitation — tells the user which outdoor plants they can SKIP because rain already watered them. Indoor plants are excluded from rain logic. Use whenever the user asks whether they need to water given the weather.',
+    description: 'Get weather-adjusted watering recommendations using real local rainfall data (past 7 days + 7-day forecast). Outdoor plants are checked against actual precipitation — tells the user which outdoor plants they can SKIP because rain already watered them. Indoor plants are excluded from rain logic. If latitude and longitude are omitted, uses the user\'s current resolved location automatically.',
     inputSchema: {
       type: 'object',
       properties: {
-        latitude: { type: 'number', description: 'Latitude coordinate of the location' },
-        longitude: { type: 'number', description: 'Longitude coordinate of the location' }
-      },
-      required: ['latitude', 'longitude']
-    },
-    execute: async (input) => {
-      if (!input || typeof input.latitude !== 'number' || typeof input.longitude !== 'number') {
-        return { error: 'Missing required coordinates: latitude and longitude must be numbers.' };
+        latitude: { type: 'number', description: 'Optional latitude coordinate. Omit to use the user\'s current resolved location.' },
+        longitude: { type: 'number', description: 'Optional longitude coordinate. Omit to use the user\'s current resolved location.' }
       }
+    },
+    execute: async (input = {}) => {
+      let lat = input?.latitude;
+      let lon = input?.longitude;
+
+      // Reject non-numeric inputs if provided
+      if (lat !== undefined && (typeof lat !== 'number' || isNaN(lat))) {
+        return { error: 'Invalid coordinate: latitude must be a number.', code: 'INVALID_COORDINATES' };
+      }
+      if (lon !== undefined && (typeof lon !== 'number' || isNaN(lon))) {
+        return { error: 'Invalid coordinate: longitude must be a number.', code: 'INVALID_COORDINATES' };
+      }
+
+      // If omitted, fallback to user's resolved location
+      if (lat === undefined || lon === undefined) {
+        const coords = await weather.resolveUserCoordinates(false);
+        lat = coords.latitude;
+        lon = coords.longitude;
+      }
+
       return weather.getWateringForecast({
-        latitude: input.latitude,
-        longitude: input.longitude
+        latitude: lat,
+        longitude: lon
       });
     }
   });
@@ -143,10 +172,30 @@ export function registerAllTools() {
       if (!input || !input.plant_id || !Array.isArray(input.symptoms) || input.symptoms.length === 0) {
         return { error: 'Missing required fields: plant_id and symptoms array (non-empty) are required.' };
       }
-      return diagnose.diagnoseProblem({
+      
+      // Look up current plant name from cache or local storage if available to preserve nickname
+      let localPlant = null;
+      try {
+        const saved = localStorage.getItem('plantneeds_local_plants');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          localPlant = parsed.find(p => String(p.id) === String(input.plant_id));
+        }
+      } catch {}
+
+      const res = await diagnose.diagnoseProblem({
         plant_id: input.plant_id,
-        symptoms: input.symptoms
+        symptoms: input.symptoms,
+        plant: localPlant
       });
+
+      if (localPlant && res?.plant) {
+        res.plant.name = localPlant.name || res.plant.name;
+        res.plant.species = localPlant.species || res.plant.species;
+        if (localPlant.light_exposure) res.plant.light_exposure = localPlant.light_exposure;
+        if (localPlant.pot_has_drainage !== undefined) res.plant.pot_has_drainage = localPlant.pot_has_drainage;
+      }
+      return res;
     }
   });
 
@@ -182,27 +231,36 @@ export function registerAllTools() {
   // Tool 6 — plan_seasonal_planting
   reg({
     name: 'plan_seasonal_planting',
-    description: 'Build a planting calendar for outdoor crops/vegetables based on location — when to start indoors, transplant, and expected days to harvest, with companion-planting hints. Use when the user asks when/what to plant for the season.',
+    description: 'Build a planting calendar for outdoor crops/vegetables based on location — when to start indoors, transplant, and expected days to harvest, with companion-planting hints. If latitude and longitude are omitted, uses the user\'s current resolved location automatically.',
     inputSchema: {
       type: 'object',
       properties: {
-        latitude: { type: 'number', description: 'Latitude coordinate' },
-        longitude: { type: 'number', description: 'Longitude coordinate' },
+        latitude: { type: 'number', description: 'Optional latitude coordinate' },
+        longitude: { type: 'number', description: 'Optional longitude coordinate' },
         crops: {
           type: 'array',
           items: { type: 'string' },
           description: 'List of crop names to plan'
         }
       },
-      required: ['latitude', 'longitude', 'crops']
+      required: ['crops']
     },
     execute: async (input) => {
-      if (!input || typeof input.latitude !== 'number' || typeof input.longitude !== 'number' || !Array.isArray(input.crops)) {
-        return { error: 'Missing required fields: latitude, longitude, and crops array are required.' };
+      if (!input || !Array.isArray(input.crops) || input.crops.length === 0) {
+        return { error: 'Missing required field: crops array is required.' };
       }
+      let lat = input.latitude;
+      let lon = input.longitude;
+
+      if (typeof lat !== 'number' || typeof lon !== 'number') {
+        const coords = await weather.resolveUserCoordinates(false);
+        lat = coords.latitude;
+        lon = coords.longitude;
+      }
+
       return planner.planSeasonalPlanting({
-        latitude: input.latitude,
-        longitude: input.longitude,
+        latitude: lat,
+        longitude: lon,
         crops: input.crops
       });
     }
@@ -226,8 +284,20 @@ export function registerAllTools() {
       if (!input || !input.plant_id || !input.milestone) {
         return { error: 'Missing required fields: plant_id and milestone are required.' };
       }
+
+      let plantName = input.plant_name;
+      try {
+        const saved = localStorage.getItem('plantneeds_local_plants');
+        if (saved) {
+          const plants = JSON.parse(saved);
+          const found = plants.find(p => String(p.id) === String(input.plant_id));
+          if (found?.name) plantName = found.name;
+        }
+      } catch {}
+
       return planner.logGrowth({
         ...input,
+        plant_name: plantName,
         source: 'agent'
       });
     }

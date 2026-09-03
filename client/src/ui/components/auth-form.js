@@ -390,6 +390,12 @@ export function renderAuthForm(container, { initialMode = 'login' } = {}) {
 
         if (result && result.token) {
           setToken(result.token);
+          if (result.user) {
+            if (result.user.username) localStorage.setItem('plantneeds_username', result.user.username);
+            if (result.user.email) localStorage.setItem('plantneeds_email', result.user.email);
+            if (result.user.avatar_url) localStorage.setItem('plantneeds_avatar', result.user.avatar_url);
+            if (result.user.provider) localStorage.setItem('plantneeds_provider', result.user.provider);
+          }
           emit('auth-changed');
         }
       } catch (err) {

@@ -7,19 +7,21 @@ import { db } from '../db/pool.js';
 import speciesData from '../data/plants-db.json' with { type: 'json' };
 
 /** addPlant(input, userId) → resolves species, inserts plant, returns {plant, care_tips}. Day 4. */
-export async function addPlant({ name, species, location, light_exposure, pot_has_drainage, acquired_date }, userId) {
+export async function addPlant({ name, species, location, light_exposure, pot_has_drainage, acquired_date, image_url }, userId) {
   // Resolve species profile (match or custom fallback)
   const profile = getSpeciesProfile(species);
   
   // Determine water frequency (user override or species default)
   const water_frequency_days = profile.default_water_frequency_days ?? 7;
+  const resolvedLight = light_exposure || profile.light || 'bright_indirect';
+  const resolvedDrainage = pot_has_drainage !== undefined ? Boolean(pot_has_drainage) : true;
   
   // Insert plant
   const result = await db.query(
-    `INSERT INTO plants (name, species, location, light_exposure, pot_has_drainage, acquired_date, water_frequency_days, user_id)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-     RETURNING id`,
-    [name, species, location, light_exposure || null, pot_has_drainage, acquired_date || null, water_frequency_days, userId]
+    `INSERT INTO plants (name, species, location, light_exposure, pot_has_drainage, acquired_date, water_frequency_days, user_id, image_url)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+     RETURNING id, name, species, location, light_exposure, pot_has_drainage, water_frequency_days, image_url`,
+    [name, species, location, resolvedLight, resolvedDrainage ? 1 : 0, acquired_date || null, water_frequency_days, userId, image_url || null]
   );
   
   const plantId = result.rows[0].id;
@@ -27,7 +29,15 @@ export async function addPlant({ name, species, location, light_exposure, pot_ha
   // Generate care tips from species profile
   const careTips = generateCareTips(profile);
   
-  return { plantId, species: species, name, location, careTips };
+  return { 
+    plantId, 
+    species, 
+    name, 
+    location, 
+    light_exposure: resolvedLight,
+    pot_has_drainage: resolvedDrainage,
+    careTips 
+  };
 }
 
 /** getCareSchedule(userId, {plant_id?, days_ahead?}) → ScheduleItem[] sorted by next_watering. Day 4. */

@@ -195,7 +195,7 @@ export async function loginWithGoogle({ credential, email, name, googleId, avata
         id: mockId,
         username: baseUsername,
         email: googleEmail,
-        avatar_url: picture || 'https://lh3.googleusercontent.com/aida-public/AB6AXuBmX1gzteICusJWAL6o8TBIgj2aEee9UDdvGv6jrJbIKNbZAazY-YqO-IzcOOAN3rTeV7Y-YQ7bLoaXpDW90AIvceHzpVtw_OMpR58pkcZTULK5kL9f5uSdUShAUdorMz1oqpQMUPVUaakMa80pIX8-4nXAjqdeOfMMgRmDTVq2VvPSR-Chyq383zmwaJpVEaEOzhXDp8H7OeeF2QHULS_0Zk6zCCEmoBVeWXE-pzMI2x5Dpphl2Bp_sw',
+        avatar_url: picture || null,
         provider: 'google'
       },
       token: signToken(mockId)
@@ -264,4 +264,47 @@ export async function getCurrentUser(userId) {
 
 export async function handleGoogleCallback(code) {
   return loginWithGoogle();
+}
+
+/**
+ * Update current user profile fields (e.g. avatar_url, username) in PostgreSQL.
+ * @param {string} userId
+ * @param {{ avatar_url?: string, username?: string }} input
+ */
+export async function updateUserProfile(userId, { avatar_url, username } = {}) {
+  try {
+    const fields = [];
+    const values = [];
+    let idx = 1;
+
+    if (avatar_url !== undefined) {
+      fields.push(`avatar_url = $${idx++}`);
+      values.push(avatar_url);
+    }
+    if (username !== undefined && username.trim()) {
+      fields.push(`username = $${idx++}`);
+      values.push(username.trim());
+    }
+
+    if (fields.length === 0) {
+      return getCurrentUser(userId);
+    }
+
+    values.push(userId);
+    const sql = `UPDATE users SET ${fields.join(', ')} WHERE id = $${idx} RETURNING id, username, email, avatar_url, provider, created_at`;
+    const { rows } = await query(sql, values);
+    return { user: rows[0] };
+  } catch (err) {
+    if (err.code === 'ECONNREFUSED' || err.message?.includes('ECONNREFUSED')) {
+      return {
+        user: {
+          id: userId,
+          username: username || 'gardener',
+          avatar_url: avatar_url || null,
+          provider: 'local'
+        }
+      };
+    }
+    throw err;
+  }
 }

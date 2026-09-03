@@ -14,8 +14,9 @@ import { renderDarkDiagnosis } from './components/render-dark-diagnosis.js';
 import { renderAddPlantModal } from './components/add-plant-form.js';
 import { renderGrowthJournalModal } from './components/growth-journal-modal.js';
 import { renderSeasonalPlannerModal } from './components/seasonal-planner-modal.js';
+import { renderSettingsModal } from './components/settings-modal.js';
 import { showToast } from './components/toast-notification.js';
-import { listPlants, logCareActivity } from '../logic/plants.js';
+import { listPlants, logCareActivity, deletePlant, getBotanicalPlantPhoto } from '../logic/plants.js';
 import { getWateringForecast, getCachedWeather, resolveUserCoordinates, getFriendlyCityName } from '../logic/weather.js';
 import { getNavbarHtml, getWeatherBannerHtml } from './components/navbar.js';
 import { getSmartInsightsHtml } from './components/smart-insights.js';
@@ -26,6 +27,12 @@ export function getAppTheme() {
 
 export function setAppTheme(theme) {
   localStorage.setItem('plantneeds_theme', theme);
+  document.documentElement.setAttribute('data-theme', theme);
+  if (theme === 'dark') {
+    document.documentElement.classList.add('dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+  }
   window.dispatchEvent(new CustomEvent('theme-changed', { detail: { theme } }));
 }
 
@@ -67,6 +74,7 @@ export function computePlantStatus(p) {
   const rawRemaining = freq - daysSinceWatered;
   const daysRemaining = isNaN(rawRemaining) ? freq : Math.max(0, rawRemaining);
   const isOverdue = daysSinceWatered >= freq;
+  const isWateredToday = daysSinceWatered === 0 && Boolean(lastWateredStr);
 
   return {
     ...p,
@@ -74,11 +82,12 @@ export function computePlantStatus(p) {
     last_watered: lastWateredStr,
     days_since_watered: daysSinceWatered,
     days_remaining: daysRemaining,
-    status_label: isOverdue ? 'Due Today' : `${daysRemaining}d Left`,
+    status_label: isWateredToday ? 'Hydrated' : (isOverdue ? 'Due Today' : `${daysRemaining}d Left`),
     is_overdue: isOverdue,
-    badge_bg: isOverdue ? 'bg-status-warning' : 'bg-primary-fixed',
-    ring_color: isOverdue ? 'text-status-warning' : 'text-primary-fixed',
-    ring_dashoffset: isOverdue ? '10' : '60',
+    is_watered_today: isWateredToday,
+    badge_bg: isWateredToday ? 'bg-emerald-600' : (isOverdue ? 'bg-status-warning' : 'bg-primary-fixed'),
+    ring_color: isWateredToday ? 'text-emerald-400' : (isOverdue ? 'text-status-warning' : 'text-primary-fixed'),
+    ring_dashoffset: isWateredToday ? '0' : (isOverdue ? '10' : '60'),
     btn_class: isOverdue ? 'bg-primary text-white hover:bg-primary-container' : 'bg-white/10 text-white hover:bg-white/20'
   };
 }
@@ -119,13 +128,14 @@ export function getSavedPlants() {
     } catch {}
   }
   
-  // Only inject default demo plants if user is NOT logged in (preview mode)
+  // Return empty list by default if user is authenticated (empty garden)
   const isAuth = Boolean(hasToken() || readStoredToken());
-  if (!isAuth) {
-    return DEFAULT_BOTANICAL_PLANTS.map(computePlantStatus);
+  if (isAuth) {
+    return [];
   }
 
-  return [];
+  // Only show demo plants for unauthenticated preview mode
+  return DEFAULT_BOTANICAL_PLANTS.map(computePlantStatus);
 }
 
 export function savePlantsLocally(plants) {
@@ -149,9 +159,8 @@ export function mountUi() {
       const coords = await resolveUserCoordinates(promptGps);
       const forecast = await getWateringForecast(coords);
       window.__plantneeds_weather = forecast;
-      const city = coords.source === 'gps' ? 'Local GPS' : (coords.source === 'stored' ? 'Saved' : 'Auto');
       const labelEl = document.getElementById('banner-location-city');
-      if (labelEl) labelEl.textContent = city;
+      if (labelEl) labelEl.textContent = `${coords.latitude.toFixed(2)}, ${coords.longitude.toFixed(2)}`;
     } catch (err) {
       console.warn('[weather] Sync weather warning:', err.message);
     } finally {
@@ -160,29 +169,35 @@ export function mountUi() {
   }
 
   async function syncLivePlants() {
-    if (isFetchingLive || !hasToken()) return;
+    if (isFetchingLive) return;
     isFetchingLive = true;
     try {
-      // 1. Fetch plants from DB
-      const livePlants = await listPlants();
-      if (Array.isArray(livePlants)) {
-        userPlants = livePlants.map((p, idx) => ({
-          id: p.id,
-          name: p.name,
-          species: p.species || 'Houseplant',
-          location: p.location || 'indoor',
-          water_frequency_days: p.water_frequency_days || 7,
-          last_watered: p.last_watered || null,
-          subtitle: `${p.species || 'Houseplant'} • ${p.location === 'outdoor' ? 'Outdoor Bed' : 'Indoor'}`,
-          image_url: p.image_url || (idx % 2 === 0 
-            ? 'https://lh3.googleusercontent.com/aida-public/AB6AXuAhEkaeKyuoBmmFgEVi4XkgE5zr14wDdg-UMmpjk-ne84t6WCC6gvm6rfVlReiJSqhNRfJdfEAsxG2ghiWQLKN7zfvRGZ-XpKcO4ey8BdjqxooUrkZcD_FF2_CVerxj42LG9oElK1zM_Lzgpn937KCuEi5sJIn_p8jaxgE-B-5QpywJ25ocmygtN0A3AQgknTrweb_F6gCgJp0zj88WQ2pFawAiIKDMEegkTmjs-U2EDgAMfDSzQuXuQw'
-            : 'https://lh3.googleusercontent.com/aida-public/AB6AXuAxW8RBbT4YPXuDPqRLeQZQr-aXgWG48D8hE_oQLERilCYbEBCHF2gjHmR1fXjqucqbGnduvacZ3V3g9I5boK1H0Wtb9UrOfNj05whoLSdKDEHpmh_LZtbGOeTl7TTIe_pI_C1U_1uqhs1yM7MsHa4T4pH6JQHnNX1VaNeigoC04P3z_su3uuKq5TS9-ANEBa3ebnz18U0PhkUAnYdUN1Rmu1yFC4VeIGeD2DNb5FKvVNQnwEcchk8Yig')
-        }));
-        savePlantsLocally(userPlants);
+      if (hasToken()) {
+        // 1. Fetch plants from DB if authenticated
+        const livePlants = await listPlants();
+        if (Array.isArray(livePlants)) {
+          userPlants = livePlants.map((p) => ({
+            id: p.id,
+            name: p.name,
+            species: p.species || 'Houseplant',
+            location: p.location || 'indoor',
+            water_frequency_days: p.water_frequency_days || 7,
+            last_watered: p.last_watered || null,
+            subtitle: `${p.species || 'Houseplant'} • ${p.location === 'outdoor' ? 'Outdoor Bed' : 'Indoor'}`,
+            image_url: (p.image_url && !p.image_url.includes('lh3.googleusercontent.com/aida-public'))
+              ? p.image_url
+              : getBotanicalPlantPhoto(p.species || p.name)
+          }));
+          savePlantsLocally(userPlants);
+        }
       }
 
       // 2. Fetch live weather from Open-Meteo API
       const coords = await resolveUserCoordinates(false);
+      if (typeof document !== 'undefined') {
+        document.documentElement.dataset.userLatitude = coords.latitude.toString();
+        document.documentElement.dataset.userLongitude = coords.longitude.toString();
+      }
       const wRes = await getWateringForecast(coords);
       if (wRes && typeof wRes.recent_rain_mm === 'number') {
         liveWeather = wRes;
@@ -215,14 +230,8 @@ export function mountUi() {
 
     userPlants = getSavedPlants();
     const rawHash = (window.location.hash || '').toLowerCase();
-    
-    if (rawHash.includes('dark')) {
-      localStorage.setItem('plantneeds_theme', 'dark');
-    } else if (rawHash.includes('light')) {
-      localStorage.setItem('plantneeds_theme', 'light');
-    }
-
     const currentTheme = getAppTheme();
+    document.documentElement.setAttribute('data-theme', currentTheme);
     const isScheduleView = rawHash.includes('schedule');
     const isDiagnoseView = rawHash.includes('diagnose');
 
@@ -342,9 +351,18 @@ export function mountUi() {
                         <button class="open-journal-btn p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition border border-white/10 cursor-pointer" data-id="${plant.id}" title="View Growth Journal">
                           <span class="material-symbols-outlined text-sm">psychiatry</span>
                         </button>
-                        <button class="app-water-btn ${plant.btn_class} px-5 py-2.5 rounded-full font-body-sm font-semibold transition-colors flex items-center gap-2 cursor-pointer" data-id="${plant.id}">
-                          <span class="material-symbols-outlined text-sm">water_drop</span> Water
+                        <button class="delete-plant-btn p-2 rounded-full bg-white/5 hover:bg-rose-500/20 text-white/40 hover:text-rose-400 transition border border-white/10 cursor-pointer" data-id="${plant.id}" data-name="${plant.name}" title="Delete Plant">
+                          <span class="material-symbols-outlined text-sm">delete</span>
                         </button>
+                        ${plant.is_watered_today ? `
+                          <button class="px-4 py-2 rounded-full text-xs font-semibold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 flex items-center gap-1.5 cursor-default" title="Plant was watered today">
+                            <span class="material-symbols-outlined text-sm text-emerald-400">check_circle</span> Hydrated Today
+                          </button>
+                        ` : `
+                          <button class="app-water-btn ${plant.btn_class} px-5 py-2.5 rounded-full font-body-sm font-semibold transition-colors flex items-center gap-2 cursor-pointer shadow-sm" data-id="${plant.id}">
+                            <span class="material-symbols-outlined text-sm">water_drop</span> Water
+                          </button>
+                        `}
                       </div>
                     </div>
                   </div>
@@ -505,6 +523,31 @@ export function mountUi() {
   on('weather-updated', () => render());
   window.addEventListener('hashchange', () => render());
   window.addEventListener('theme-changed', () => render());
+
+  // Global delegation for avatar and plant actions anywhere in the app
+  document.addEventListener('click', async (e) => {
+    const avatarBtn = e.target.closest('#navbar-user-avatar-btn');
+    if (avatarBtn) {
+      e.preventDefault();
+      e.stopPropagation();
+      renderSettingsModal(document.body, { onUpdate: () => render() });
+      return;
+    }
+
+    const deleteBtn = e.target.closest('.delete-plant-btn');
+    if (deleteBtn) {
+      e.preventDefault();
+      e.stopPropagation();
+      const id = deleteBtn.getAttribute('data-id');
+      const name = deleteBtn.getAttribute('data-name') || 'Plant';
+      if (confirm(`Remove "${name}" from your garden?`)) {
+        await deletePlant(id);
+        showToast({ title: 'Plant Removed', message: `"${name}" removed from garden`, type: 'info' });
+        render();
+      }
+      return;
+    }
+  });
 
   render();
 }

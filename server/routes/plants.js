@@ -19,7 +19,7 @@ router.get('/', async (req, res) => {
   try {
     const location = req.query.location?.toString();
     
-    let query = `SELECT id, name, species, location, light_exposure, pot_has_drainage, acquired_date, water_frequency_days, last_watered FROM plants WHERE user_id = $1`;
+    let query = `SELECT id, name, species, location, light_exposure, pot_has_drainage, acquired_date, water_frequency_days, last_watered, image_url FROM plants WHERE user_id = $1`;
     const queryParams = [req.userId];
     
     if (location) {
@@ -41,7 +41,7 @@ router.get('/', async (req, res) => {
 /** POST /api/plants - Add new plant */
 router.post('/', async (req, res) => {
   try {
-    const { name, species, location, light_exposure, pot_has_drainage, acquired_date } = req.body;
+    const { name, species, location, light_exposure, pot_has_drainage, acquired_date, image_url } = req.body;
     
     if (!name || !species || !location) {
       return res.status(400).json({ error: 'Missing required fields: name, species, location' });
@@ -53,7 +53,7 @@ router.post('/', async (req, res) => {
     }
     
     const result = await addPlantLogic(
-      { name, species, location, light_exposure, pot_has_drainage, acquired_date },
+      { name, species, location, light_exposure, pot_has_drainage, acquired_date, image_url },
       req.userId
     );
     
@@ -195,8 +195,8 @@ router.post('/:id/care', async (req, res) => {
 /** POST /api/plants/:id/growth - Log growth milestone (T-16) */
 router.post('/:id/growth', async (req, res) => {
   try {
-    const { milestone, height_cm, notes, date, source } = req.body || {};
-    const result = await logGrowth(req.params.id, req.userId, { milestone, height_cm, notes, date, source });
+    const { milestone, height_cm, notes, date, source, plant_name } = req.body || {};
+    const result = await logGrowth(req.params.id, req.userId, { milestone, height_cm, notes, date, source, plant_name });
     res.status(200).json(result);
   } catch (err) {
     res.status(err.status || 500).json({ error: err.message || 'Failed to log growth milestone' });

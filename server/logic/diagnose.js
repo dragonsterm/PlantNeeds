@@ -43,6 +43,13 @@ function evaluateClause(clause, ctx) {
     return false;
   }
 
+  // Prevent NaN or non-number comparisons from triggering false rules
+  if (op === '<=' || op === '>=' || op === '<' || op === '>') {
+    if (typeof leftVal !== 'number' || typeof rightVal !== 'number' || isNaN(leftVal) || isNaN(rightVal)) {
+      return false;
+    }
+  }
+
   switch (op) {
     case '===':
     case '==':
@@ -99,7 +106,7 @@ function isValidUUID(str) {
  * Diagnose a plant problem given plant_id and symptoms array.
  * Scoped by userId to enforce per-user security.
  */
-export async function diagnoseProblem(userId, { plant_id, symptoms }) {
+export async function diagnoseProblem(userId, { plant_id, symptoms, plant: clientPlant = null }) {
   if (!plant_id) {
     const err = new Error('plant_id is required');
     err.status = 400;
@@ -123,21 +130,48 @@ export async function diagnoseProblem(userId, { plant_id, symptoms }) {
       plant = plantRes.rows[0];
     }
   } catch (dbErr) {
-    // If table query fails, create synthetic plant object
+    // If table query fails, check global lookup
   }
 
   if (!plant) {
-    // Synthetic plant fallback for demo/unpersisted client IDs
-    plant = {
-      id: plant_id,
-      name: 'Monstera Deliciosa',
-      species: 'Monstera deliciosa',
-      location: 'indoor',
-      light_exposure: 'bright_indirect',
-      pot_has_drainage: true,
-      water_frequency_days: 7,
-      last_watered: new Date().toISOString().split('T')[0]
-    };
+    try {
+      const plantRes2 = await pool.query(
+        `SELECT * FROM plants WHERE id = $1`,
+        [String(plant_id)]
+      );
+      if (plantRes2.rows.length > 0) {
+        plant = plantRes2.rows[0];
+      }
+    } catch {}
+  }
+
+  if (!plant) {
+    // Use client-provided plant if available (preserves exact name, species, location, light)
+    if (clientPlant && typeof clientPlant === 'object') {
+      plant = {
+        id: plant_id,
+        name: clientPlant.name || 'Plant',
+        species: clientPlant.species || 'Houseplant',
+        location: clientPlant.location || 'indoor',
+        light_exposure: clientPlant.light_exposure || 'bright_indirect',
+        pot_has_drainage: clientPlant.pot_has_drainage !== false,
+        water_frequency_days: Number(clientPlant.water_frequency_days) || 7,
+        last_watered: clientPlant.last_watered || new Date().toISOString().split('T')[0],
+        is_new: true
+      };
+    } else {
+      plant = {
+        id: plant_id,
+        name: 'Garden Plant',
+        species: 'Houseplant',
+        location: 'indoor',
+        light_exposure: 'bright_indirect',
+        pot_has_drainage: true,
+        water_frequency_days: 7,
+        last_watered: new Date().toISOString().split('T')[0],
+        is_new: true
+      };
+    }
   }
 
   // 2. Fetch care logs for the last 90 days
@@ -157,6 +191,7 @@ export async function diagnoseProblem(userId, { plant_id, symptoms }) {
   // Compute care history metrics
   const now = new Date();
   const waterLogs = careLogs.filter(l => l.activity === 'watered');
+  const hasHistory = careLogs.length > 0;
   
   let avgWaterGap = null;
   if (waterLogs.length >= 2) {
@@ -175,21 +210,17 @@ export async function diagnoseProblem(userId, { plant_id, symptoms }) {
 
   const daysSinceWatered = plant.last_watered
     ? Math.max(0, Math.round((now - new Date(plant.last_watered)) / (1000 * 60 * 60 * 24)))
-    : null;
-
-  const fertilizeLogs = careLogs.filter(l => l.activity === 'fertilized');
-  const lastFertilized = fertilizeLogs.length > 0 ? fertilizeLogs[fertilizeLogs.length - 1].date : null;
-  const daysSinceFertilized = lastFertilized
-    ? Math.max(0, Math.round((now - new Date(lastFertilized)) / (1000 * 60 * 60 * 24)))
-    : 999;
+    : (hasHistory ? 1 : null);
 
   const repotLogs = careLogs.filter(l => l.activity === 'repotted');
-  const lastRepotted = repotLogs.length > 0 ? repotLogs[repotLogs.length - 1].date : null;
-  const daysSinceRepotted = lastRepotted
-    ? Math.max(0, Math.round((now - new Date(lastRepotted)) / (1000 * 60 * 60 * 24)))
-    : (plant.acquired_date
-        ? Math.max(0, Math.round((now - new Date(plant.acquired_date)) / (1000 * 60 * 60 * 24)))
-        : 999);
+  const daysSinceRepotted = repotLogs.length > 0
+    ? Math.max(0, Math.round((now - new Date(repotLogs[repotLogs.length - 1].date)) / (1000 * 60 * 60 * 24)))
+    : (hasHistory ? 999 : null);
+
+  const fertLogs = careLogs.filter(l => l.activity === 'fertilized');
+  const daysSinceFertilized = fertLogs.length > 0
+    ? Math.max(0, Math.round((now - new Date(fertLogs[fertLogs.length - 1].date)) / (1000 * 60 * 60 * 24)))
+    : (hasHistory ? 999 : null);
 
   const matched = await matchSpecies(plant.species);
   const speciesInfo = matched?.profile || FALLBACK_PROFILE;

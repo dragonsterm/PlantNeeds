@@ -19,6 +19,13 @@ function evaluateClause(clause, ctx) {
     return false;
   }
 
+  // Prevent NaN or non-number comparisons from triggering false rules
+  if (op === '<=' || op === '>=' || op === '<' || op === '>') {
+    if (typeof leftVal !== 'number' || typeof rightVal !== 'number' || isNaN(leftVal) || isNaN(rightVal)) {
+      return false;
+    }
+  }
+
   switch (op) {
     case '===':
     case '==':
@@ -98,8 +105,8 @@ export function evaluateDiagnosisLocally({ plant, symptoms = [] }) {
     avgWaterGap,
     recommendedGap,
     daysSinceWatered,
-    daysSinceFertilized: 999,
-    daysSinceRepotted: 999,
+    daysSinceFertilized: null,
+    daysSinceRepotted: null,
     drainage: currentPlant.pot_has_drainage !== false,
     light: currentPlant.light_exposure || 'bright_indirect',
     recommendedLight,
@@ -213,7 +220,22 @@ export function normalizeDiagnosisResult(raw) {
 export async function diagnoseProblem({ plant_id, symptoms, plant = null }) {
   let result = null;
   try {
-    result = await api('/api/diagnose', { method: 'POST', body: { plant_id, symptoms } });
+    result = await api('/api/diagnose', { 
+      method: 'POST', 
+      body: { 
+        plant_id, 
+        symptoms,
+        plant: plant ? {
+          name: plant.name,
+          species: plant.species,
+          location: plant.location,
+          light_exposure: plant.light_exposure,
+          pot_has_drainage: plant.pot_has_drainage,
+          water_frequency_days: plant.water_frequency_days,
+          last_watered: plant.last_watered
+        } : null
+      } 
+    });
   } catch (err) {
     console.warn('[diagnose] API call failed, falling back to client evaluation:', err?.message || err);
     result = evaluateDiagnosisLocally({ plant, symptoms });

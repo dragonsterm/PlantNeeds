@@ -8,6 +8,7 @@ import { getAppTheme, toggleAppTheme, getSavedPlants, savePlantsLocally } from '
 import { renderAddPlantModal } from './add-plant-form.js';
 import { renderGrowthJournalModal } from './growth-journal-modal.js';
 import { renderSeasonalPlannerModal } from './seasonal-planner-modal.js';
+import { renderSettingsModal } from './settings-modal.js';
 import { showToast } from './toast-notification.js';
 import { logCareActivity } from '../../logic/plants.js';
 import { getNavbarHtml, getWeatherBannerHtml } from './navbar.js';
@@ -103,9 +104,18 @@ export function renderLightDashboard(container, { userPlants = [], weatherData =
                     <button class="light-open-journal-btn p-2 rounded-full bg-black/5 hover:bg-black/10 text-[#1B3022] transition border border-black/10 cursor-pointer" data-id="${plant.id}" title="View Growth Journal">
                       <span class="material-symbols-outlined text-sm">psychiatry</span>
                     </button>
-                    <button class="app-water-btn ${plant.is_overdue ? 'bg-[#154212] text-white hover:bg-[#1B3022]' : 'bg-[#1B3022]/10 text-[#1B3022] hover:bg-[#1B3022]/20'} px-5 py-2.5 rounded-full font-body-sm font-semibold transition-colors flex items-center gap-2 cursor-pointer" data-id="${plant.id}">
-                      <span class="material-symbols-outlined text-sm">water_drop</span> Water
+                    <button class="delete-plant-btn p-2 rounded-full bg-black/5 hover:bg-rose-50 text-[#556353] hover:text-rose-600 transition border border-black/10 cursor-pointer" data-id="${plant.id}" data-name="${plant.name}" title="Delete Plant">
+                      <span class="material-symbols-outlined text-sm">delete</span>
                     </button>
+                    ${plant.is_watered_today ? `
+                      <button class="px-4 py-2 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center gap-1.5 cursor-default" title="Plant was watered today">
+                        <span class="material-symbols-outlined text-sm text-emerald-700">check_circle</span> Hydrated Today
+                      </button>
+                    ` : `
+                      <button class="app-water-btn ${plant.is_overdue ? 'bg-[#154212] text-white hover:bg-[#1B3022]' : 'bg-[#1B3022]/10 text-[#1B3022] hover:bg-[#1B3022]/20'} px-5 py-2.5 rounded-full font-body-sm font-semibold transition-colors flex items-center gap-2 cursor-pointer" data-id="${plant.id}">
+                        <span class="material-symbols-outlined text-sm">water_drop</span> Water
+                      </button>
+                    `}
                   </div>
                 </div>
               </div>

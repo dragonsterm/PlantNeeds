@@ -49,27 +49,7 @@ function initSqlite() {
         water_frequency_days INTEGER NOT NULL DEFAULT 7,
         water_needs_inches_weekly REAL,
         last_watered TEXT,
-        created_at TEXT NOT NULL DEFAULT (datetime('now'))
-      );
-
-      CREATE TABLE IF NOT EXISTS care_log (
-        id TEXT PRIMARY KEY,
-        plant_id TEXT NOT NULL,
-        activity TEXT NOT NULL,
-        date TEXT NOT NULL DEFAULT (date('now')),
-        notes TEXT,
-        source TEXT NOT NULL DEFAULT 'human',
-        created_at TEXT NOT NULL DEFAULT (datetime('now'))
-      );
-
-      CREATE TABLE IF NOT EXISTS growth_log (
-        id TEXT PRIMARY KEY,
-        plant_id TEXT NOT NULL,
-        milestone TEXT NOT NULL,
-        height_cm REAL,
-        notes TEXT,
-        date TEXT NOT NULL DEFAULT (date('now')),
-        source TEXT NOT NULL DEFAULT 'human',
+        image_url TEXT,
         created_at TEXT NOT NULL DEFAULT (datetime('now'))
       );
 
@@ -79,6 +59,10 @@ function initSqlite() {
         expires_at TEXT NOT NULL
       );
     `);
+
+    try {
+      sqliteDb.exec(`ALTER TABLE plants ADD COLUMN image_url TEXT`);
+    } catch {}
   }
   return sqliteDb;
 }
