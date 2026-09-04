@@ -525,8 +525,30 @@ export function mountUi() {
   window.addEventListener('hashchange', () => render());
   window.addEventListener('theme-changed', () => render());
 
-  // Global delegation for avatar and plant actions anywhere in the app
+  // Global delegation for avatar, mobile menu and plant actions anywhere in the app
   document.addEventListener('click', async (e) => {
+    const mobileMenuBtn = e.target.closest('#mobile-nav-toggle-btn');
+    if (mobileMenuBtn) {
+      e.preventDefault();
+      e.stopPropagation();
+      const dropdown = document.getElementById('mobile-nav-dropdown');
+      if (dropdown) {
+        dropdown.classList.toggle('hidden');
+      }
+      return;
+    }
+
+    const mobileNavLink = e.target.closest('.mobile-nav-link');
+    if (mobileNavLink) {
+      const dropdown = document.getElementById('mobile-nav-dropdown');
+      if (dropdown) dropdown.classList.add('hidden');
+    } else {
+      const dropdown = document.getElementById('mobile-nav-dropdown');
+      if (dropdown && !dropdown.contains(e.target)) {
+        dropdown.classList.add('hidden');
+      }
+    }
+
     const avatarBtn = e.target.closest('#navbar-user-avatar-btn');
     if (avatarBtn) {
       e.preventDefault();

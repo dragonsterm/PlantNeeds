@@ -45,17 +45,17 @@ export function getNavbarHtml({ activeRoute = 'dashboard', theme = 'light' } = {
     : `<span class="font-bold text-xs" style="color: ${isDark ? '#bcf0ae' : '#154212'};">${initial}</span>`;
 
   return `
-    <div class="fixed top-4 left-4 right-4 z-50 max-w-7xl mx-auto">
-      <nav class="glass-panel rounded-full px-6 py-2.5 shadow-sm transition-all duration-300" style="${navGlassStyle}">
+    <div class="fixed top-3 sm:top-4 left-2.5 sm:left-4 right-2.5 sm:right-4 z-50 max-w-7xl mx-auto">
+      <nav class="glass-panel rounded-full px-4 sm:px-6 py-2 sm:py-2.5 shadow-sm transition-all duration-300" style="${navGlassStyle}">
         <div class="flex justify-between items-center w-full">
           <!-- Logo Area -->
-          <a href="#dashboard" class="flex items-center gap-3 cursor-pointer" style="text-decoration: none;">
-            <img src="/assets/plantneeds-leaf-drop-logo.png" alt="PlantNeeds Logo" style="height: 34px; width: auto; object-fit: contain;" />
-            <span class="font-headline-lg text-headline-lg font-bold" style="color: ${logoTextColor};">PlantNeeds</span>
+          <a href="#dashboard" class="flex items-center gap-2 sm:gap-3 cursor-pointer shrink-0" style="text-decoration: none;">
+            <img src="/assets/plantneeds-leaf-drop-logo.png" alt="PlantNeeds Logo" class="h-7 sm:h-[34px] w-auto object-contain" />
+            <span class="font-headline-lg font-bold text-base sm:text-headline-lg tracking-tight" style="color: ${logoTextColor};">PlantNeeds</span>
           </a>
 
-          <!-- Navigation Links (Zero-Shift Fixed Box Model) -->
-          <div class="flex items-center gap-3 sm:gap-6">
+          <!-- Navigation Links (Desktop: Zero-Shift Fixed Box Model) -->
+          <div class="hidden sm:flex items-center gap-6">
             <!-- My Garden -->
             <a href="#dashboard" class="relative px-3 py-1.5 font-medium text-sm transition-colors cursor-pointer" style="color: ${isGardenActive ? activeColor : inactiveColor}; text-decoration: none;">
               <span class="${isGardenActive ? 'font-bold' : 'font-medium'}">My Garden</span>
@@ -75,17 +75,40 @@ export function getNavbarHtml({ activeRoute = 'dashboard', theme = 'light' } = {
             </a>
           </div>
 
-          <!-- Trailing Actions -->
-          <div class="flex items-center gap-3 sm:gap-4">
-            <button id="global-add-plant-btn" class="text-white px-5 py-2 rounded-full font-body-sm font-semibold hover:opacity-90 transition-opacity flex items-center gap-2 shadow-sm border border-transparent cursor-pointer" style="background: ${addBtnBg};">
-              <span class="material-symbols-outlined text-sm">add</span> Add Plant
+          <!-- Trailing Actions (Add Plant, Avatar, and Mobile Menu Toggle) -->
+          <div class="flex items-center gap-2 sm:gap-4 shrink-0">
+            <button id="global-add-plant-btn" class="text-white p-2 sm:px-5 sm:py-2 rounded-full font-body-sm font-semibold hover:opacity-90 transition-opacity flex items-center justify-center gap-1.5 shadow-sm border border-transparent cursor-pointer" style="background: ${addBtnBg};" title="Add Plant">
+              <span class="material-symbols-outlined text-sm">add</span>
+              <span class="hidden sm:inline">Add Plant</span>
             </button>
-            <button id="navbar-user-avatar-btn" class="w-10 h-10 rounded-full overflow-hidden border-2 shadow-sm ml-1 cursor-pointer transition-all hover:scale-105 active:scale-95 ${avatarBorder} flex items-center justify-center p-0" style="background: ${isDark ? 'rgba(188, 240, 174, 0.15)' : '#E5ECE4'};" title="Gardener Profile & Settings">
+            <button id="navbar-user-avatar-btn" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden border-2 shadow-sm cursor-pointer transition-all hover:scale-105 active:scale-95 ${avatarBorder} flex items-center justify-center p-0" style="background: ${isDark ? 'rgba(188, 240, 174, 0.15)' : '#E5ECE4'};" title="Gardener Profile & Settings">
               ${avatarInner}
+            </button>
+            <!-- Mobile Hamburger Menu Button (visible only on mobile) -->
+            <button id="mobile-nav-toggle-btn" class="sm:hidden w-8 h-8 rounded-full flex items-center justify-center transition-colors cursor-pointer" style="background: ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)'}; color: ${isDark ? '#FFFFFF' : '#1B3022'}; border: none;" title="Open Menu">
+              <span class="material-symbols-outlined text-[18px]">menu</span>
             </button>
           </div>
         </div>
       </nav>
+
+      <!-- Mobile Dropdown Navigation Menu -->
+      <div id="mobile-nav-dropdown" class="sm:hidden hidden mt-2 rounded-2xl p-3 shadow-2xl transition-all duration-200" style="${navGlassStyle}">
+        <div class="flex flex-col gap-1 text-sm font-medium">
+          <a href="#dashboard" class="mobile-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors cursor-pointer" style="text-decoration: none; color: ${isGardenActive ? activeColor : inactiveColor}; background: ${isGardenActive ? (isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)') : 'transparent'};">
+            <span class="material-symbols-outlined text-base">potted_plant</span>
+            <span class="${isGardenActive ? 'font-bold' : ''}">My Garden</span>
+          </a>
+          <a href="#schedule" class="mobile-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors cursor-pointer" style="text-decoration: none; color: ${isScheduleActive ? activeColor : inactiveColor}; background: ${isScheduleActive ? (isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)') : 'transparent'};">
+            <span class="material-symbols-outlined text-base">calendar_month</span>
+            <span class="${isScheduleActive ? 'font-bold' : ''}">Care Schedule</span>
+          </a>
+          <a href="#diagnose" class="mobile-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors cursor-pointer" style="text-decoration: none; color: ${isDiagnoseActive ? activeColor : inactiveColor}; background: ${isDiagnoseActive ? (isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)') : 'transparent'};">
+            <span class="material-symbols-outlined text-base">stethoscope</span>
+            <span class="${isDiagnoseActive ? 'font-bold' : ''}">Diagnosis</span>
+          </a>
+        </div>
+      </div>
     </div>
   `;
 }
