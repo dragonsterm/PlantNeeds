@@ -1,4 +1,4 @@
-# 🌱 PlantNeeds — The AI-Powered Intelligent Botanical Companion
+# 🌱 PlantNeeds The AI-Powered Intelligent Botanical Companion
 
 <div align="center">
 
